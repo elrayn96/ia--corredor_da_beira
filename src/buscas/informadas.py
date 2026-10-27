@@ -133,7 +133,7 @@ def aStar(problema, heuristica, estatisticas=None):
     )
 
 def aStarPonderada(problema, heuristica, peso, estatisticas=None):
-    if not isinstance(peso, (init, float)) or isinstance(peso, bool) or peso <= 0:
+    if not isinstance(peso, (int, float)) or isinstance(peso, bool) or peso <= 0:
         raise ValueError("O peso da A* ponderada deve ser um número real positivo.")
     return _melhor_primeiro(
         problema, heuristica, lambda g, h: g + peso * h, True, estatisticas
