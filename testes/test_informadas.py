@@ -86,3 +86,32 @@ def test_ponderada_respeita_limite_teorico(problema, w):
 def test_ponderada_peso_invalido(problema, peso):
     with pytest.raises(ValueError):
         aStarPonderada(problema, h_admissivel, peso)
+
+
+def test_sem_solucao_devolve_none(problema):
+    p = ProblemaGrafo({"S": [("A", 1)], "A": []}, "S", "G")
+    assert aStar(p, h0) is None
+    assert buscaGulosa(p, h0) is None
+    assert aStarPonderada(p, h0, 2) is None
+
+
+def test_estado_inicial_ja_e_objetivo():
+    p = ProblemaGrafo({}, "G", "G")
+    sol = aStar(p, h0)
+    assert sol.custo_total == 0
+    assert sol.accoes == []
+    assert sol.estados == ["G"]
+
+
+def test_ciclos_nao_bloqueiam_a_busca():
+    arestas = {"S": [("A", 1)], "A": [("S", 1), ("G", 1)]}
+    p = ProblemaGrafo(arestas, "S", "G")
+    assert aStar(p, h0).custo_total == 2
+    
+
+def test_estatisticas_sao_preenchidas(problema):
+    est = {}
+    aStar(problema, h0, estatisticas=est)
+    assert est["nos_gerados"] >= est["nos_expandidos"] > 0
+    assert est["max_fronteira"] >= 1
+    assert est["tempo"] >= 0
