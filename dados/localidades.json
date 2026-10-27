@@ -1,0 +1,64 @@
+{
+  "localidades": [
+    {
+      "nome": "Beira",
+      "abastecimento": true
+    },
+    {
+      "nome": "Dondo",
+      "abastecimento": false
+    },
+    {
+      "nome": "Nhamatanda",
+      "abastecimento": false
+    },
+    {
+      "nome": "Inchope",
+      "abastecimento": true
+    },
+    {
+      "nome": "Gorongosa",
+      "abastecimento": false
+    },
+    {
+      "nome": "Gondola",
+      "abastecimento": false
+    },
+    {
+      "nome": "Chimoio",
+      "abastecimento": true
+    },
+    {
+      "nome": "Manica",
+      "abastecimento": false
+    },
+    {
+      "nome": "Catandica",
+      "abastecimento": false
+    },
+    {
+      "nome": "Muxunguè",
+      "abastecimento": false
+    },
+    {
+      "nome": "Caia",
+      "abastecimento": false
+    },
+    {
+      "nome": "Mafambisse",
+      "abastecimento": false
+    },
+    {
+      "nome": "Mutua",
+      "abastecimento": false
+    },
+    {
+      "nome": "Lamego",
+      "abastecimento": false
+    },
+    {
+      "nome": "Vanduzi",
+      "abastecimento": false
+    }
+  ]
+}

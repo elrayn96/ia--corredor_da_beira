@@ -1,0 +1,186 @@
+{
+  "velocidadesPorPiso": {
+    "1": 40,
+    "2": 55,
+    "3": 70,
+    "4": 80,
+    "5": 90
+  },
+  "estradas": [
+    {
+      "origem": "Beira",
+      "destino": "Dondo",
+      "distanciaKm": 40,
+      "piso": 5,
+      "velocidadeMediaKmH": 90
+    },
+    {
+      "origem": "Beira",
+      "destino": "Mutua",
+      "distanciaKm": 200,
+      "piso": 2,
+      "velocidadeMediaKmH": 55
+    },
+    {
+      "origem": "Dondo",
+      "destino": "Nhamatanda",
+      "distanciaKm": 90,
+      "piso": 4,
+      "velocidadeMediaKmH": 80
+    },
+    {
+      "origem": "Dondo",
+      "destino": "Lamego",
+      "distanciaKm": 130,
+      "piso": 2,
+      "velocidadeMediaKmH": 55
+    },
+    {
+      "origem": "Nhamatanda",
+      "destino": "Mafambisse",
+      "distanciaKm": 60,
+      "piso": 4,
+      "velocidadeMediaKmH": 80
+    },
+    {
+      "origem": "Nhamatanda",
+      "destino": "Inchope",
+      "distanciaKm": 70,
+      "piso": 4,
+      "velocidadeMediaKmH": 80
+    },
+    {
+      "origem": "Nhamatanda",
+      "destino": "Gorongosa",
+      "distanciaKm": 90,
+      "piso": 4,
+      "velocidadeMediaKmH": 80
+    },
+    {
+      "origem": "Mafambisse",
+      "destino": "Caia",
+      "distanciaKm": 110,
+      "piso": 3,
+      "velocidadeMediaKmH": 70
+    },
+    {
+      "origem": "Caia",
+      "destino": "Gorongosa",
+      "distanciaKm": 150,
+      "piso": 3,
+      "velocidadeMediaKmH": 70
+    },
+    {
+      "origem": "Gorongosa",
+      "destino": "Muxunguè",
+      "distanciaKm": 140,
+      "piso": 3,
+      "velocidadeMediaKmH": 70
+    },
+    {
+      "origem": "Gorongosa",
+      "destino": "Chimoio",
+      "distanciaKm": 130,
+      "piso": 3,
+      "velocidadeMediaKmH": 70
+    },
+    {
+      "origem": "Chimoio",
+      "destino": "Inchope",
+      "distanciaKm": 100,
+      "piso": 4,
+      "velocidadeMediaKmH": 80
+    },
+    {
+      "origem": "Chimoio",
+      "destino": "Gondola",
+      "distanciaKm": 60,
+      "piso": 4,
+      "velocidadeMediaKmH": 80
+    },
+    {
+      "origem": "Chimoio",
+      "destino": "Muxunguè",
+      "distanciaKm": 100,
+      "piso": 3,
+      "velocidadeMediaKmH": 70
+    },
+    {
+      "origem": "Chimoio",
+      "destino": "Catandica",
+      "distanciaKm": 160,
+      "piso": 2,
+      "velocidadeMediaKmH": 55
+    },
+    {
+      "origem": "Chimoio",
+      "destino": "Manica",
+      "distanciaKm": 80,
+      "piso": 3,
+      "velocidadeMediaKmH": 70
+    },
+    {
+      "origem": "Gondola",
+      "destino": "Inchope",
+      "distanciaKm": 70,
+      "piso": 4,
+      "velocidadeMediaKmH": 80
+    },
+    {
+      "origem": "Gondola",
+      "destino": "Vanduzi",
+      "distanciaKm": 45,
+      "piso": 4,
+      "velocidadeMediaKmH": 80
+    },
+    {
+      "origem": "Vanduzi",
+      "destino": "Manica",
+      "distanciaKm": 70,
+      "piso": 3,
+      "velocidadeMediaKmH": 70
+    },
+    {
+      "origem": "Vanduzi",
+      "destino": "Lamego",
+      "distanciaKm": 110,
+      "piso": 3,
+      "velocidadeMediaKmH": 70
+    },
+    {
+      "origem": "Manica",
+      "destino": "Catandica",
+      "distanciaKm": 180,
+      "piso": 2,
+      "velocidadeMediaKmH": 55
+    },
+    {
+      "origem": "Catandica",
+      "destino": "Muxunguè",
+      "distanciaKm": 120,
+      "piso": 3,
+      "velocidadeMediaKmH": 70
+    },
+    {
+      "origem": "Inchope",
+      "destino": "Lamego",
+      "distanciaKm": 90,
+      "piso": 3,
+      "velocidadeMediaKmH": 70
+    },
+    {
+      "origem": "Inchope",
+      "destino": "Mutua",
+      "distanciaKm": 120,
+      "piso": 2,
+      "velocidadeMediaKmH": 55
+    },
+    {
+      "origem": "Lamego",
+      "destino": "Mutua",
+      "distanciaKm": 60,
+      "piso": 3,
+      "velocidadeMediaKmH": 70
+    }
+  ]
+}
