@@ -11,7 +11,7 @@ def _sucessores(problema, estado):
     return problema.getSucessores(estado)
 
 def _e_objectivo(problema, estado):
-    return problema.testObjectivo(estado)
+    return problema.testeObjectivo(estado)
 
 
 """Classe que representa um nó na árvore de busca."""
@@ -36,27 +36,27 @@ def _reconstruir(no):
         no = no.pai
     estados.reverse()
     accoes.reverse()
-    return estados, accoes
+    return accoes, estados
 
 
 """Solução provisória. Usada enquanto não tiver src/solucao.py"""
-
-def __init__(self, accoes, estados, custo_total):
-    self.accoes = accoes
-    self.estados = estados
-    self.custo_total = custo_total
+class _SolucaoProvisoria:
+    def __init__(self, accoes, estados, custo_total):
+        self.accoes = accoes
+        self.estados = estados
+        self.custo_total = custo_total
 
 
 def _criar_solução(accoes, estados, custo_total):
-    try:
-        from src.solucao import Solucao
-    except ImportError:
-        Solucao = _SolucaoProvisoria
-    try:
-        return Solucao(accoes = accoes, estados = estados, custoTotal = custo_total)
-    except TypeError:
-        return Solucao(accoes, estados, custo_total)
-    
+        try:
+            from src.solucao import Solucao
+        except ImportError:
+            Solucao = _SolucaoProvisoria
+        try:
+            return Solucao(accoes = accoes, estados = estados, custoTotal = custo_total)
+        except TypeError:
+            return Solucao(accoes, estados, custo_total)
+        
 
 def _valor_h(heuristica, estado, problema):
     if heuristica is None:
@@ -87,7 +87,7 @@ def _melhor_primeiro(problema, heuristica, prioridade, reabrir, estatisticas):
 
         if no.g > g_melhor[estado]:
             continue
-        if estado in expandidos and expandidos[estados] <= no.g:
+        if estado in expandidos and expandidos[estado] <= no.g:
             continue
 
         if _e_objectivo(problema, estado):
@@ -95,7 +95,7 @@ def _melhor_primeiro(problema, heuristica, prioridade, reabrir, estatisticas):
             resultado = _criar_solução(accoes, estados, no.g)
             break
 
-        expandidos[estados] = no.g
+        expandidos[estado] = no.g
         n_expandidos += 1
 
         for accao, seguinte, custo in _sucessores(problema, estado):
