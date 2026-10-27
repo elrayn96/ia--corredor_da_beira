@@ -34,12 +34,15 @@ H_TABELA = {"S": 7, "A": 1, "B": 3, "G": 6}
 def h0(estado, problema):
     return 0
 
+
 def h_admissivel(estado, problema):
     return H_TABELA[estado]
+
 
 @pytest.fixture
 def problema():
     return ProblemaGrafo(ARESTAS, "S", "G")
+
 
 def test_astar_h0_encontra_optimo(problema):
     sol = aStar(problema, h0)
@@ -63,3 +66,23 @@ def test_gulosa_encontra_solucao_mas_nao_optima(problema):
     assert sol is not None
     assert sol.estados[0] == "S" and sol.estados[-1] == "G"
     assert sol.custo_total == 11  # S->A->G
+
+
+def test_ponderada_peso_1_igual_a_astar(problema):
+    assert (
+        aStarPonderada(problema, h_admissivel, 1).custo_total ==
+        aStar(problema, h_admissivel).custo_total
+    )
+
+
+@pytest.mark.parametrize("w", [1.25, 1.5, 2, 3])
+def test_ponderada_respeita_limite_teorico(problema, w):
+    sol = aStarPonderada(problema, h_admissivel, w)
+    assert sol is not None
+    assert sol.custo_total <= w * 7  # 7 é o custo ótimo
+
+
+@pytest.mark.parametrize("peso", [0, -1, -0.5, None, "2"])
+def test_ponderada_peso_invalido(problema, peso):
+    with pytest.raises(ValueError):
+        aStarPonderada(problema, h_admissivel, peso)
