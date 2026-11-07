@@ -3,15 +3,16 @@
 import heapq
 import time
 from itertools import count
+from src.solucao import Solucao
 
 def _estado_inicial(problema):
-    return problema.getEstadoInicial()
+    return problema.get_estado_inicial()
 
 def _sucessores(problema, estado):
-    return problema.getSucessores(estado)
+    return problema.get_sucessores(estado)
 
 def _e_objectivo(problema, estado):
-    return problema.testeObjectivo(estado)
+    return problema.teste_objectivo(estado)
 
 
 """Classe que representa um nó na árvore de busca."""
@@ -40,23 +41,11 @@ def _reconstruir(no):
 
 
 """Solução provisória. Usada enquanto não tiver src/solucao.py"""
-class _SolucaoProvisoria:
-    def __init__(self, accoes, estados, custo_total):
-        self.accoes = accoes
-        self.estados = estados
-        self.custo_total = custo_total
 
 
 def _criar_solução(accoes, estados, custo_total):
-        try:
-            from src.solucao import Solucao
-        except ImportError:
-            Solucao = _SolucaoProvisoria
-        try:
-            return Solucao(accoes = accoes, estados = estados, custoTotal = custo_total)
-        except TypeError:
-            return Solucao(accoes, estados, custo_total)
-        
+    return Solucao(accoes=accoes, estados=estados, custo_total=custo_total)
+
 
 def _valor_h(heuristica, estado, problema):
     if heuristica is None:
@@ -122,17 +111,17 @@ def _melhor_primeiro(problema, heuristica, prioridade, reabrir, estatisticas):
     return resultado
 
 
-def buscaGulosa(problema, heuristica, estatisticas=None):
+def busca_gulosa(problema, heuristica, estatisticas=None):
     return _melhor_primeiro(
         problema, heuristica, lambda g, h: h, False, estatisticas
     )
 
-def aStar(problema, heuristica, estatisticas=None):
+def a_star(problema, heuristica, estatisticas=None):
     return _melhor_primeiro(
         problema, heuristica, lambda g, h: g + h, True, estatisticas
     )
 
-def aStarPonderada(problema, heuristica, peso, estatisticas=None):
+def a_star_ponderada(problema, heuristica, peso, estatisticas=None):
     if not isinstance(peso, (int, float)) or isinstance(peso, bool) or peso <= 0:
         raise ValueError("O peso da A* ponderada deve ser um número real positivo.")
     return _melhor_primeiro(
