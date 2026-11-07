@@ -11,7 +11,7 @@ FICHEIRO_LOCALIDADES = PASTA_DADOS / "localidades.json"
 FICHEIRO_ESTRADAS = PASTA_DADOS / "estradas.json"
 
 
-def carregarJson(caminho):
+def carregar_json(caminho):
     """
     Carrega um ficheiro JSON e devolve os seus dados.
     """
@@ -19,7 +19,7 @@ def carregarJson(caminho):
         return json.load(ficheiro)
 
 
-def carregarRede():
+def carregar_rede():
     """
     Carrega localidades.json e estradas.json.
 
@@ -29,8 +29,8 @@ def carregarRede():
         - estradas
         - velocidadesPorPiso
     """
-    dados_localidades = carregarJson(FICHEIRO_LOCALIDADES)
-    dados_estradas = carregarJson(FICHEIRO_ESTRADAS)
+    dados_localidades = carregar_json(FICHEIRO_LOCALIDADES)
+    dados_estradas = carregar_json(FICHEIRO_ESTRADAS)
 
     return {
         "localidades": dados_localidades["localidades"],
@@ -39,7 +39,7 @@ def carregarRede():
     }
 
 
-def validarHorario(horario):
+def validar_horario(horario):
     """
     Verifica se o horário está no formato HH:MM.
     """
@@ -50,31 +50,37 @@ def validarHorario(horario):
         return False
 
 
-def selecionarSupermercados(localidades, quantidade=7, semente=202601):
+def selecionar_supermercados(localidades, quantidade=7, semente=202601):
     """
-    Selecciona localidades para funcionarem como supermercados.
+    Selecciona exactamente 7 localidades distintas como supermercados.
+
+    Lança ValueError se a quantidade não for 7 ou se não houver
+    localidades distintas suficientes.
 
     A Beira não é seleccionada porque é o ponto de partida e retorno.
 
     A utilização de uma semente torna a selecção reproduzível.
     """
-    nomes_disponiveis = [
+    if type(quantidade) is not int or quantidade != 7:
+        raise ValueError("A quantidade de supermercados deve ser exactamente 7.")
+
+    nomes_disponiveis = list(dict.fromkeys(
         localidade["nome"]
         for localidade in localidades
         if localidade["nome"] != "Beira"
-    ]
+    ))
 
     if quantidade > len(nomes_disponiveis):
         raise ValueError(
             "A quantidade de supermercados é maior que o número "
-            "de localidades disponíveis."
+            "de localidades distintas disponíveis."
         )
 
     gerador = random.Random(semente)
     return gerador.sample(nomes_disponiveis, quantidade)
 
 
-def gerarJanelasHorario(supermercados):
+def gerar_janelas_horario(supermercados):
     """
     Cria os dados dos supermercados com identificador, nome
     e janela horária.
@@ -107,7 +113,7 @@ def gerarJanelasHorario(supermercados):
         abertura = horas_abertura[i]
         fecho = horas_fecho[i]
 
-        if not validarHorario(abertura) or not validarHorario(fecho):
+        if not validar_horario(abertura) or not validar_horario(fecho):
             raise ValueError("Foi gerado um horário inválido.")
 
         supermercados_com_janela.append({
@@ -121,21 +127,21 @@ def gerarJanelasHorario(supermercados):
     return supermercados_com_janela
 
 
-def gerarInstancia(semente=202601, quantidade_supermercados=7):
+def gerar_instancia(semente=202601, quantidade_supermercados=7):
     """
     Gera uma instância do problema com base na rede carregada.
 
     Retorna um dicionário pronto para ser guardado em JSON.
     """
-    rede = carregarRede()
+    rede = carregar_rede()
 
-    supermercados = selecionarSupermercados(
+    supermercados = selecionar_supermercados(
         rede["localidades"],
         quantidade=quantidade_supermercados,
         semente=semente
     )
 
-    supermercados = gerarJanelasHorario(supermercados)
+    supermercados = gerar_janelas_horario(supermercados)
 
     instancia = {
         "nome": f"instancia_{semente}",
@@ -173,7 +179,49 @@ def gerarInstancia(semente=202601, quantidade_supermercados=7):
     return instancia
 
 
-def guardarInstancia(instancia, nome_ficheiro="instancia_gerada.json"):
+def converter_para_busca(instancia, rede=None):
+    """
+    Converte uma instância gerada para os mapas usados pelas buscas.
+
+    Se rede não for fornecida, carrega a rede base do projecto.
+    As estradas são consideradas bidireccionais. Cada localidade contém
+    todos os seus vizinhos, incluindo um mapa vazio se não tiver ligações.
+
+    Retorna:
+        {
+            'estradas': {localidade: {vizinho: {'distancia': km, 'piso': 1..5}}},
+            'supermercados': {localidade: {'abertura': 'HH:MM', 'fecho': 'HH:MM'}}
+        }
+
+    Não altera a instância nem a rede recebidas.
+    """
+    if rede is None:
+        rede = carregar_rede()
+
+    estradas = {localidade["nome"]: {} for localidade in rede["localidades"]}
+
+    for estrada in rede["estradas"]:
+        origem = estrada["origem"]
+        destino = estrada["destino"]
+        atributos = {
+            "distancia": estrada["distanciaKm"],
+            "piso": estrada["piso"]
+        }
+        estradas[origem][destino] = atributos
+        estradas[destino][origem] = atributos.copy()
+
+    supermercados = {
+        supermercado["localidade"]: {
+            "abertura": supermercado["abertura"],
+            "fecho": supermercado["fecho"]
+        }
+        for supermercado in instancia["supermercados"]
+    }
+
+    return {"estradas": estradas, "supermercados": supermercados}
+
+
+def guardar_instancia(instancia, nome_ficheiro="instancia_teste_01.json"):
     """
     Guarda uma instância na pasta dados/instancias.
     """
@@ -192,7 +240,7 @@ def guardarInstancia(instancia, nome_ficheiro="instancia_gerada.json"):
     return caminho
 
 
-def gerarProblema(
+def gerar_problema(
     semente=202601,
     quantidade_supermercados=7,
     nome_ficheiro="instancia_teste_01.json"
@@ -210,12 +258,12 @@ def gerarProblema(
     Retorna:
         instancia, caminho_do_ficheiro
     """
-    instancia = gerarInstancia(
+    instancia = gerar_instancia(
         semente=semente,
         quantidade_supermercados=quantidade_supermercados
     )
 
-    caminho = guardarInstancia(
+    caminho = guardar_instancia(
         instancia,
         nome_ficheiro=nome_ficheiro
     )
@@ -224,7 +272,7 @@ def gerarProblema(
 
 
 if __name__ == "__main__":
-    instancia, caminho = gerarProblema()
+    instancia, caminho = gerar_problema()
 
     print("Instância gerada com sucesso.")
     print(f"Ficheiro: {caminho}")

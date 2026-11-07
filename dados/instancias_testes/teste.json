@@ -1,5 +1,5 @@
 {
-  "nome": "instancia_teste",
+  "nome": "instancia_202601",
   "semente": 202601,
   "rede": {
     "localidades": "../localidades.json",
@@ -29,7 +29,7 @@
       "nome": "Supermercado 1",
       "localidade": "Dondo",
       "abertura": "06:00",
-      "fecho": "09:30"
+      "fecho": "10:00"
     },
     {
       "id": "SM02",
@@ -48,30 +48,30 @@
     {
       "id": "SM04",
       "nome": "Supermercado 4",
-      "localidade": "Inchope",
-      "abertura": "08:00",
+      "localidade": "Gondola",
+      "abertura": "09:00",
       "fecho": "14:30"
     },
     {
       "id": "SM05",
       "nome": "Supermercado 5",
-      "localidade": "Gorongosa",
-      "abertura": "09:00",
+      "localidade": "Catandica",
+      "abertura": "10:00",
       "fecho": "16:00"
     },
     {
       "id": "SM06",
       "nome": "Supermercado 6",
-      "localidade": "Chimoio",
-      "abertura": "10:00",
-      "fecho": "18:00"
+      "localidade": "Caia",
+      "abertura": "11:00",
+      "fecho": "17:30"
     },
     {
       "id": "SM07",
       "nome": "Supermercado 7",
-      "localidade": "Gondola",
-      "abertura": "11:00",
-      "fecho": "18:30"
+      "localidade": "Gorongosa",
+      "abertura": "12:00",
+      "fecho": "19:00"
     }
   ]
 }
