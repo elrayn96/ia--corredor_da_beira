@@ -1,13 +1,26 @@
 from math import ceil
+from typing import ClassVar
 
-from src.estado import Estado
 from src.accao import Accao
+from src.estado import Estado
 
 
 class Problema:
     # Coordena as regras da cadeia de frio e fornece sucessores aos algoritmos
-    VELOCIDADES = {1: 40, 2: 55, 3: 70, 4: 80, 5: 90} # Em funcao do PISO
-    POSTOS_ABASTECIMENTO = {'Beira', 'Inchope', 'Chimoio'} 
+    class Problema:
+    VELOCIDADES: ClassVar[dict[int, int]] = {
+        1: 40,
+        2: 55,
+        3: 70,
+        4: 80,
+        5: 90,
+    }
+
+    POSTOS_ABASTECIMENTO: ClassVar[set[str]] = {
+        "Beira",
+        "Inchope",
+        "Chimoio",
+    } # Em funcao do PISO
     CAPACIDADE = 300000  # mililitros
     CONSUMO = 350  # mililitros por quilometro
     LIMITE_FRIO = 14
