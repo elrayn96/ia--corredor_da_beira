@@ -1,0 +1,330 @@
+# Tarefa: Implementar a minha parte do projecto de IA I — Cadeia de frio no Corredor da Beira
+
+## 1. Objectivo
+
+Implementa integralmente a minha parte do projecto prático de Inteligência Artificial I, respeitando a divisão de tarefas do Grupo 01, a formulação do problema já definida e as decisões de arquitectura acordadas pelo grupo.
+
+Antes de escrever código, inspecciona o repositório, os ficheiros existentes, os comentários, os nomes usados e a organização do projecto. Utiliza o código existente como referência para manter o mesmo estilo de programação.
+
+Não comeces por criar uma arquitectura alternativa. Primeiro compreende a existente e identifica o que falta implementar.
+
+## 2. Limite de ficheiros que podes alterar
+
+A minha responsabilidade abrange exclusivamente os seguintes ficheiros:
+
+- `src/estado.py`
+- `src/accao.py`
+- `src/problema.py`
+- `src/solucao.py`
+- `main.py`
+
+Podes consultar outros ficheiros do repositório para compreender a arquitectura, os dados, os algoritmos, as heurísticas e as interfaces dos módulos dos colegas.
+
+**Não alteres nenhum ficheiro fora da lista acima.** Não edites os ficheiros dos colegas, os dados JSON, as heurísticas, os algoritmos de procura, os testes, o relatório, o README ou a configuração do projecto. Não renomeies, movas ou elimines ficheiros existentes.
+
+Se uma implementação correcta depender de alterações noutros ficheiros, não as faças. Explica a dependência e indica exactamente o que precisa de ser acordado com o responsável pelo respectivo módulo.
+
+## 3. Regras de programação e estilo
+
+### 3.1. Programação orientada a objectos
+
+Aplica os princípios de programação orientada a objectos:
+
+- Encapsulamento dos atributos e das responsabilidades de cada classe.
+- Separação clara das responsabilidades.
+- Métodos públicos com funções bem definidas.
+- Reutilização do código, evitando duplicação desnecessária.
+- Baixo acoplamento entre os módulos.
+- Validação dos dados e tratamento adequado de erros.
+- Interfaces simples e consistentes entre as classes.
+
+Não concentres toda a lógica no `main.py`. Este ficheiro deve funcionar como ponto de entrada e coordenar a execução do programa, recorrendo aos objectos e métodos das classes.
+
+Não introduzas padrões de desenho, hierarquias de classes ou abstracções desnecessárias para este projecto académico.
+
+### 3.2. Nomenclatura
+
+Segue rigorosamente a nomenclatura já acordada pelo grupo e utilizada no projecto.
+
+Utiliza nomes de classes em português e no estilo já adoptado:
+
+- `Estado`
+- `Accao`
+- `Problema`
+- `Solucao`
+
+Preserva os nomes de métodos acordados, incluindo, quando aplicáveis:
+
+- `getSucessores(...)`
+- `custo_transicao(...)`
+- `criar_estado(...)`
+- `get_localidade()`
+- `get_entregas_concluidas()`
+- `get_tempo()`
+- `get_combustivel()`
+
+Não substituas estes nomes por traduções inglesas, sinónimos ou variantes como `get_successors`, `get_tempoDecorrido` ou `getFuel`, se isso quebrar a interface acordada.
+
+Utiliza nomes de variáveis em português, claros e descritivos, seguindo o estilo existente. Por exemplo: `estadoActual`, `estadoSeguinte`, `localidadeDestino`, `entregasConcluidas`, `custoTotal` e `combustivelDisponivel`.
+
+Segue a convenção de nomes que já estiver estabelecida no código. Não mistures estilos de nomenclatura sem necessidade.
+
+Antes de criar um método, procura se já existe outro que desempenhe a mesma função. Não dupliques métodos nem alteres assinaturas públicas sem justificação.
+
+### 3.3. Comentários
+
+Os comentários devem seguir o estilo do meu código existente.
+
+Antes de escrever comentários, inspecciona os comentários já existentes e reproduz o seu nível de detalhe, linguagem e formato.
+
+- Escreve em português.
+- Explica a intenção e a lógica quando não forem evidentes.
+- Explica decisões importantes e restrições do problema.
+- Utiliza comentários curtos e didácticos, adequados a um trabalho académico.
+- Mantém ou melhora os comentários existentes quando alterares código.
+- Não comentes cada linha de código.
+- Não uses comentários genéricos, repetitivos ou com linguagem artificial.
+- Não afirmes que um comportamento está garantido se não tiver sido verificado.
+
+Os comentários devem ajudar-me a compreender e explicar o código ao docente e aos colegas.
+
+## 4. Responsabilidade de cada ficheiro
+
+### 4.1. `src/estado.py` — classe `Estado`
+
+Implementa a representação de um estado do problema.
+
+Cada estado deve conter exactamente as quatro componentes conceptuais acordadas:
+
+1. A localidade actual do veículo.
+2. O conjunto das entregas concluídas.
+3. O tempo decorrido desde a partida da Beira, em minutos.
+4. O combustível disponível.
+
+Requisitos:
+
+- Encapsula os atributos.
+- Implementa os métodos de acesso acordados.
+- Implementa `criar_estado(...)` de acordo com a arquitectura existente, caso esta responsabilidade pertença à classe `Estado`. Se o método tiver sido definido como responsabilidade de `Problema`, mantém essa separação e não dupliques a função.
+- A representação das entregas concluídas deve utilizar `set`, conforme decidido pelo grupo.
+- Quando um novo estado resulta de uma transição, o conjunto das entregas concluídas deve ser copiado para evitar que a alteração de um estado modifique outros estados.
+- Implementa a igualdade entre estados e o método `__hash__`, utilizando as mesmas componentes para ambos.
+- Como o conjunto é mutável, utiliza uma representação imutável, como `frozenset`, para calcular a chave de identidade.
+- Não permitas que a modificação de um estado depois da sua inserção num conjunto ou dicionário corrompa a estrutura de procura.
+- Implementa uma representação textual simples e útil para depuração.
+
+Confirma a unidade do combustível no projecto antes de a definires. A decisão técnica acordada prevê a representação em mililitros, utilizando valores inteiros, para evitar erros de precisão. Se o código existente ou as interfaces dos colegas ainda utilizarem litros, identifica a incompatibilidade e propõe uma conversão consistente, sem alterar os ficheiros dos colegas.
+
+A igualdade dos estados deve considerar a localidade, as entregas concluídas, o tempo e o combustível. Não consideres apenas a localidade como identidade do estado.
+
+### 4.2. `src/accao.py` — classe `Accao`
+
+Implementa uma única classe `Accao`, capaz de representar os diferentes tipos de acção do problema através de um tipo e dos respectivos parâmetros.
+
+As acções previstas são:
+
+- Deslocação para outra localidade.
+- Realização de uma entrega.
+- Abastecimento.
+- Espera.
+
+Requisitos:
+
+- Evita criar uma classe diferente para cada acção, pois a decisão do grupo foi utilizar uma única classe.
+- Representa explicitamente o tipo da acção e os parâmetros necessários.
+- Utiliza os nomes de tipos e os formatos de parâmetros que já estejam definidos nos ficheiros do projecto.
+- Se ainda não existir um formato acordado, propõe um formato simples e uniforme, documentando-o nos comentários.
+- Não coloques na classe `Accao` a lógica que pertence à classe `Problema`.
+- A classe representa a acção; a classe `Problema` verifica se ela é aplicável e determina os seus efeitos.
+- Implementa uma representação textual legível para apresentar o percurso encontrado.
+
+### 4.3. `src/problema.py` — classe `Problema`
+
+Esta classe representa a formulação operacional do problema de procura e concentra a lógica das transições e dos custos.
+
+Antes de implementar, inspecciona os ficheiros JSON, a classe `Estado`, a classe `Accao` e as interfaces dos algoritmos dos colegas.
+
+A classe deve disponibilizar, de forma coerente com o projecto:
+
+- A definição do estado inicial.
+- O teste de objectivo.
+- A geração dos sucessores válidos.
+- O cálculo do custo de uma transição.
+- A validação das restrições do problema.
+- A criação de novos estados resultantes das acções.
+
+Preserva os nomes e as assinaturas acordados. Em particular, verifica a utilização de `getSucessores(...)`, `custo_transicao(...)` e `criar_estado(...)`.
+
+#### Geração de sucessores
+
+`getSucessores(estado)` deve devolver os sucessores válidos no formato acordado com os algoritmos de procura.
+
+A interface prevista é uma lista de triplos:
+
+`(accao, estadoSeguinte, custo)`
+
+Cada triplo deve conter a acção aplicada, o estado resultante e o custo da transição.
+
+O método deve:
+
+1. Identificar as acções possíveis a partir do estado actual.
+2. Verificar as respectivas pré-condições.
+3. Rejeitar transições que violem as restrições.
+4. Criar um novo estado sem modificar o estado original.
+5. Calcular o custo da transição.
+6. Devolver os sucessores válidos.
+
+Não uses uma lista global de localidades visitadas para impedir o veículo de voltar a uma localidade. A mesma localidade pode ser necessária em momentos diferentes, nomeadamente no regresso à Beira ou para abastecimento. A gestão dos estados explorados pertence ao algoritmo de procura e deve considerar a identidade completa do estado.
+
+#### Estado inicial e objectivo
+
+O estado inicial corresponde ao veículo na Beira, às 05h00, com o depósito cheio e sem entregas concluídas.
+
+O objectivo, de acordo com a formulação actual do relatório, é concluir as sete entregas obrigatórias e regressar à Beira, respeitando as restrições aplicáveis.
+
+Não codifiques os sete supermercados como uma selecção feita pelo algoritmo: os destinos obrigatórios são definidos previamente na instância do problema.
+
+#### Restrições
+
+Utiliza os pressupostos definidos no relatório e confirma-os com os dados existentes:
+
+- Rede rodoviária com localidades e estradas.
+- Velocidade associada ao estado do piso.
+- Distância percorrida e tempo de deslocação.
+- Consumo de combustível de 0,35 litros por quilómetro.
+- Capacidade do depósito de 300 litros.
+- Entregas com duração de 30 minutos.
+- Abastecimentos de 20 minutos.
+- Abastecimento apenas nas localidades autorizadas.
+- Horários de abertura e fecho dos supermercados.
+- Espera quando a chegada ocorre antes da abertura.
+- Conclusão da descarga dentro da janela de funcionamento.
+- Limite de 14 horas para a conservação da mercadoria, aplicado às entregas conforme a formulação do problema.
+- Proibição de circulação entre as 22h00 e as 05h00.
+- Regresso à Beira depois das entregas, incluindo a possibilidade de atravessar localidades anteriormente visitadas.
+
+Não assumas que o limite de refrigeração equivale necessariamente ao limite de duração de toda a viagem. Aplica a restrição segundo o enunciado e os pressupostos adoptados.
+
+Confirma como as janelas temporais são representadas nos dados, por exemplo, `"08:00"` e `"17:00"`. Não alteres os ficheiros JSON para os adaptar ao teu código.
+
+#### Cálculo dos custos
+
+O custo de cada transição deve representar o tempo consumido, em minutos.
+
+- Deslocação: calcular a duração a partir da distância e da velocidade correspondente ao piso.
+- Entrega: 30 minutos, além de qualquer espera necessária antes de começar.
+- Abastecimento: 20 minutos, repondo o combustível até à capacidade máxima.
+- Espera: diferença entre o instante actual e o instante até ao qual é necessário aguardar.
+
+O tempo decorrido deve ser actualizado de forma consistente com o custo da transição. Evita contar duas vezes o mesmo intervalo de espera ou o tempo de descarga.
+
+Não uses a distância em quilómetros como custo quando os algoritmos devem minimizar o tempo total.
+
+Se a implementação exigir uma decisão ainda não definida — por exemplo, como representar o tempo ou identificar os locais autorizados para abastecimento —, procura primeiro essa informação nos ficheiros existentes. Se não existir, documenta a questão e apresenta a decisão proposta no relatório final da tarefa.
+
+### 4.4. `src/solucao.py` — classe `Solucao`
+
+Implementa uma classe para representar uma solução completa encontrada por um algoritmo de procura.
+
+A solução deve conter:
+
+- A sequência de acções.
+- A sequência de estados do percurso.
+- O custo total acumulado, em minutos.
+
+Requisitos:
+
+- Encapsula os atributos.
+- Implementa métodos de acesso consistentes com o resto do projecto.
+- Garante que a sequência de estados e a sequência de acções correspondem ao percurso apresentado.
+- Permite apresentar a solução de forma legível.
+- Distingue claramente a ausência de solução de uma solução válida com custo zero.
+- Não implementes os algoritmos de procura nesta classe.
+
+Confirma a interface que os colegas irão utilizar para devolver as soluções e mantém-na consistente.
+
+### 4.5. `main.py` — integração e execução
+
+O ficheiro `main.py` deve servir de ponto de entrada do programa.
+
+Deve:
+
+1. Carregar ou receber a instância de teste através dos mecanismos já existentes.
+2. Criar o objecto `Problema`.
+3. Invocar os algoritmos através das respectivas interfaces, sem reimplementar a sua lógica.
+4. Receber e apresentar a solução, quando existir.
+5. Indicar claramente quando não for encontrada uma solução.
+6. Apresentar, pelo menos, o percurso, as acções principais e o custo total em minutos.
+7. Tratar erros de carregamento ou de integração com mensagens compreensíveis.
+
+Não implementes os algoritmos de procura no `main.py`. Não alteres os módulos dos colegas para fazer a integração funcionar. Se alguma interface ainda não estiver disponível, identifica-a e regista a dependência.
+
+## 5. Integração com o trabalho dos colegas
+
+O projecto é desenvolvido em grupo. Por isso, antes de definir uma interface, inspecciona os módulos dos algoritmos, das heurísticas e dos dados.
+
+Não inventes assinaturas de métodos incompatíveis com o código existente.
+
+Se existirem divergências entre os nomes, os tipos de dados ou os parâmetros:
+
+1. Identifica a divergência.
+2. Determina qual é a interface já acordada ou efectivamente utilizada.
+3. Preserva os ficheiros que não estão sob a minha responsabilidade.
+4. Implementa apenas o que for possível dentro dos cinco ficheiros autorizados.
+5. Apresenta as alterações de interface necessárias para os colegas, sem as executar nos seus ficheiros.
+
+Mantém o formato de retorno dos sucessores uniforme para todos os algoritmos.
+
+## 6. Testes e validação
+
+Executa os testes existentes sem modificar os ficheiros de teste.
+
+Se os testes falharem, determina se a causa está nos meus ficheiros, numa incompatibilidade com outro módulo ou num problema nos dados.
+
+Valida, pelo menos, os seguintes comportamentos, recorrendo aos testes existentes ou a verificações temporárias que não alterem os ficheiros autorizados:
+
+- Criação de um estado inicial correcto.
+- Igualdade entre estados equivalentes.
+- Diferença entre estados que tenham a mesma localidade, mas entregas, tempo ou combustível diferentes.
+- Funcionamento do hash e utilização de estados em conjuntos e dicionários.
+- Independência do conjunto de entregas dos estados sucessores.
+- Rejeição de deslocações sem estrada ou com combustível insuficiente.
+- Actualização correcta do tempo e do combustível.
+- Respeito pelos horários das entregas.
+- Actualização correcta das entregas concluídas.
+- Abastecimento até à capacidade máxima.
+- Possibilidade de regressar a localidades já visitadas.
+- Teste de objectivo que exige as sete entregas e o regresso à Beira.
+- Coerência entre o custo total da solução e a soma dos custos das transições.
+
+Não afirmes que os testes passaram sem os executar. Não modifiques testes nem dados para esconder falhas.
+
+## 7. Restrições adicionais
+
+- Não alteres ficheiros fora dos cinco indicados.
+- Não instales bibliotecas nem alteres `requirements.txt` sem autorização.
+- Não introduzas dependências desnecessárias.
+- Não apagues comentários ou código útil sem justificação.
+- Não dupliques lógica que já exista noutro módulo.
+- Não substituas a implementação dos colegas por versões simplificadas.
+- Não introduzas dados fictícios como se fossem dados reais.
+- Não declares que a integração está concluída se faltarem módulos.
+- Não faças commits, merges ou alterações de branches.
+- Não cries uma segunda implementação paralela da arquitectura.
+
+## 8. Resultado esperado
+
+Implementa as alterações directamente nos cinco ficheiros autorizados, respeitando o código e a nomenclatura existentes.
+
+No final, apresenta um relatório curto e objectivo com:
+
+1. Os ficheiros alterados.
+2. O que foi implementado em cada ficheiro.
+3. Os métodos públicos e respectivas assinaturas.
+4. As decisões técnicas tomadas e as razões.
+5. Os testes executados e os resultados reais.
+6. As incompatibilidades encontradas com os módulos dos colegas.
+7. As dependências que ainda exigem decisão ou trabalho de outros membros.
+8. A lista exacta das questões que preciso de discutir com o grupo antes da integração final.
+
+A prioridade é produzir uma implementação correcta, compreensível e coerente com o projecto existente, não apenas gerar código rapidamente.
