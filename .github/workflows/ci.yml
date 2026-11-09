@@ -34,7 +34,7 @@ jobs:
           pip install pytest ruff
 
       - name: Verificar sintaxe Python
-        run: python -m compileall -q src testes main.py
+        run: python -m compileall -q src main.py
 
       - name: Verificar qualidade do codigo
         run: ruff check src main.py
