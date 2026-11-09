@@ -7,7 +7,6 @@ from src.estado import Estado
 
 class Problema:
     # Coordena as regras da cadeia de frio e fornece sucessores aos algoritmos
-    class Problema:
     VELOCIDADES: ClassVar[dict[int, int]] = {
         1: 40,
         2: 55,
