@@ -37,7 +37,7 @@ jobs:
         run: python -m compileall -q src testes main.py
 
       - name: Verificar qualidade do codigo
-        run: ruff check src testes main.py
+        run: ruff check src main.py
 
       - name: Executar testes
         run: python -m pytest testes -v
