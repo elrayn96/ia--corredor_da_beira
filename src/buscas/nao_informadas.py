@@ -1,7 +1,7 @@
 
+import heapq
 from collections import deque
 from itertools import count
-import heapq
 
 from src.solucao import Solucao
 
