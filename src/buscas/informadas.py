@@ -92,9 +92,8 @@ def _melhor_primeiro(problema, heuristica, prioridade, reabrir, estatisticas):
         for accao, seguinte, custo in _sucessores(problema, estado):
             gerados += 1
             novo_g = no.g + custo
-            if seguinte in g_melhor:
-                if not reabrir or novo_g >= g_melhor[seguinte]:
-                    continue
+            if seguinte in g_melhor and (not reabrir or novo_g >= g_melhor[seguinte]):
+                continue
             g_melhor[seguinte] = novo_g
             h = _valor_h(heuristica, seguinte, problema)
             novo = _No(seguinte, no, accao, novo_g)
