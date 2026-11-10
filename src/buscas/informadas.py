@@ -3,7 +3,9 @@
 import heapq
 import time
 from itertools import count
+
 from src.solucao import Solucao
+
 
 def _estado_inicial(problema):
     return problema.get_estado_inicial()
@@ -18,7 +20,7 @@ def _e_objectivo(problema, estado):
 """Classe que representa um nó na árvore de busca."""
 class _No:
 
-    __slots__ = ("estado", "pai", "accao", "g")
+    __slots__ = ("accao", "estado", "g", "pai")
 
     def __init__(self, estado, pai, accao, g):
         self.estado = estado
@@ -100,8 +102,7 @@ def _melhor_primeiro(problema, heuristica, prioridade, reabrir, estatisticas):
                 fronteira, (prioridade(novo_g, h), h, next(contador), novo)
             )
 
-        if len(fronteira) > max_fronteira:
-            max_fronteira = len(fronteira)
+        max_fronteira = max(max_fronteira, len(fronteira))
 
     if estatisticas is not None:
         estatisticas["nos_gerados"] = gerados
