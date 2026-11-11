@@ -42,10 +42,7 @@ def _reconstruir(no):
     return accoes, estados
 
 
-"""Solução provisória. Usada enquanto não tiver src/solucao.py"""
-
-
-def _criar_solução(accoes, estados, custo_total):
+def _criar_solucao(accoes, estados, custo_total):
     return Solucao(accoes=accoes, estados=estados, custo_total=custo_total)
 
 
@@ -83,7 +80,7 @@ def _melhor_primeiro(problema, heuristica, prioridade, reabrir, estatisticas):
 
         if _e_objectivo(problema, estado):
             accoes, estados = _reconstruir(no)
-            resultado = _criar_solução(accoes, estados, no.g)
+            resultado = _criar_solucao(accoes, estados, no.g)
             break
 
         expandidos[estado] = no.g

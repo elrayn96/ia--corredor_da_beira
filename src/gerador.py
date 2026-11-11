@@ -1,7 +1,7 @@
 import json
 import random
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 RAIZ_PROJECTO = Path(__file__).resolve().parent.parent
 PASTA_DADOS = RAIZ_PROJECTO / "dados"
