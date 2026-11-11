@@ -31,18 +31,18 @@ def test_solucao_valida(dados_solucao):
         26
     )
 
-    assert len(solucao.get_acoes()) == 1
+    assert len(solucao.get_accoes()) == 1
     assert len(solucao.get_estados()) == 2
     assert solucao.get_custo_total() == 26
 
 
 # 2. Verificar uma solucao sem accoes
-def test_solucao_sem_acoes():
+def test_solucao_sem_accoes():
     estado = Estado("Beira", set(), 0, 300000)
 
     solucao = Solucao([], [estado], 0)
 
-    assert solucao.get_acoes() == []
+    assert solucao.get_accoes() == []
     assert solucao.get_estados() == [estado]
     assert solucao.get_custo_total() == 0
 
@@ -81,11 +81,11 @@ def test_listas_protegidas(dados_solucao):
         26
     )
 
-    acoes = solucao.get_acoes()
+    accoes = solucao.get_accoes()
     estados = solucao.get_estados()
 
-    acoes.clear()
+    accoes.clear()
     estados.clear()
 
-    assert len(solucao.get_acoes()) == 1
+    assert len(solucao.get_accoes()) == 1
     assert len(solucao.get_estados()) == 2
