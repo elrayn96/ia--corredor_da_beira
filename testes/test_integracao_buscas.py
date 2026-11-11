@@ -30,13 +30,13 @@ def problema_pequeno():
 def validar_solucao(problema, solucao):
     assert isinstance(solucao, Solucao)
     estados = solucao.get_estados()
-    acoes = solucao.get_acoes()
-    assert len(estados) == len(acoes) + 1
+    accoes = solucao.get_accoes()
+    assert len(estados) == len(accoes) + 1
     assert estados[0] == problema.get_estado_inicial()
     assert problema.teste_objectivo(estados[-1])
 
     custo_acumulado = 0
-    for anterior, accao, seguinte in zip(estados, acoes, estados[1:]):
+    for anterior, accao, seguinte in zip(estados, accoes, estados[1:]):
         transicoes = problema.get_sucessores(anterior)
         correspondencias = [
             custo for acao_valida, estado_valido, custo in transicoes
