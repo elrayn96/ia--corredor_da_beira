@@ -7,7 +7,7 @@ from src.solucao import Solucao
 
 
 def reconstruir_solucao(estado_final, predecessores, custo_total):
-    acoes = []
+    ações = []
     estados = []
     estado = estado_final
 
@@ -16,16 +16,16 @@ def reconstruir_solucao(estado_final, predecessores, custo_total):
         anterior = predecessores[estado]
 
         if anterior is not None:
-            estado_pai, accao = anterior
-            acoes.append(accao)
+            estado_pai, ação = anterior
+            ações.append(ação)
             estado = estado_pai
         else:
             estado = None
 
     estados.reverse()
-    acoes.reverse()
+    ações.reverse()
 
-    return Solucao(acoes, estados, custo_total)
+    return Solucao(ações, estados, custo_total)
 
 
 def bfs(problema):
@@ -46,10 +46,10 @@ def bfs(problema):
                 custos[estado_actual]
             )
 
-        for accao, estado_seguinte, custo in problema.get_sucessores(estado_actual):
+        for ação, estado_seguinte, custo in problema.get_sucessores(estado_actual):
             if estado_seguinte not in visitados:
                 visitados.add(estado_seguinte)
-                predecessores[estado_seguinte] = (estado_actual, accao)
+                predecessores[estado_seguinte] = (estado_actual, ação)
                 custos[estado_seguinte] = custos[estado_actual] + custo
                 fila.append(estado_seguinte)
 
@@ -79,14 +79,14 @@ def dfs(problema):
                 custos[estado_actual]
             )
 
-        for accao, estado_seguinte, custo in reversed(
-            problema.get_sucessores(estado_actual)
-        ):
+        sucessores = list(problema.get_sucessores(estado_actual))
+
+        for ação, estado_seguinte, custo in reversed(sucessores):
             if (
                 estado_seguinte not in visitados
                 and estado_seguinte not in predecessores
             ):
-                predecessores[estado_seguinte] = (estado_actual, accao)
+                predecessores[estado_seguinte] = (estado_actual, ação)
                 custos[estado_seguinte] = custos[estado_actual] + custo
                 pilha.append(estado_seguinte)
 
@@ -95,42 +95,61 @@ def dfs(problema):
 
 def lds(problema, limite):
     if limite < 0:
-        raise ValueError("O limite nao pode ser negativo")
+        raise ValueError("O limite não pode ser negativo")
 
     estado_inicial = problema.get_estado_inicial()
+
     pilha = [(estado_inicial, 0, [], [estado_inicial], 0)]
+    menor_profundidade = {estado_inicial: 0}
 
     while pilha:
-        estado_actual, profundidade, acoes, estados, custo_total = pilha.pop()
+        estado_actual, profundidade, ações, estados, custo_total = pilha.pop()
+
+        if profundidade > menor_profundidade.get(
+            estado_actual, profundidade
+        ):
+            continue
 
         if problema.teste_objectivo(estado_actual):
-            return Solucao(acoes, estados, custo_total)
+            return Solucao(ações, estados, custo_total)
 
         if profundidade >= limite:
             continue
 
-        sucessores = problema.get_sucessores(estado_actual)
+        sucessores = list(problema.get_sucessores(estado_actual))
 
-        for accao, estado_seguinte, custo in reversed(sucessores):
-            if estado_seguinte not in estados:
-                novas_acoes = acoes + [accao]
-                novos_estados = estados + [estado_seguinte]
-                novo_custo = custo_total + custo
+        for ação, estado_seguinte, custo in reversed(sucessores):
+            nova_profundidade = profundidade + 1
 
-                pilha.append((
-                    estado_seguinte,
-                    profundidade + 1,
-                    novas_acoes,
-                    novos_estados,
-                    novo_custo
-                ))
+            if estado_seguinte in estados:
+                continue
+
+            if (
+                estado_seguinte in menor_profundidade
+                and menor_profundidade[estado_seguinte] <= nova_profundidade
+            ):
+                continue
+
+            menor_profundidade[estado_seguinte] = nova_profundidade
+
+            novas_ações = ações + [ação]
+            novos_estados = estados + [estado_seguinte]
+            novo_custo = custo_total + custo
+
+            pilha.append((
+                estado_seguinte,
+                nova_profundidade,
+                novas_ações,
+                novos_estados,
+                novo_custo
+            ))
 
     return None
 
 
 def ids(problema, limite_maximo):
     if limite_maximo < 0:
-        raise ValueError("O limite maximo nao pode ser negativo")
+        raise ValueError("O limite máximo não pode ser negativo")
 
     for limite in range(limite_maximo + 1):
         solucao = lds(problema, limite)
@@ -168,7 +187,7 @@ def ucs(problema):
                 custo_actual
             )
 
-        for accao, estado_seguinte, custo in problema.get_sucessores(estado_actual):
+        for ação, estado_seguinte, custo in problema.get_sucessores(estado_actual):
             novo_custo = custo_actual + custo
 
             if (
@@ -176,7 +195,7 @@ def ucs(problema):
                 or novo_custo < custos[estado_seguinte]
             ):
                 custos[estado_seguinte] = novo_custo
-                predecessores[estado_seguinte] = (estado_actual, accao)
+                predecessores[estado_seguinte] = (estado_actual, ação)
 
                 heapq.heappush(
                     fila_prioridade,
