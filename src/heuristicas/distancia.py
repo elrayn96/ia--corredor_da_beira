@@ -5,7 +5,6 @@ from __future__ import annotations
 import heapq
 from math import inf
 
-
 VELOCIDADE_MAXIMA_KMH = 90.0
 
 
@@ -68,7 +67,7 @@ def matriz_distancias(problema) -> dict[str, dict[str, float]]:
             cidade: menores_distancias(grafo, cidade)
             for cidade in grafo
         }
-        setattr(problema, "_cache_distancias", cache)
+        problema._cache_distancias = cache
     return cache
 
 

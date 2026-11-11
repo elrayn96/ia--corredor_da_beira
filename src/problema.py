@@ -1,13 +1,25 @@
 from math import ceil
+from typing import ClassVar
 
-from src.estado import Estado
 from src.accao import Accao
+from src.estado import Estado
 
 
 class Problema:
     # Coordena as regras da cadeia de frio e fornece sucessores aos algoritmos
-    VELOCIDADES = {1: 40, 2: 55, 3: 70, 4: 80, 5: 90} # Em funcao do PISO
-    POSTOS_ABASTECIMENTO = {'Beira', 'Inchope', 'Chimoio'} 
+    VELOCIDADES: ClassVar[dict[int, int]] = {
+        1: 40,
+        2: 55,
+        3: 70,
+        4: 80,
+        5: 90,
+    }
+
+    POSTOS_ABASTECIMENTO: ClassVar[set[str]] = {
+        "Beira",
+        "Inchope",
+        "Chimoio",
+    } # Em funcao do PISO
     CAPACIDADE = 300000  # mililitros
     CONSUMO = 350  # mililitros por quilometro
     LIMITE_FRIO = 14
@@ -44,8 +56,8 @@ class Problema:
     def get_estado_inicial(self):
         return Estado(self.__origem, set(), 0, self.CAPACIDADE)
 
-    def criar_estado(self, localidade, entregasConcluidas, tempo, combustivel):
-        return Estado(localidade, set(entregasConcluidas), tempo, combustivel)
+    def criar_estado(self, localidade, entregas_concluidas, tempo, combustivel):
+        return Estado(localidade, set(entregas_concluidas), tempo, combustivel)
 
     def get_origem(self):
         return self.__origem
@@ -60,7 +72,7 @@ class Problema:
         return (estado.get_localidade() == self.__origem
                 and set(self.__supermercados).issubset(estado.get_entregas_concluidas()))
 
-    def custo_transicao(self, estado, accao, estadoSeguinte=None):
+    def custo_transicao(self, estado, accao, estado_seguinte=None):
         # Calcula o custo de cada accao em minutos
         tipo = accao.get_tipo()
         if tipo == 'deslocar':
@@ -78,12 +90,12 @@ class Problema:
     @staticmethod
     def __circulacao_permitida(inicio, duracao):
         # A partida ocorre as 05:00; nao circular durante 22:00-05:00
-        horaInicial = (300 + inicio) % 1440
-        horaFinal = horaInicial + duracao
-        return 300 <= horaInicial < 1320 and horaFinal <= 1320
+        hora_inicial = (300 + inicio) % 1440
+        hora_final = hora_inicial + duracao
+        return 300 <= hora_inicial < 1320 and hora_final <= 1320
 
     def get_sucessores(self, estado):
-        # Cada sucessor: (accao, estadoSeguinte, custo)
+        # Cada sucessor: (accao, estado_seguinte, custo)
         sucessores = []
         localidade = estado.get_localidade()
         tempo = estado.get_tempo()
@@ -109,11 +121,11 @@ class Problema:
             fecho = self.__minutos(dados['fecho']) - 300
             if abertura <= tempo and tempo + self.DURACAO_ENTREGA <= min(fecho, self.LIMITE_FRIO_MINUTOS):
                 accao = Accao('entregar', supermercado=localidade)
-                novasEntregas = set(entregas)
-                novasEntregas.add(localidade)
+                novas_entregas = set(entregas)
+                novas_entregas.add(localidade)
                 custo = self.custo_transicao(estado, accao)
-                novoEstado = self.criar_estado(localidade, novasEntregas, tempo + custo, combustivel)
-                sucessores.append((accao, novoEstado, custo))
+                novo_estado = self.criar_estado(localidade, novas_entregas, tempo + custo, combustivel)
+                sucessores.append((accao, novo_estado, custo))
 
             # Esperar pela abertura, sem ultrapassar o limite do frio, se o camiao chega antes da loja abrir
             if tempo < abertura and abertura + self.DURACAO_ENTREGA <= min(fecho, self.LIMITE_FRIO_MINUTOS):
@@ -130,9 +142,9 @@ class Problema:
             sucessores.append((accao, novo, custo))
 
         # Esperar ate a reabertura da circulacao, quando necessario
-        horaActual = (300 + tempo) % 1440
-        if horaActual >= 1320 or horaActual < 300:
-            espera = (300 - horaActual) % 1440
+        hora_actual = (300 + tempo) % 1440
+        if hora_actual >= 1320 or hora_actual < 300:
+            espera = (300 - hora_actual) % 1440
             if espera > 0:
                 accao = Accao('esperar', minutos=espera)
                 novo = self.criar_estado(localidade, entregas, tempo + espera, combustivel)

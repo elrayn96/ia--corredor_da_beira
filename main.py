@@ -1,21 +1,22 @@
 import json
 from pathlib import Path
+
 from src.problema import Problema
 
 
-def carregarInstancia(caminho):
+def carregar_instancia(caminho):
     # Le os dados da instancia; o formato deve ser acordado com a Adila
     with open(caminho, 'r', encoding='utf-8') as ficheiro:
         dados = json.load(ficheiro)
     return Problema(dados['estradas'], dados['supermercados'], dados.get('origem', 'Beira'))
 
 
-def mostrarSolucao(solucao):
+def mostrar_solucao(solucao):
     if solucao is None:
         print('Nao foi encontrada uma solucao.')
         return
-    print(f'Custo total: {solucao.getCustoTotal()} minutos')
-    for numero, accao in enumerate(solucao.getAcoes(), 1):
+    print(f'Custo total: {solucao.get_custo_total()} minutos')
+    for numero, accao in enumerate(solucao.get_accoes(), 1):
         print(f'{numero}. {accao}')
 
 
@@ -26,7 +27,7 @@ def main():
         print(f'Instancia ainda nao disponivel: {caminho}')
         return
     try:
-        problema = carregarInstancia(caminho)
+        problema = carregar_instancia(caminho)
     except (OSError, ValueError, KeyError, TypeError) as erro:
         print(f'Erro ao carregar a instancia: {erro}')
         return

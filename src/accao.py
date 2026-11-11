@@ -1,6 +1,9 @@
+from typing import ClassVar
+
+
 class Accao:
     # Uma accao tem um tipo e os parametros necessarios para a executar
-    TIPOS = {'deslocar', 'entregar', 'abastecer', 'esperar'}
+    TIPOS: ClassVar[set[str]] = {'deslocar', 'entregar', 'abastecer', 'esperar'}
 
 	# Os parametros podem coner razoes que justificam a accao, como abastecer, ou esperar a espera de janela,
 	# ou deslocar-se para algum destino, abastecer por ter conbustivel insuficeiente...

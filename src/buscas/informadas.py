@@ -3,7 +3,9 @@
 import heapq
 import time
 from itertools import count
+
 from src.solucao import Solucao
+
 
 def _estado_inicial(problema):
     return problema.get_estado_inicial()
@@ -18,7 +20,7 @@ def _e_objectivo(problema, estado):
 """Classe que representa um nó na árvore de busca."""
 class _No:
 
-    __slots__ = ("estado", "pai", "accao", "g")
+    __slots__ = ("accao", "estado", "g", "pai")
 
     def __init__(self, estado, pai, accao, g):
         self.estado = estado
@@ -40,10 +42,7 @@ def _reconstruir(no):
     return accoes, estados
 
 
-"""Solução provisória. Usada enquanto não tiver src/solucao.py"""
-
-
-def _criar_solução(accoes, estados, custo_total):
+def _criar_solucao(accoes, estados, custo_total):
     return Solucao(accoes=accoes, estados=estados, custo_total=custo_total)
 
 
@@ -81,7 +80,7 @@ def _melhor_primeiro(problema, heuristica, prioridade, reabrir, estatisticas):
 
         if _e_objectivo(problema, estado):
             accoes, estados = _reconstruir(no)
-            resultado = _criar_solução(accoes, estados, no.g)
+            resultado = _criar_solucao(accoes, estados, no.g)
             break
 
         expandidos[estado] = no.g
@@ -90,9 +89,8 @@ def _melhor_primeiro(problema, heuristica, prioridade, reabrir, estatisticas):
         for accao, seguinte, custo in _sucessores(problema, estado):
             gerados += 1
             novo_g = no.g + custo
-            if seguinte in g_melhor:
-                if not reabrir or novo_g >= g_melhor[seguinte]:
-                    continue
+            if seguinte in g_melhor and (not reabrir or novo_g >= g_melhor[seguinte]):
+                continue
             g_melhor[seguinte] = novo_g
             h = _valor_h(heuristica, seguinte, problema)
             novo = _No(seguinte, no, accao, novo_g)
@@ -100,8 +98,7 @@ def _melhor_primeiro(problema, heuristica, prioridade, reabrir, estatisticas):
                 fronteira, (prioridade(novo_g, h), h, next(contador), novo)
             )
 
-        if len(fronteira) > max_fronteira:
-            max_fronteira = len(fronteira)
+        max_fronteira = max(max_fronteira, len(fronteira))
 
     if estatisticas is not None:
         estatisticas["nos_gerados"] = gerados
