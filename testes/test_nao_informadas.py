@@ -42,13 +42,13 @@ def test_encontra_solucao(problema, algoritmo):
     assert solucao is not None
     assert solucao.get_estados()[0] == "S"
     assert solucao.get_estados()[-1] == "G"
-    assert len(solucao.get_estados()) == len(solucao.get_acoes()) + 1
+    assert len(solucao.get_estados()) == len(solucao.get_accoes()) + 1
 
 
 def test_bfs_encontra_menor_numero_acoes(problema):
     solucao = bfs(problema)
 
-    assert len(solucao.get_acoes()) == 2
+    assert len(solucao.get_accoes()) == 2
     assert solucao.get_estados() == ["S", "A", "G"]
     assert solucao.get_custo_total() == 11
 
@@ -66,7 +66,7 @@ def test_ucs_encontra_menor_custo(problema):
 
     assert solucao.get_custo_total() == 7
     assert solucao.get_estados() == ["S", "B", "G"]
-    assert solucao.get_acoes() == ["S->B", "B->G"]
+    assert solucao.get_accoes() == ["S->B", "B->G"]
 
 
 def test_lds_respeita_limite(problema):
@@ -76,7 +76,7 @@ def test_lds_respeita_limite(problema):
     solucao = lds(problema, 2)
 
     assert solucao is not None
-    assert len(solucao.get_acoes()) == 2
+    assert len(solucao.get_accoes()) == 2
 
 
 def test_ids_encontra_solucao(problema):
@@ -85,7 +85,7 @@ def test_ids_encontra_solucao(problema):
     solucao = ids(problema, 2)
 
     assert solucao is not None
-    assert len(solucao.get_acoes()) == 2
+    assert len(solucao.get_accoes()) == 2
     assert solucao.get_estados()[-1] == "G"
 
 
@@ -118,7 +118,7 @@ def test_estado_inicial_ja_e_objetivo(algoritmo):
     solucao = algoritmo(problema)
 
     assert solucao.get_custo_total() == 0
-    assert solucao.get_acoes() == []
+    assert solucao.get_accoes() == []
     assert solucao.get_estados() == ["G"]
 
 
