@@ -159,7 +159,7 @@ def _melhor_primeiro(problema, heuristica, estrategia, estatisticas, observador)
             g_melhor[seguinte] = novo_g
             h_seg = _valor_h(heuristica, seguinte, problema)
             f_seg = estrategia.prioridade(novo_g, h_seg)
-            emissor.emitir("emitir" if ja_visto else "gerar", novo, h_seg, f_seg)
+            emissor.emitir("reabrir" if ja_visto else "gerar", novo, h_seg, f_seg)
             heapq.heappush(fronteira, (f_seg, h_seg, next(contador), novo))
 
         max_fronteira = max(max_fronteira, len(fronteira))

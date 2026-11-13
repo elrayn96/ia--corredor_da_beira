@@ -25,7 +25,7 @@ def emitir_evento (observador, evento):
     if observador is None:
         return
     if evento.get("tipo") not in TIPOS_EVENTO:
-        raise ValueError(f"Tipo de Evento Inválido: {evento.get("tipo")!r}")
+                raise ValueError(f"Tipo de evento inválido: {evento.get('tipo')!r}")
     em_falta = [chave for chave in CHAVES_EVENTO if chave not in evento]
     if em_falta:
         raise ValueError(f"Evento sem as chaves: {em_falta}")
