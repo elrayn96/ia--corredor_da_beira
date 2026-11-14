@@ -1,7 +1,7 @@
 import pytest
 
-from src.estado import Estado
 from src.accao import Accao
+from src.estado import Estado
 from src.solucao import Solucao
 
 
@@ -49,7 +49,7 @@ def test_solucao_sem_accoes():
 
 # 3. Rejeitar quantidade inconsistente de estados
 def test_quantidade_estados_invalida(dados_solucao):
-    inicial, final, accao = dados_solucao
+    inicial, _final, accao = dados_solucao
 
     with pytest.raises(ValueError):
         Solucao(

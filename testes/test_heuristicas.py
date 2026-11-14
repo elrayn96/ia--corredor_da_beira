@@ -1,4 +1,4 @@
-from itertools import permutations
+from itertools import pairwise, permutations
 from math import isclose
 
 from src.estado import Estado
@@ -44,7 +44,7 @@ def custo_optimo_restante(estado, problema):
     for ordem in permutations(pendentes):
         cidades = (local,) + ordem + (base,)
         quilometros = sum(
-            distancias[a][b] for a, b in zip(cidades, cidades[1:])
+            distancias[a][b] for a, b in pairwise(cidades)
         )
         melhor = min(melhor, quilometros / 90 * 60)
     return melhor + 30 * len(pendentes)

@@ -5,7 +5,11 @@ import pytest
 from src.accao import Accao
 from src.estado import Estado
 from src.gerador import carregar_rede, gerar_instancia
-from src.interface.mapa_rodoviario import preparar_posicoes, segmentos_percurso
+from src.interface.mapa_rodoviario import (
+    preparar_posicoes,
+    segmentos_percurso,
+    supermercados_da_instancia,
+)
 from src.interface.painel_configuracao import ALGORITMOS, validar_configuracao
 
 
@@ -32,6 +36,13 @@ def test_posicoes_rede_real_estaveis():
     assert preparar_posicoes([{"nome": "Teste", "x": 10, "y": 20}]) == {
         "Teste": (10, 20)
     }
+
+
+def test_supermercados_aceitam_os_dois_formatos():
+    gerado = {"supermercados": [{"localidade": "Dondo", "abertura": "06:00"}]}
+    directo = {"supermercados": {"Dondo": {"abertura": "06:00"}}}
+    assert supermercados_da_instancia(gerado)["Dondo"]["abertura"] == "06:00"
+    assert supermercados_da_instancia(directo)["Dondo"]["localidade"] == "Dondo"
 
 
 @pytest.mark.parametrize("algoritmo", ALGORITMOS.values())

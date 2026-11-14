@@ -100,7 +100,7 @@ def test_deslocacao_para_dondo(problema):
 
     assert len(deslocacoes) == 1
 
-    accao, novo, custo = deslocacoes[0]
+    _accao, novo, custo = deslocacoes[0]
 
     assert novo.get_localidade() == "Dondo"
     assert custo == 26

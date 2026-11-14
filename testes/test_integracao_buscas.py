@@ -4,6 +4,8 @@ Usa sete clientes (exigência de Problema), numa rede linear pequena.
 Não executa a instância real, que pode demorar muito tempo.
 """
 
+from itertools import pairwise
+
 import pytest
 
 from src.buscas.informadas import a_star, a_star_ponderada, busca_gulosa
@@ -16,7 +18,7 @@ from src.solucao import Solucao
 def problema_pequeno():
     localidades = ["Beira"] + [f"C{i}" for i in range(1, 8)]
     estradas = {nome: {} for nome in localidades}
-    for origem, destino in zip(localidades, localidades[1:]):
+    for origem, destino in pairwise(localidades):
         atributos = {"distancia": 1, "piso": 5}
         estradas[origem][destino] = atributos.copy()
     estradas[localidades[-1]]["Beira"] = {"distancia": 1, "piso": 5}
