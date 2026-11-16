@@ -52,9 +52,8 @@ def validar_configuracao(caminho_instancia, algoritmo, heuristica, peso, limite)
             "Verifique o peso e o limite de profundidade."
         ) from None
 
-    if peso_normalizado is not None:
-        if not 0 < peso_normalizado < float("inf"):
-            raise ValueError("O peso deve ser finito e positivo.")
+    if peso_normalizado is not None and not (0 < peso_normalizado < float("inf")):
+        raise ValueError("O peso deve ser finito e positivo.")
 
     if limite_normalizado is not None and limite_normalizado < 0:
         raise ValueError("O limite nao pode ser negativo.")
