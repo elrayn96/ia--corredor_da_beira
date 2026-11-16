@@ -51,7 +51,7 @@ def test_contrato_configuracao(tmp_path, algoritmo):
     caminho.write_text("{}", encoding="utf-8")
     config = validar_configuracao(caminho, algoritmo, "h1", "1,5", "0")
     assert set(config) == {
-        "instancia",
+        "caminho_instancia",
         "algoritmo",
         "heuristica",
         "peso",

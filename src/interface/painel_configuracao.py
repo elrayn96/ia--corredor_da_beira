@@ -4,7 +4,7 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
-from src.gerador import carregar_json
+from src.gerador import carregar_json, gerar_problema
 
 ALGORITMOS = {
     "BFS": "bfs",
@@ -59,7 +59,7 @@ def validar_configuracao(caminho_instancia, algoritmo, heuristica, peso, limite)
         raise ValueError("O limite nao pode ser negativo.")
 
     return {
-        "instancia": str(Path(caminho_instancia).resolve()),
+        "caminho_instancia": str(Path(caminho_instancia).resolve()),
         "algoritmo": algoritmo,
         "heuristica": heuristica if informada else "h0",
         "peso": peso_normalizado,
@@ -86,6 +86,11 @@ class PainelConfiguracao(ttk.Frame):
         ttk.Button(self, text="Carregar instância", command=self._carregar).grid(
             row=2, column=0, columnspan=2, sticky="ew", pady=3
         )
+        ttk.Button(
+            self,
+            text="Gerar nova instância",
+            command=self._gerar_instancia,
+        ).grid(row=3, column=0, columnspan=2, sticky="ew", pady=3)
         self._campos = {}
         for linha, (rotulo, variavel, opcoes) in enumerate(
             (
@@ -146,6 +151,34 @@ class PainelConfiguracao(ttk.Frame):
                 state=("readonly" if nome == "Heurística" else "normal")
                 if activo
                 else "disabled"
+            )
+
+    def _gerar_instancia(self):
+        """Gera e carrega automaticamente uma nova instância."""
+        try:
+            from datetime import datetime
+
+            semente = int(datetime.now().timestamp() * 1000)
+            nome = f"instancia_{semente}.json"
+
+            _, caminho = gerar_problema(
+                semente=semente,
+                nome_ficheiro=nome,
+            )
+
+            self.carregar_instancia(caminho)
+
+            messagebox.showinfo(
+                "Instância gerada",
+                f"Instância criada com sucesso:\n{caminho}",
+                parent=self,
+            )
+
+        except (OSError, ValueError, KeyError, TypeError) as erro:
+            messagebox.showerror(
+                "Erro ao gerar instância",
+                str(erro),
+                parent=self,
             )
 
     def _carregar(self):
