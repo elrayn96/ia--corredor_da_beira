@@ -2,7 +2,12 @@ from itertools import permutations
 from math import isclose
 
 from src.estado import Estado
-from src.heuristicas.distancia import h0, h1, matriz_distancias
+from src.heuristicas.distancia import (
+    h0,
+    h1,
+    matriz_distancias,
+    tempo_a_velocidade_maxima,
+)
 from src.heuristicas.mst import h2, peso_mst
 
 
@@ -72,12 +77,60 @@ def test_peso_mst_conhecido():
     assert peso_mst({"A", "B", "C"}, distancias) == 180
 
 
+def test_h2_calculo_conhecido():
+    problema = ProblemaHeuristica()
+    assert isclose(h2(Estado("B"), problema), 300.0)
+
+
+def test_h2_inclui_a_localidade_actual_na_mst():
+    problema = ProblemaHeuristica()
+    grafo = problema.get_estradas()
+    grafo["X"] = {}
+    for cidade in ("A", "B", "C"):
+        grafo["X"][cidade] = {"distancia": 1}
+        grafo[cidade]["X"] = {"distancia": 1}
+
+    # MST de {A, B, C} = 2 km; ao incluir X passa a 3 km.
+    # h2 = 3/90*60 + duas descargas de 30 minutos = 62 minutos.
+    assert isclose(h2(Estado("X"), problema), 62.0)
+
+
 def test_h2_domina_h1():
     problema = ProblemaHeuristica()
     for local in problema.get_estradas():
         for concluidas in (set(), {"A"}, {"C"}, {"A", "C"}):
             estado = Estado(local, concluidas)
             assert h2(estado, problema) >= h1(estado, problema)
+
+
+def test_h2_e_consistente_nas_transicoes_do_exemplo():
+    problema = ProblemaHeuristica()
+    grafo = problema.get_estradas()
+    supermercados = set(problema.get_supermercados())
+
+    for local in grafo:
+        for concluidas in (set(), {"A"}, {"C"}, {"A", "C"}):
+            estado = Estado(local, concluidas)
+            valor_actual = h2(estado, problema)
+
+            for vizinha, estrada in grafo[local].items():
+                seguinte = Estado(vizinha, concluidas)
+                custo = tempo_a_velocidade_maxima(estrada["distancia"])
+                assert valor_actual <= custo + h2(seguinte, problema) + 1e-9
+
+            if local in supermercados - concluidas:
+                seguinte = Estado(local, concluidas | {local})
+                assert valor_actual <= 30.0 + h2(seguinte, problema) + 1e-9
+
+
+def test_h2_reutiliza_mst_para_o_mesmo_conjunto_de_vertices():
+    problema = ProblemaHeuristica()
+    h2(Estado("B", tempo=0, combustivel=300000), problema)
+    quantidade_inicial = len(problema._cache_pesos_mst)
+
+    h2(Estado("B", tempo=120, combustivel=100000), problema)
+
+    assert len(problema._cache_pesos_mst) == quantidade_inicial
 
 
 def test_admissibilidade_em_todos_os_estados_do_exemplo():
