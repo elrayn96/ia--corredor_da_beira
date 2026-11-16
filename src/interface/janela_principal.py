@@ -1,4 +1,3 @@
-"""Janela principal da aplicacao — integracao progressiva dos paineis."""
 import tkinter as tk
 from tkinter import ttk, messagebox
 from concurrent.futures import ThreadPoolExecutor
@@ -55,7 +54,7 @@ class JanelaPrincipal(tk.Tk):
         self.area_resultados = ttk.LabelFrame(self.aba_operacao, text="Resultados", padding=12)
         self.area_resultados.pack(side="left", fill="both", expand=True)
         ttk.Label(self.area_resultados, text="Aguardando execucao...").pack(anchor="w")
-        ttk.Label(self.aba_arvore, text="Visualizacao disponivel apos integracao do Elias").pack(anchor="w")
+        self._criar_aba_arvore()
         ttk.Label(self.aba_comparacao, text="Painel de comparacao: Naeem").pack(anchor="w")
 
     def obter_configuracao(self):
@@ -88,6 +87,7 @@ class JanelaPrincipal(tk.Tk):
             self._mostrar_estado(f"Erro na procura: {erro}")
             return
         self._mostrar_resultado(self.ultimo_resultado)
+        self._actualizar_arvore(self.ultimo_resultado.get("eventos", []))
 
     def _mostrar_estado(self, texto):
         for filho in self.area_resultados.winfo_children():
@@ -109,3 +109,17 @@ class JanelaPrincipal(tk.Tk):
     def destroy(self):
         self._executor.shutdown(wait=False, cancel_futures=True)
         super().destroy()
+
+    def _criar_aba_arvore(self):
+        try:
+            from src.interface.arvore_busca import ArvoreBusca
+        except ImportError:
+            ttk.Label(self.aba_arvore, text="Aguardando integracao do modulo do Elias").pack(anchor="w")
+            self.visualizador_arvore = None
+            return
+        self.visualizador_arvore = ArvoreBusca(self.aba_arvore)
+        self.visualizador_arvore.pack(fill="both", expand=True)
+
+    def _actualizar_arvore(self, eventos):
+        if self.visualizador_arvore is not None:
+            self.visualizador_arvore.carregar_eventos(eventos)
