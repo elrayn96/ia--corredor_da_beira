@@ -7,3 +7,8 @@ def test_carregar_instancia_real():
     assert problema.get_origem() == "Beira"
     assert len(problema.get_supermercados()) == 7
     assert len(problema.get_estradas()) >= 15
+
+from src.servicos.validar_solucao import validar_solucao
+
+def test_validacao_sem_solucao():
+    assert validar_solucao(carregar_instancia(), None)["valida"] is False
