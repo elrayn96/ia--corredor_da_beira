@@ -433,5 +433,12 @@ class MapaRodoviario(ttk.Frame):
         texto = f"{nome} · Abastecimento: {'Sim' if localidade.get('abastecimento') else 'Não'}"
         supermercado = self._supermercados.get(nome)
         if supermercado:
-            texto += f" · {supermercado['nome']}: {supermercado['abertura']}–{supermercado['fecho']}"
+            nome_supermercado = supermercado.get(
+                "nome",
+                f"Supermercado em {nome}",
+            )
+            texto += (
+                f" · {nome_supermercado}: "
+                f"{supermercado['abertura']}–{supermercado['fecho']}"
+            )
         self._detalhes.configure(text=texto)

@@ -209,7 +209,15 @@ def converter_para_busca(instancia, rede=None):
         }
         estradas[origem][destino] = atributos
         estradas[destino][origem] = atributos.copy()
+    locais = [
+        supermercado["localidade"]
+        for supermercado in instancia["supermercados"]
+    ]
 
+    if len(locais) != len(set(locais)):
+        raise ValueError(
+            "Supermercados duplicados na instância."
+        )
     supermercados = {
         supermercado["localidade"]: {
             "abertura": supermercado["abertura"],

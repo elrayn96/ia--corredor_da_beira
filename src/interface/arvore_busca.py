@@ -53,10 +53,13 @@ def formatar_numero(valor):
 
 
 def rotulo_estado(estado):
-    """Texto curto do estado: usa a localidade se existir."""
-    localidade = getattr(estado, "localidade", None)
-    texto = str(localidade if localidade is not None else estado)
-    return texto[:MAXIMO_CARACTERES_ROTULO]
+    """Devolve um rótulo curto com a localidade do estado."""
+    if hasattr(estado, "get_localidade"):
+        texto = estado.get_localidade()
+    else:
+        texto = getattr(estado, "localidade", estado)
+
+    return str(texto)[:MAXIMO_CARACTERES_ROTULO]
 
 
 def calcular_posicoes(nos, filhos, raizes):

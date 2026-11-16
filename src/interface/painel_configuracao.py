@@ -10,6 +10,7 @@ ALGORITMOS = {
     "BFS": "bfs",
     "DFS": "dfs",
     "IDS": "ids",
+    "LDS": "lds",
     "UCS": "ucs",
     "Gulosa": "busca_gulosa",
     "A*": "a_star",
@@ -44,7 +45,7 @@ def validar_configuracao(caminho_instancia, algoritmo, heuristica, peso, limite)
 
         limite_normalizado = (
             int(str(limite))
-            if algoritmo == "ids"
+            if algoritmo in ("ids", "lds")
             else None
         )
     except (TypeError, ValueError):
@@ -99,7 +100,7 @@ class PainelConfiguracao(ttk.Frame):
                 ("Peso", self._peso, None),
                 ("Limite (IDS)", self._limite, None),
             ),
-            3,
+            4,
         ):
             ttk.Label(self, text=rotulo).grid(row=linha, column=0, sticky="w", pady=5)
             campo = (
@@ -145,7 +146,7 @@ class PainelConfiguracao(ttk.Frame):
         for nome, activo in {
             "Heurística": algoritmo in ("Gulosa", "A*", "A* ponderada"),
             "Peso": algoritmo == "A* ponderada",
-            "Limite (IDS)": algoritmo == "IDS",
+            "Limite (IDS)": algoritmo in ("IDS", "LDS"),
         }.items():
             self._campos[nome].configure(
                 state=("readonly" if nome == "Heurística" else "normal")

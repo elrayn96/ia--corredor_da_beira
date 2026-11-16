@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import queue
 import threading
 import tkinter as tk
@@ -14,6 +15,8 @@ from src.interface.painel_comparacao import PainelComparacao
 from src.interface.painel_configuracao import PainelConfiguracao
 from src.interface.painel_resultados import PainelResultados
 from src.servicos.executar_busca import executar_busca
+
+logger = logging.getLogger(__name__)
 
 
 class JanelaPrincipal(tk.Tk):
@@ -143,20 +146,59 @@ class JanelaPrincipal(tk.Tk):
         self.after(80, self._consultar_fila)
 
     def _executar_em_fundo(self, configuracao):
-        resultado = executar_busca(configuracao)
-        self._fila.put((configuracao, resultado))
+        try:
+            resultado = executar_busca(configuracao)
+            self._fila.put(("resultado", configuracao, resultado))
+
+        except Exception:
+            logger.exception(
+                "Falha inesperada durante a execução da busca."
+            )
+            self._fila.put(
+                (
+                    "falha",
+                    configuracao,
+                    ("Ocorreu um erro inesperado durante a busca. "
+                    "Consulte o terminal para mais detalhes."),
+                )
+            )
 
     def _consultar_fila(self):
         try:
-            configuracao, resultado = self._fila.get_nowait()
+            tipo, configuracao, conteudo = self._fila.get_nowait()
+
         except queue.Empty:
             if self._em_execucao:
                 self.after(80, self._consultar_fila)
             return
+
         self._em_execucao = False
         self._progresso.stop()
         self._botao_executar.state(["!disabled"])
-        self._apresentar_resultado(configuracao, resultado)
+
+        if tipo == "falha":
+            self._estado.set("Erro inesperado na busca.")
+            messagebox.showerror(
+                "Erro na execução",
+                conteudo,
+                parent=self,
+            )
+            return
+
+        try:
+            self._apresentar_resultado(configuracao, conteudo)
+
+        except Exception:
+            logger.exception(
+                "Falha ao apresentar os resultados da busca."
+            )
+            self._estado.set("Erro ao apresentar os resultados.")
+            messagebox.showerror(
+                "Erro de apresentação",
+                "Não foi possível apresentar os resultados. "
+                "Consulte o terminal.",
+                parent=self,
+            )
 
     def _apresentar_resultado(self, configuracao, resultado):
         solucao = resultado["solucao"]
