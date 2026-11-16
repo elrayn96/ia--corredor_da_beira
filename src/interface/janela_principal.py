@@ -104,11 +104,24 @@ class JanelaPrincipal(tk.Tk):
         self._separadores.add(self._arvore, text="Árvore de busca")
         self._separadores.add(self._comparacao, text="Comparação")
 
+    
     def _ao_carregar_instancia(self, instancia):
         self._mapa.mostrar_instancia(instancia)
         self._estado.set(
             f"Instância carregada: {instancia.get('nome', 'sem nome')}"
         )
+
+    def obter_configuracao(self):
+        """Obtém a configuração seleccionada no painel."""
+        return self._configuracao.obter_configuracao()
+
+    def iniciar_busca(self):
+        """Inicia a busca usando o fluxo existente."""
+        return self._iniciar_busca()
+
+    def _actualizar_arvore(self, eventos):
+        """Actualiza a visualização da árvore de busca."""
+        self._arvore.carregar_eventos(eventos)
 
     def _iniciar_busca(self):
         if self._em_execucao:

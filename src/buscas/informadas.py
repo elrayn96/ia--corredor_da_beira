@@ -132,8 +132,6 @@ def _melhor_primeiro(problema, heuristica, estrategia, estatisticas, observador)
         if obsoleto or (estado in expandidos and expandidos[estado] <= no.g):
             emissor.emitir("descartar", no, h, f)
             continue
-        if estado in expandidos and expandidos[estado] <= no.g:
-            continue
 
         if _e_objectivo(problema, estado):
             emissor.emitir("objectivo", no, h, f)
