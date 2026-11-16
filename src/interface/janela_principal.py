@@ -1,5 +1,8 @@
+"""Janela principal da aplicacao — integracao progressiva dos paineis."""
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
+from concurrent.futures import ThreadPoolExecutor
+from src.servicos.executar_busca import executar_busca
 from src.servicos.carregar_instancia import INSTANCIA_PADRAO
 from src.interface.tema import AZUL_ESCURO, FUNDO, configurar_estilos
 
@@ -11,6 +14,7 @@ class JanelaPrincipal(tk.Tk):
         self.minsize(850, 560)
         self.configure(background=FUNDO)
         configurar_estilos(self)
+        self._executor = ThreadPoolExecutor(max_workers=1)
         self._construir()
 
     def _construir(self):
@@ -46,6 +50,8 @@ class JanelaPrincipal(tk.Tk):
         ttk.Label(self.configuracao, text="Heuristica").pack(anchor="w", pady=(8, 2))
         ttk.Combobox(self.configuracao, textvariable=self.heuristica_var,
                      values=("h0", "h1", "h2"), state="readonly", width=35).pack(fill="x")
+        self.botao_executar = ttk.Button(self.configuracao, text="Executar procura", command=self.iniciar_busca)
+        self.botao_executar.pack(fill="x", pady=16)
         self.area_resultados = ttk.LabelFrame(self.aba_operacao, text="Resultados", padding=12)
         self.area_resultados.pack(side="left", fill="both", expand=True)
         ttk.Label(self.area_resultados, text="Aguardando execucao...").pack(anchor="w")
@@ -59,3 +65,47 @@ class JanelaPrincipal(tk.Tk):
                 "peso": float(self.peso_var.get()),
                 "limite": int(self.limite_var.get()),
                 "limite_maximo": int(self.limite_var.get())}
+
+    def iniciar_busca(self):
+        try:
+            configuracao = self.obter_configuracao()
+        except ValueError as erro:
+            messagebox.showerror("Parametros invalidos", str(erro))
+            return
+        self.botao_executar.state(["disabled"])
+        self._mostrar_estado("Procura em execucao...")
+        futuro = self._executor.submit(executar_busca, configuracao)
+        self._verificar_execucao(futuro)
+
+    def _verificar_execucao(self, futuro):
+        if not futuro.done():
+            self.after(150, self._verificar_execucao, futuro)
+            return
+        self.botao_executar.state(["!disabled"])
+        try:
+            self.ultimo_resultado = futuro.result()
+        except Exception as erro:
+            self._mostrar_estado(f"Erro na procura: {erro}")
+            return
+        self._mostrar_resultado(self.ultimo_resultado)
+
+    def _mostrar_estado(self, texto):
+        for filho in self.area_resultados.winfo_children():
+            filho.destroy()
+        ttk.Label(self.area_resultados, text=texto, wraplength=500).pack(anchor="w")
+
+    def _mostrar_resultado(self, resultado):
+        solucao = resultado["solucao"]
+        if solucao is None:
+            self._mostrar_estado("Nao foi encontrada uma solucao.")
+            return
+        self._mostrar_estado(f"Estado: {resultado['estado_execucao']} | Custo: {solucao.custo_total} min")
+        texto = tk.Text(self.area_resultados, wrap="word", height=18)
+        texto.pack(fill="both", expand=True, pady=8)
+        for numero, accao in enumerate(solucao.get_accoes(), 1):
+            texto.insert("end", f"{numero}. {accao}\n")
+        texto.configure(state="disabled")
+
+    def destroy(self):
+        self._executor.shutdown(wait=False, cancel_futures=True)
+        super().destroy()
