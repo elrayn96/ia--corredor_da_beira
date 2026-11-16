@@ -239,7 +239,7 @@ class ArvoreBusca(ttk.Frame):
             ("Seguinte", self.seguinte),
             ("Reproduzir", self.reproduzir),
             ("Pausar", self.pausar),
-            ("Reiniciar", self.reiniciar),
+            ("Reiniciar", self.reiniciar_visualizacao),
         )
         for texto, comando in accoes:
             botao = ttk.Button(barra, text=texto, command=comando)
@@ -261,7 +261,7 @@ class ArvoreBusca(ttk.Frame):
             self._indice = max(0, min(indice, total - 1))
         self._desenhar()
 
-    def reiniciar(self):
+    def reiniciar_visualizacao(self):
         """Pára a reprodução e volta ao primeiro passo."""
         self.pausar()
         self._indice = 0
