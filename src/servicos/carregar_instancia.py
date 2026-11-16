@@ -7,7 +7,7 @@ RAIZ = Path(__file__).resolve().parents[2]
 INSTANCIA_PADRAO = RAIZ / "dados/instancias_testes/teste.json"
 
 def carregar_instancia(caminho=INSTANCIA_PADRAO):
-    caminho = Path(caminho).resolve()
+    caminho = Path(caminho or INSTANCIA_PADRAO).resolve()
     with caminho.open(encoding="utf-8") as ficheiro:
         dados = json.load(ficheiro)
     if "rede" not in dados or "supermercados" not in dados:
