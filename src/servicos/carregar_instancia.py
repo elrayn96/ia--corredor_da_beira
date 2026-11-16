@@ -1,6 +1,7 @@
 """Conversao dos JSON reais do grupo para o contrato de Problema."""
 import json
 from pathlib import Path
+
 from src.problema import Problema
 
 RAIZ = Path(__file__).resolve().parents[2]

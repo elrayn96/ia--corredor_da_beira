@@ -1,6 +1,8 @@
 """Testes sem necessidade de criar janelas Tkinter."""
+
 from src.interface.janela_principal import JanelaPrincipal
 from src.interface.tema import CORES_ARVORE
+
 
 def test_janela_tem_contratos_basicos():
     for metodo in ("obter_configuracao", "iniciar_busca", "_actualizar_arvore"):

@@ -1,4 +1,8 @@
+
+"""Ponto de entrada da interface gráfica."""
+
 from src.interface.janela_principal import JanelaPrincipal
+
 
 def main():
     aplicacao = JanelaPrincipal()

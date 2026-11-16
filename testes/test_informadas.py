@@ -4,6 +4,7 @@ import pytest
 
 from src.buscas.informadas import a_star, a_star_ponderada, busca_gulosa
 
+
 class ProblemaGrafo:
 
     def __init__(self, arestas, inicio, objetivo):

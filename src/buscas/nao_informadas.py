@@ -1,205 +1,280 @@
+"""Buscas não informadas com métricas e eventos opcionais."""
+
+from __future__ import annotations
 
 import heapq
+import time
 from collections import deque
 from itertools import count
 
+from src.buscas.eventos_busca import emitir_evento
 from src.solucao import Solucao
 
 
-def reconstruir_solucao(estado_final, predecessores, custo_total):
-    ações = []
-    estados = []
-    estado = estado_final
+class _No:
+    __slots__ = ("accao", "estado", "g", "no_id", "pai", "profundidade")
 
-    while estado is not None:
-        estados.append(estado)
-        anterior = predecessores[estado]
-
-        if anterior is not None:
-            estado_pai, ação = anterior
-            ações.append(ação)
-            estado = estado_pai
-        else:
-            estado = None
-
-    estados.reverse()
-    ações.reverse()
-
-    return Solucao(ações, estados, custo_total)
+    def __init__(self, estado, pai, accao, g, no_id):
+        self.estado = estado
+        self.pai = pai
+        self.accao = accao
+        self.g = g
+        self.no_id = no_id
+        self.profundidade = 0 if pai is None else pai.profundidade + 1
 
 
-def bfs(problema):
-    estado_inicial = problema.get_estado_inicial()
+class _Emissor:
+    def __init__(self, observador):
+        self.observador = observador
+        self.passo = 0
 
-    fila = deque([estado_inicial])
-    visitados = {estado_inicial}
-    predecessores = {estado_inicial: None}
-    custos = {estado_inicial: 0}
-
-    while fila:
-        estado_actual = fila.popleft()
-
-        if problema.teste_objectivo(estado_actual):
-            return reconstruir_solucao(
-                estado_actual,
-                predecessores,
-                custos[estado_actual]
-            )
-
-        for ação, estado_seguinte, custo in problema.get_sucessores(estado_actual):
-            if estado_seguinte not in visitados:
-                visitados.add(estado_seguinte)
-                predecessores[estado_seguinte] = (estado_actual, ação)
-                custos[estado_seguinte] = custos[estado_actual] + custo
-                fila.append(estado_seguinte)
-
-    return None
+    def emitir(self, tipo, no):
+        if self.observador is None:
+            return
+        evento = {
+            "tipo": tipo,
+            "passo": self.passo,
+            "no_id": no.no_id,
+            "pai_id": None if no.pai is None else no.pai.no_id,
+            "estado": no.estado,
+            "accao": no.accao,
+            "profundidade": no.profundidade,
+            "g": no.g,
+            "h": 0,
+            "f": no.g,
+        }
+        self.passo += 1
+        emitir_evento(self.observador, evento)
 
 
-def dfs(problema):
-    estado_inicial = problema.get_estado_inicial()
-
-    pilha = [estado_inicial]
-    visitados = set()
-    predecessores = {estado_inicial: None}
-    custos = {estado_inicial: 0}
-
-    while pilha:
-        estado_actual = pilha.pop()
-
-        if estado_actual in visitados:
-            continue
-
-        visitados.add(estado_actual)
-
-        if problema.teste_objectivo(estado_actual):
-            return reconstruir_solucao(
-                estado_actual,
-                predecessores,
-                custos[estado_actual]
-            )
-
-        sucessores = list(problema.get_sucessores(estado_actual))
-
-        for ação, estado_seguinte, custo in reversed(sucessores):
-            if (
-                estado_seguinte not in visitados
-                and estado_seguinte not in predecessores
-            ):
-                predecessores[estado_seguinte] = (estado_actual, ação)
-                custos[estado_seguinte] = custos[estado_actual] + custo
-                pilha.append(estado_seguinte)
-
-    return None
+def _solucao(no):
+    accoes, estados = [], []
+    final = no
+    while no is not None:
+        estados.append(no.estado)
+        if no.pai is not None:
+            accoes.append(no.accao)
+        no = no.pai
+    return Solucao(list(reversed(accoes)), list(reversed(estados)), final.g)
 
 
-def lds(problema, limite):
-    if limite < 0:
-        raise ValueError("O limite não pode ser negativo")
-
-    estado_inicial = problema.get_estado_inicial()
-
-    pilha = [(estado_inicial, 0, [], [estado_inicial], 0)]
-    menor_profundidade = {estado_inicial: 0}
-
-    while pilha:
-        estado_actual, profundidade, ações, estados, custo_total = pilha.pop()
-
-        if profundidade > menor_profundidade.get(
-            estado_actual, profundidade
-        ):
-            continue
-
-        if problema.teste_objectivo(estado_actual):
-            return Solucao(ações, estados, custo_total)
-
-        if profundidade >= limite:
-            continue
-
-        sucessores = list(problema.get_sucessores(estado_actual))
-
-        for ação, estado_seguinte, custo in reversed(sucessores):
-            nova_profundidade = profundidade + 1
-
-            if estado_seguinte in estados:
-                continue
-
-            if (
-                estado_seguinte in menor_profundidade
-                and menor_profundidade[estado_seguinte] <= nova_profundidade
-            ):
-                continue
-
-            menor_profundidade[estado_seguinte] = nova_profundidade
-
-            novas_ações = ações + [ação]
-            novos_estados = estados + [estado_seguinte]
-            novo_custo = custo_total + custo
-
-            pilha.append((
-                estado_seguinte,
-                nova_profundidade,
-                novas_ações,
-                novos_estados,
-                novo_custo
-            ))
-
-    return None
-
-
-def ids(problema, limite_maximo):
-    if limite_maximo < 0:
-        raise ValueError("O limite máximo não pode ser negativo")
-
-    for limite in range(limite_maximo + 1):
-        solucao = lds(problema, limite)
-
-        if solucao is not None:
-            return solucao
-
-    return None
-
-
-def ucs(problema):
-    estado_inicial = problema.get_estado_inicial()
-
-    fila_prioridade = []
-    contador = count()
-
-    heapq.heappush(
-        fila_prioridade,
-        (0, next(contador), estado_inicial)
+def _registar(estatisticas, contadores, inicio):
+    if estatisticas is None:
+        return
+    estatisticas.update(
+        {
+            "nos_gerados": contadores["gerados"],
+            "nos_expandidos": contadores["expandidos"],
+            "max_fronteira": contadores["max_fronteira"],
+            "tempo": time.perf_counter() - inicio,
+        }
     )
 
-    custos = {estado_inicial: 0}
-    predecessores = {estado_inicial: None}
 
-    while fila_prioridade:
-        custo_actual, _, estado_actual = heapq.heappop(fila_prioridade)
+def _novo_contador():
+    return {"gerados": 0, "expandidos": 0, "max_fronteira": 0}
 
-        if custo_actual > custos[estado_actual]:
+
+def bfs(problema, estatisticas=None, observador=None):
+    """Busca em largura com teste de objectivo na geração."""
+    inicio = time.perf_counter()
+    ids = count()
+    emissor = _Emissor(observador)
+    contadores = _novo_contador()
+    raiz = _No(problema.get_estado_inicial(), None, None, 0, next(ids))
+    fronteira = deque([raiz])
+    visitados = {raiz.estado}
+    contadores.update(gerados=1, max_fronteira=1)
+    emissor.emitir("inicio", raiz)
+
+    if problema.teste_objectivo(raiz.estado):
+        emissor.emitir("objectivo", raiz)
+        _registar(estatisticas, contadores, inicio)
+        return _solucao(raiz)
+
+    while fronteira:
+        no = fronteira.popleft()
+        emissor.emitir("expandir", no)
+        contadores["expandidos"] += 1
+        for accao, seguinte, custo in problema.get_sucessores(no.estado):
+            novo = _No(seguinte, no, accao, no.g + custo, next(ids))
+            contadores["gerados"] += 1
+            if seguinte in visitados:
+                emissor.emitir("descartar", novo)
+                continue
+            visitados.add(seguinte)
+            emissor.emitir("gerar", novo)
+            if problema.teste_objectivo(seguinte):
+                emissor.emitir("objectivo", novo)
+                _registar(estatisticas, contadores, inicio)
+                return _solucao(novo)
+            fronteira.append(novo)
+        contadores["max_fronteira"] = max(
+            contadores["max_fronteira"], len(fronteira)
+        )
+
+    _registar(estatisticas, contadores, inicio)
+    return None
+
+
+def dfs(problema, estatisticas=None, observador=None):
+    """Busca em profundidade, preservando a ordem anterior dos sucessores."""
+    inicio = time.perf_counter()
+    ids = count()
+    emissor = _Emissor(observador)
+    contadores = _novo_contador()
+    raiz = _No(problema.get_estado_inicial(), None, None, 0, next(ids))
+    fronteira = [raiz]
+    descobertos = {raiz.estado}
+    visitados = set()
+    contadores.update(gerados=1, max_fronteira=1)
+    emissor.emitir("inicio", raiz)
+
+    while fronteira:
+        no = fronteira.pop()
+        if no.estado in visitados:
+            emissor.emitir("descartar", no)
+            continue
+        visitados.add(no.estado)
+        if problema.teste_objectivo(no.estado):
+            emissor.emitir("objectivo", no)
+            _registar(estatisticas, contadores, inicio)
+            return _solucao(no)
+        emissor.emitir("expandir", no)
+        contadores["expandidos"] += 1
+
+        for accao, seguinte, custo in reversed(problema.get_sucessores(no.estado)):
+            novo = _No(seguinte, no, accao, no.g + custo, next(ids))
+            contadores["gerados"] += 1
+            if seguinte in visitados or seguinte in descobertos:
+                emissor.emitir("descartar", novo)
+                continue
+            descobertos.add(seguinte)
+            emissor.emitir("gerar", novo)
+            fronteira.append(novo)
+        contadores["max_fronteira"] = max(
+            contadores["max_fronteira"], len(fronteira)
+        )
+
+    _registar(estatisticas, contadores, inicio)
+    return None
+
+
+def _contem_no_caminho(no, estado):
+    while no is not None:
+        if no.estado == estado:
+            return True
+        no = no.pai
+    return False
+
+
+def _busca_limitada(problema, limite, emissor, ids, contadores):
+    raiz = _No(problema.get_estado_inicial(), None, None, 0, next(ids))
+    fronteira = [raiz]
+    menor_profundidade = {raiz.estado: 0}
+    contadores["gerados"] += 1
+    contadores["max_fronteira"] = max(contadores["max_fronteira"], 1)
+    emissor.emitir("inicio", raiz)
+
+    while fronteira:
+        no = fronteira.pop()
+        if no.profundidade > menor_profundidade.get(no.estado, no.profundidade):
+            emissor.emitir("descartar", no)
+            continue
+        if problema.teste_objectivo(no.estado):
+            emissor.emitir("objectivo", no)
+            return no
+        if no.profundidade >= limite:
+            emissor.emitir("descartar", no)
             continue
 
-        if problema.teste_objectivo(estado_actual):
-            return reconstruir_solucao(
-                estado_actual,
-                predecessores,
-                custo_actual
-            )
+        emissor.emitir("expandir", no)
+        contadores["expandidos"] += 1
+        for accao, seguinte, custo in reversed(problema.get_sucessores(no.estado)):
+            novo = _No(seguinte, no, accao, no.g + custo, next(ids))
+            contadores["gerados"] += 1
+            if _contem_no_caminho(no, seguinte):
+                emissor.emitir("descartar", novo)
+                continue
+            if menor_profundidade.get(seguinte, novo.profundidade + 1) <= novo.profundidade:
+                emissor.emitir("descartar", novo)
+                continue
+            menor_profundidade[seguinte] = novo.profundidade
+            emissor.emitir("gerar", novo)
+            fronteira.append(novo)
+        contadores["max_fronteira"] = max(
+            contadores["max_fronteira"], len(fronteira)
+        )
+    return None
 
-        for ação, estado_seguinte, custo in problema.get_sucessores(estado_actual):
-            novo_custo = custo_actual + custo
 
-            if (
-                estado_seguinte not in custos
-                or novo_custo < custos[estado_seguinte]
-            ):
-                custos[estado_seguinte] = novo_custo
-                predecessores[estado_seguinte] = (estado_actual, ação)
+def lds(problema, limite, estatisticas=None, observador=None):
+    if limite < 0:
+        raise ValueError("O limite não pode ser negativo")
+    inicio = time.perf_counter()
+    contadores = _novo_contador()
+    no = _busca_limitada(
+        problema, limite, _Emissor(observador), count(), contadores
+    )
+    _registar(estatisticas, contadores, inicio)
+    return None if no is None else _solucao(no)
 
-                heapq.heappush(
-                    fila_prioridade,
-                    (novo_custo, next(contador), estado_seguinte)
-                )
 
+def ids(problema, limite_maximo, estatisticas=None, observador=None):
+    if limite_maximo < 0:
+        raise ValueError("O limite máximo não pode ser negativo")
+    inicio = time.perf_counter()
+    contadores = _novo_contador()
+    emissor = _Emissor(observador)
+    ids_nos = count()
+    for limite in range(limite_maximo + 1):
+        no = _busca_limitada(problema, limite, emissor, ids_nos, contadores)
+        if no is not None:
+            _registar(estatisticas, contadores, inicio)
+            return _solucao(no)
+    _registar(estatisticas, contadores, inicio)
+    return None
+
+
+def ucs(problema, estatisticas=None, observador=None):
+    """Busca de custo uniforme com descarte de entradas obsoletas."""
+    inicio = time.perf_counter()
+    ids = count()
+    desempate = count()
+    emissor = _Emissor(observador)
+    contadores = _novo_contador()
+    raiz = _No(problema.get_estado_inicial(), None, None, 0, next(ids))
+    fronteira = [(0, next(desempate), raiz)]
+    custos = {raiz.estado: 0}
+    contadores.update(gerados=1, max_fronteira=1)
+    emissor.emitir("inicio", raiz)
+
+    while fronteira:
+        custo_actual, _, no = heapq.heappop(fronteira)
+        if custo_actual > custos[no.estado]:
+            emissor.emitir("descartar", no)
+            continue
+        if problema.teste_objectivo(no.estado):
+            emissor.emitir("objectivo", no)
+            _registar(estatisticas, contadores, inicio)
+            return _solucao(no)
+        emissor.emitir("expandir", no)
+        contadores["expandidos"] += 1
+
+        for accao, seguinte, custo in problema.get_sucessores(no.estado):
+            novo_g = no.g + custo
+            novo = _No(seguinte, no, accao, novo_g, next(ids))
+            contadores["gerados"] += 1
+            if novo_g >= custos.get(seguinte, float("inf")):
+                emissor.emitir("descartar", novo)
+                continue
+            reabrir = seguinte in custos
+            custos[seguinte] = novo_g
+            emissor.emitir("reabrir" if reabrir else "gerar", novo)
+            heapq.heappush(fronteira, (novo_g, next(desempate), novo))
+        contadores["max_fronteira"] = max(
+            contadores["max_fronteira"], len(fronteira)
+        )
+
+    _registar(estatisticas, contadores, inicio)
     return None

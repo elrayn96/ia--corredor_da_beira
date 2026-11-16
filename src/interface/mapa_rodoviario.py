@@ -85,6 +85,17 @@ def segmentos_percurso(estados, accoes):
     return segmentos
 
 
+def supermercados_da_instancia(instancia):
+    """Normaliza supermercados dos formatos gerado e directo."""
+    supermercados = instancia.get("supermercados", [])
+    if isinstance(supermercados, dict):
+        return {
+            localidade: {"localidade": localidade, **dados}
+            for localidade, dados in supermercados.items()
+        }
+    return {supermercado["localidade"]: supermercado for supermercado in supermercados}
+
+
 class MapaRodoviario(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -203,8 +214,10 @@ class MapaRodoviario(ttk.Frame):
         self._desenhar()
 
     def mostrar_instancia(self, instancia):
-        self._supermercados = {s["localidade"]: s for s in instancia["supermercados"]}
-        self._origem = instancia.get("estadoInicial", {}).get("localidade", "Beira")
+        self._supermercados = supermercados_da_instancia(instancia)
+        self._origem = instancia.get("origem") or instancia.get(
+            "estadoInicial", {}
+        ).get("localidade", "Beira")
         self.limpar_percurso()
 
     def destacar_percurso(self, estados, accoes):
