@@ -204,7 +204,8 @@ class JanelaPrincipal(tk.Tk):
         solucao = resultado["solucao"]
         estatisticas = resultado["estatisticas"]
         self._painel_resultados.mostrar_resultados(solucao, estatisticas)
-        self._arvore.carregar_eventos(resultado["eventos"])
+        eventos = resultado.get("eventos") or []
+        self._arvore.carregar_eventos(eventos)
         self._mapa.limpar_percurso()
         if solucao is not None:
             self._mapa.destacar_percurso(
@@ -224,7 +225,11 @@ class JanelaPrincipal(tk.Tk):
         self._resultados.append(registo)
         self._comparacao.mostrar_comparacao(self._resultados)
         self._estado.set(resultado["mensagem"])
-        self._separadores.select(self._painel_resultados)
+        if eventos:
+            self._separadores.select(self._arvore)
+            self._arvore.reiniciar_visualizacao()
+        else:
+            self._separadores.select(self._painel_resultados)
         if resultado["estado_execucao"] == "erro":
             messagebox.showerror("Erro na busca", resultado["mensagem"], parent=self)
 
