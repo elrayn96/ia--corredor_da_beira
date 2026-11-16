@@ -40,11 +40,12 @@ def test_contrato_configuracao(tmp_path, algoritmo):
     caminho.write_text("{}", encoding="utf-8")
     config = validar_configuracao(caminho, algoritmo, "h1", "1,5", "0")
     assert set(config) == {
-        "caminho_instancia",
+        "instancia",
         "algoritmo",
         "heuristica",
         "peso",
         "limite",
+        "limite_maximo",
     }
     assert config["peso"] == (1.5 if algoritmo == "a_star_ponderada" else None)
     assert config["limite"] == (0 if algoritmo in ("lds", "ids") else None)

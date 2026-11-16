@@ -1,4 +1,4 @@
-"""Mapa esquemático da rede: não representa coordenadas geográficas."""
+"""Mapa esquematico da rede: nao representa coordenadas geograficas."""
 
 import math
 from tkinter import ttk
@@ -70,12 +70,12 @@ def obter_localidade(estado):
 
 
 def segmentos_percurso(estados, accoes):
-    """Aceita o Estado actual e estados com atributo público localidade."""
+    """Aceita o Estado actual e estados com atributo publico localidade."""
     estados, accoes = list(estados), list(accoes)
     if estados and len(estados) != len(accoes) + 1:
-        raise ValueError("O percurso deve ter um estado a mais que as acções.")
+        raise ValueError("O percurso deve ter um estado a mais que as accoes.")
     if not estados and accoes:
-        raise ValueError("As acções precisam dos estados do percurso.")
+        raise ValueError("As accoes precisam dos estados do percurso.")
     nomes = [obter_localidade(estado) for estado in estados]
     segmentos = []
     for a, b, accao in zip(nomes, nomes[1:], accoes):

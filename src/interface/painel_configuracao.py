@@ -1,4 +1,4 @@
-"""Controlos de configuração independentes da janela principal."""
+"""Controlos de configuracao independentes da janela principal."""
 
 import tkinter as tk
 from pathlib import Path
@@ -9,7 +9,6 @@ from src.gerador import carregar_json
 ALGORITMOS = {
     "BFS": "bfs",
     "DFS": "dfs",
-    "LDS": "lds",
     "IDS": "ids",
     "UCS": "ucs",
     "Gulosa": "busca_gulosa",
@@ -20,35 +19,54 @@ HEURISTICAS = ("h0", "h1", "h2")
 
 
 def validar_configuracao(caminho_instancia, algoritmo, heuristica, peso, limite):
-    """Valida e normaliza apenas os parâmetros aplicáveis ao algoritmo."""
+    """Valida os parametros e devolve o contrato do servico de execucao."""
     if not caminho_instancia or not Path(caminho_instancia).is_file():
-        raise ValueError("Seleccione um ficheiro de instância existente.")
+        raise ValueError("Seleccione um ficheiro de instancia existente.")
+
     if algoritmo not in ALGORITMOS.values():
-        raise ValueError("Seleccione um algoritmo válido.")
-    informada = algoritmo in ("busca_gulosa", "a_star", "a_star_ponderada")
+        raise ValueError("Seleccione um algoritmo valido.")
+
+    informada = algoritmo in (
+        "busca_gulosa",
+        "a_star",
+        "a_star_ponderada",
+    )
+
     if informada and heuristica not in HEURISTICAS:
-        raise ValueError("Seleccione uma heurística válida.")
+        raise ValueError("Seleccione uma heuristica valida.")
+
     try:
-        peso = (
+        peso_normalizado = (
             float(str(peso).replace(",", "."))
             if algoritmo == "a_star_ponderada"
             else None
         )
-        limite = int(str(limite)) if algoritmo in ("lds", "ids") else None
-    except (TypeError, ValueError):
-        raise ValueError("Verifique o peso e os limites de profundidade.") from None
-    if peso is not None and not 0 < peso < float("inf"):
-        raise ValueError("O peso deve ser um número finito positivo.")
-    if limite is not None and limite < 0:
-        raise ValueError("Os limites de profundidade não podem ser negativos.")
-    return {
-        "caminho_instancia": str(caminho_instancia),
-        "algoritmo": algoritmo,
-        "heuristica": heuristica if informada else None,
-        "peso": peso,
-        "limite": limite,
-    }
 
+        limite_normalizado = (
+            int(str(limite))
+            if algoritmo == "ids"
+            else None
+        )
+    except (TypeError, ValueError):
+        raise ValueError(
+            "Verifique o peso e o limite de profundidade."
+        ) from None
+
+    if peso_normalizado is not None:
+        if not 0 < peso_normalizado < float("inf"):
+            raise ValueError("O peso deve ser finito e positivo.")
+
+    if limite_normalizado is not None and limite_normalizado < 0:
+        raise ValueError("O limite nao pode ser negativo.")
+
+    return {
+        "instancia": str(Path(caminho_instancia).resolve()),
+        "algoritmo": algoritmo,
+        "heuristica": heuristica if informada else "h0",
+        "peso": peso_normalizado,
+        "limite": limite_normalizado,
+        "limite_maximo": limite_normalizado,
+    }
 
 class PainelConfiguracao(ttk.Frame):
     """Emite a instância seleccionada através de um callback opcional."""
@@ -75,7 +93,7 @@ class PainelConfiguracao(ttk.Frame):
                 ("Algoritmo", self._algoritmo, tuple(ALGORITMOS)),
                 ("Heurística", self._heuristica, HEURISTICAS),
                 ("Peso", self._peso, None),
-                ("Limite (LDS / IDS)", self._limite, None),
+                ("Limite (IDS)", self._limite, None),
             ),
             3,
         ):
@@ -123,7 +141,7 @@ class PainelConfiguracao(ttk.Frame):
         for nome, activo in {
             "Heurística": algoritmo in ("Gulosa", "A*", "A* ponderada"),
             "Peso": algoritmo == "A* ponderada",
-            "Limite (LDS / IDS)": algoritmo in ("LDS", "IDS"),
+            "Limite (IDS)": algoritmo == "IDS",
         }.items():
             self._campos[nome].configure(
                 state=("readonly" if nome == "Heurística" else "normal")
