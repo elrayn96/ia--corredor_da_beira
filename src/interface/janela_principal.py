@@ -1,3 +1,4 @@
+"""Janela principal da aplicacao — integracao progressiva dos paineis."""
 import tkinter as tk
 from tkinter import ttk, messagebox
 from concurrent.futures import ThreadPoolExecutor
@@ -55,7 +56,7 @@ class JanelaPrincipal(tk.Tk):
         self.area_resultados.pack(side="left", fill="both", expand=True)
         ttk.Label(self.area_resultados, text="Aguardando execucao...").pack(anchor="w")
         self._criar_aba_arvore()
-        ttk.Label(self.aba_comparacao, text="Painel de comparacao: Naeem").pack(anchor="w")
+        self._criar_painel_opcional(self.aba_comparacao, "src.interface.painel_comparacao", "PainelComparacao", "Painel de comparacao: Naeem")
 
     def obter_configuracao(self):
         return {"instancia": self.instancia_var.get(),
@@ -123,3 +124,14 @@ class JanelaPrincipal(tk.Tk):
     def _actualizar_arvore(self, eventos):
         if self.visualizador_arvore is not None:
             self.visualizador_arvore.carregar_eventos(eventos)
+
+    def _criar_painel_opcional(self, parent, modulo, classe, texto_alternativo):
+        import importlib
+        try:
+            componente = getattr(importlib.import_module(modulo), classe)
+        except (ImportError, AttributeError):
+            ttk.Label(parent, text=texto_alternativo).pack(anchor="w")
+            return None
+        painel = componente(parent)
+        painel.pack(fill="both", expand=True)
+        return painel
