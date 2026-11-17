@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import threading
 import time
 import tracemalloc
 from pathlib import Path
@@ -26,6 +27,11 @@ ALGORITMOS = {
 HEURISTICAS = {"h0": h0, "h1": h1, "h2": h2}
 INFORMADAS = {"busca_gulosa", "a_star", "a_star_ponderada"}
 COM_LIMITE = {"lds", "ids"}
+LIMITE_EVENTOS_GUARDADOS = 1200
+
+
+class BuscaCancelada(Exception):
+    """Interrupção cooperativa solicitada pelo utilizador."""
 
 
 def normalizar_configuracao(configuracao):
@@ -124,19 +130,34 @@ def _metricas_vazias():
     }
 
 
-def executar_busca(configuracao, observador=None):
+def executar_busca(configuracao, observador=None, cancelar=None, limite_segundos=None):
     """Executa uma busca e devolve sempre o dicionário de resultado comum."""
     eventos = []
     estatisticas_brutas = {}
     metricas = _metricas_vazias()
     inicio = time.perf_counter()
+    cancelar = cancelar if cancelar is not None else threading.Event()
+    total_eventos = 0
+    contagem_eventos = {"gerar": 0, "expandir": 0}
     iniciou_tracemalloc = not tracemalloc.is_tracing()
     if iniciou_tracemalloc:
         tracemalloc.start()
     pico_inicial = tracemalloc.get_traced_memory()[1]
 
     def registar_evento(evento):
-        eventos.append(evento)
+        nonlocal total_eventos
+        if cancelar.is_set():
+            raise BuscaCancelada("Busca cancelada pelo utilizador.")
+        if limite_segundos is not None and time.perf_counter() - inicio > limite_segundos:
+            raise BuscaCancelada("Tempo máximo de execução atingido.")
+        total_eventos += 1
+        if evento.get("tipo") in contagem_eventos:
+            contagem_eventos[evento["tipo"]] += 1
+        # Mantém uma amostra inicial e os eventos mais recentes, sem memória ilimitada.
+        if len(eventos) < LIMITE_EVENTOS_GUARDADOS:
+            eventos.append(evento)
+        elif evento.get("tipo") == "objectivo":
+            eventos[-1] = evento
         if observador is not None:
             observador(evento)
 
@@ -152,6 +173,10 @@ def executar_busca(configuracao, observador=None):
             if solucao is not None
             else "A busca terminou sem encontrar solução."
         )
+    except BuscaCancelada as erro:
+        solucao = None
+        estado_execucao = "interrompida"
+        mensagem = str(erro)
     except (OSError, ValueError, TypeError, KeyError) as erro:
         solucao = None
         estado_execucao = "erro"
@@ -164,8 +189,10 @@ def executar_busca(configuracao, observador=None):
 
     metricas.update(
         {
-            "nos_gerados": int(estatisticas_brutas.get("nos_gerados", 0)),
-            "nos_expandidos": int(estatisticas_brutas.get("nos_expandidos", 0)),
+            "nos_gerados": int(max(estatisticas_brutas.get("nos_gerados", 0),
+                                   contagem_eventos["gerar"])),
+            "nos_expandidos": int(max(estatisticas_brutas.get("nos_expandidos", 0),
+                                     contagem_eventos["expandir"])),
             "max_fronteira": int(estatisticas_brutas.get("max_fronteira", 0)),
             "tempo_segundos": float(tempo),
             "memoria_pico_bytes": int(max(0, pico_final - pico_inicial)),
@@ -175,6 +202,7 @@ def executar_busca(configuracao, observador=None):
         "solucao": solucao,
         "estatisticas": metricas,
         "eventos": eventos,
+        "total_eventos": total_eventos,
         "estado_execucao": estado_execucao,
         "mensagem": mensagem,
     }

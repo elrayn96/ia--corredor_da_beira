@@ -59,12 +59,12 @@ def preparar_comparacao(resultados):
 
 class PainelComparacao(ttk.Frame):
     def __init__(self, parent):
-        super().__init__(parent)
+        super().__init__(parent, style="Cartao.TFrame")
         self._linhas = []
         self._criar_widgets()
 
     def _criar_widgets(self):
-        tabela_frame = ttk.Frame(self, padding=8)
+        tabela_frame = ttk.Frame(self, padding=8, style="Cartao.TFrame")
         tabela_frame.pack(fill="x")
         self._tabela = ttk.Treeview(
             tabela_frame, columns=COLUNAS, show="headings", height=7
@@ -115,13 +115,17 @@ class PainelComparacao(ttk.Frame):
             f"{linha['algoritmo']}\n{linha['heuristica']}" for linha in self._linhas
         ]
         cores = [
-            "#4c78a8" if linha["estado_execucao"] == "concluida" else "#d95f59"
+            "#086B47" if linha["estado_execucao"] == "concluida" else "#CA7966"
             for linha in self._linhas
         ]
         for eixo, (chave, titulo) in zip(self._eixos.flat, especificacoes):
             eixo.clear()
-            valores = [float(linha[chave] or 0) for linha in self._linhas]
-            eixo.bar(rotulos, valores, color=cores)
+            # Um custo ausente não é um custo zero.
+            indices = [i for i, linha in enumerate(self._linhas)
+                       if linha[chave] is not None]
+            eixo.bar([rotulos[i] for i in indices],
+                     [float(self._linhas[i][chave]) for i in indices],
+                     color=[cores[i] for i in indices])
             eixo.set_title(titulo)
             eixo.tick_params(axis="x", labelsize=7)
             eixo.grid(axis="y", alpha=0.25)

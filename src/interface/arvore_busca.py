@@ -12,7 +12,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from matplotlib.patches import Patch
 
-LIMITE_EVENTOS_PADRAO = 300
+LIMITE_EVENTOS_PADRAO = 450
 INTERVALO_PADRAO_MS = 700
 MAXIMO_CARACTERES_ROTULO = 12
 MARGEM = 1.0
@@ -197,9 +197,12 @@ def desenhar_arvore(eixo, modelo, indice):
     estados = modelo.estados_no_passo(indice)
     _desenhar_ligacoes(eixo, modelo, visiveis)
     _desenhar_nos(eixo, modelo, visiveis, estados, modelo.eventos[indice]["no_id"])
-    xs = [x for x, _ in modelo.posicoes.values()]
-    ys = [y for _, y in modelo.posicoes.values()]
-    eixo.set_xlim(min(xs) - MARGEM, max(xs) + MARGEM)
+    # Zoom automático para os nós existentes no passo actual; usar todas
+    # as folhas futuras tornava a árvore minúscula e ilegível.
+    xs = [modelo.posicoes[no_id][0] for no_id in visiveis]
+    ys = [modelo.posicoes[no_id][1] for no_id in visiveis]
+    margem_x = max(MARGEM, (max(xs) - min(xs)) * 0.12)
+    eixo.set_xlim(min(xs) - margem_x, max(xs) + margem_x)
     eixo.set_ylim(min(ys) - MARGEM, max(ys) + MARGEM)
     eixo.legend(
         handles=[Patch(facecolor=CORES[chave], label=NOMES[chave]) for chave in CORES],
@@ -230,9 +233,15 @@ class ArvoreBusca(ttk.Frame):
         ttk.Label(self, textvariable=self._aviso, foreground="#b45309").pack(
             side="top", fill="x", padx=6
         )
+        instrucoes = ttk.Label(
+            self, text="Exploração: azul = fronteira · amarelo = expandido · "
+                       "cinzento = descartado · verde = solução",
+            style="Ajuda.TLabel",
+        )
+        instrucoes.pack(side="top", anchor="w", padx=12, pady=(5, 2))
         barra = ttk.Frame(self)
         barra.pack(side="bottom", fill="x", pady=4)
-        self._figura = Figure(figsize=(8, 5), dpi=100)
+        self._figura = Figure(figsize=(8, 5), dpi=85, facecolor="#FFFFFF")
         self._eixo = self._figura.add_subplot(111)
         self._canvas = FigureCanvasTkAgg(self._figura, master=self)
         self._canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
@@ -245,7 +254,7 @@ class ArvoreBusca(ttk.Frame):
             ("Reiniciar", self.reiniciar_visualizacao),
         )
         for texto, comando in accoes:
-            botao = ttk.Button(barra, text=texto, command=comando)
+            botao = ttk.Button(barra, text=texto, command=comando, style="Secundario.TButton")
             botao.pack(side="left", padx=3)
             self._botoes[texto] = botao
 

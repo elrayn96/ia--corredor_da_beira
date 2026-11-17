@@ -102,6 +102,7 @@ class MapaRodoviario(ttk.Frame):
         super().__init__(parent, style="Cartao.TFrame")
         self._rede = {"localidades": [], "estradas": []}
         self._segmentos = []
+        self._aresta_seleccionada = None
         self._supermercados = {}
         self._origem = "Beira"
         self._posicoes = {}
@@ -118,14 +119,15 @@ class MapaRodoviario(ttk.Frame):
             cabecalho, text="Localidades, ligações, distâncias (km) e estado do piso",
             style="Cartao.TLabel"
         ).pack(anchor="w")
-        corpo = tk.Frame(self, bg="#F3F6F8")
+        corpo = ttk.Panedwindow(self, orient="horizontal")
         corpo.pack(fill="both", expand=True, padx=8, pady=(0, 8))
         area_mapa = tk.Frame(corpo, bg="#173c37")
-        area_mapa.pack(side="left", fill="both", expand=True, padx=(0, 10))
-        lateral = ttk.Frame(corpo, padding=8, width=310, style="Cartao.TFrame")
-        lateral.pack(side="right", fill="y")
-        lateral.pack_propagate(False)
+        lateral = ttk.Frame(corpo, padding=8, width=340, style="Cartao.TFrame")
+        corpo.add(area_mapa, weight=5)
+        corpo.add(lateral, weight=2)
+        self._divisao_mapa = corpo
         self._criar_legendas(lateral)
+        self.after_idle(self._ajustar_paineis)
         self._figura = Figure(figsize=(9, 7), dpi=100, facecolor="#173c37")
         self._figura.subplots_adjust(left=0.02, right=0.98, top=0.98, bottom=0.02)
         self._eixo = self._figura.add_subplot(111)
@@ -141,8 +143,13 @@ class MapaRodoviario(ttk.Frame):
         self._canvas.mpl_connect("pick_event", self._seleccionar)
         self._desenhar()
 
+    def _ajustar_paineis(self):
+        largura = self._divisao_mapa.winfo_width()
+        if largura > 650:
+            self._divisao_mapa.sashpos(0, max(350, largura - 350))
+
     def _criar_legendas(self, parent):
-        legenda = ttk.LabelFrame(parent, text="ⓘ  Legenda", padding=10)
+        legenda = ttk.LabelFrame(parent, text="ⓘ  Legenda", padding=10, style="Cartao.TLabelframe")
         legenda.pack(fill="x", pady=(0, 10))
         for texto, cor in (
             ("●  Localidade", "#b17e00"),
@@ -152,7 +159,7 @@ class MapaRodoviario(ttk.Frame):
         ):
             ttk.Label(legenda, text=texto, foreground=cor).pack(anchor="w", pady=2)
         pisos = ttk.LabelFrame(
-            parent, text="Estado do piso e velocidade média", padding=10
+            parent, text="Estado do piso e velocidade média", padding=10, style="Cartao.TLabelframe"
         )
         pisos.pack(fill="x", pady=(0, 8))
         for piso, (cor, nome, velocidade) in PISOS.items():
@@ -164,7 +171,7 @@ class MapaRodoviario(ttk.Frame):
             ttk.Label(linha, text=f" {piso} · {nome} · {velocidade} km/h").pack(
                 side="left"
             )
-        ligacoes = ttk.LabelFrame(parent, text="Lista de ligações (arestas)", padding=8)
+        ligacoes = ttk.LabelFrame(parent, text="Lista de ligações (arestas)", padding=8, style="Cartao.TLabelframe")
         ligacoes.pack(fill="both", expand=True)
         self._tabela = ttk.Treeview(
             ligacoes,
@@ -173,10 +180,10 @@ class MapaRodoviario(ttk.Frame):
             height=15,
         )
         for chave, titulo, largura in (
-            ("origem", "Origem", 85),
-            ("destino", "Destino", 85),
+            ("origem", "Origem", 86),
+            ("destino", "Destino", 86),
             ("km", "km", 42),
-            ("piso", "Piso", 38),
+            ("piso", "Piso", 44),
         ):
             self._tabela.heading(chave, text=titulo)
             self._tabela.column(chave, width=largura, minwidth=35, anchor="center")
@@ -184,6 +191,7 @@ class MapaRodoviario(ttk.Frame):
         self._tabela.configure(yscrollcommand=scroll.set)
         scroll.pack(side="right", fill="y")
         self._tabela.pack(fill="both", expand=True)
+        self._tabela.bind("<<TreeviewSelect>>", self._seleccionar_aresta)
         # Informação metodológica preservada em tooltip ou documentação futura.
 
     def mostrar_rede(self, rede):
@@ -196,6 +204,7 @@ class MapaRodoviario(ttk.Frame):
         self._rede = rede
         self._posicoes = preparar_posicoes(rede["localidades"])
         self._segmentos = []
+        self._aresta_seleccionada = None
         self._supermercados = {}
         self._tabela.delete(*self._tabela.get_children())
         for estrada in rede["estradas"]:
@@ -334,20 +343,34 @@ class MapaRodoviario(ttk.Frame):
                     "alpha": 0.95,
                 },
             )
+        if self._aresta_seleccionada is not None:
+            origem, destino = self._aresta_seleccionada
+            if origem in self._posicoes and destino in self._posicoes:
+                a, b = self._posicoes[origem], self._posicoes[destino]
+                eixo.plot([a[0], b[0]], [a[1], b[1]],
+                          color="#FFFFFF", lw=7, alpha=0.9, zorder=2)
+                eixo.plot([a[0], b[0]], [a[1], b[1]],
+                          color="#086B47", lw=4, zorder=2.1)
         for numero, (origem, destino) in enumerate(self._segmentos, 1):
             a, b = self._posicoes[origem], self._posicoes[destino]
+            # Contorno branco: percurso distinguível mesmo sobre estradas verdes.
+            eixo.plot([a[0], b[0]], [a[1], b[1]], color="#FFFFFF",
+                      lw=8, alpha=0.90, zorder=4.5, solid_capstyle="round")
             eixo.annotate(
-                "",
-                xy=b,
-                xytext=a,
-                arrowprops={"arrowstyle": "->", "color": CORES["solucao"], "lw": 2.5},
+                "", xy=b, xytext=a,
+                arrowprops={"arrowstyle": "-|>", "color": "#008C48",
+                            "lw": 4.5, "mutation_scale": 14},
+                zorder=5,
             )
             eixo.text(
                 a[0] * 0.65 + b[0] * 0.35,
                 a[1] * 0.65 + b[1] * 0.35,
                 str(numero),
-                fontsize=8,
-                color="#256029",
+                bbox={"facecolor": "#FFFFFF", "alpha": 0.90, "edgecolor": "none",
+                      "boxstyle": "round,pad=.2"},
+                fontsize=9,
+                fontweight="bold",
+                color="#004D30",
             )
         for nome, (x, y) in self._posicoes.items():
             tipo = (
@@ -422,6 +445,17 @@ class MapaRodoviario(ttk.Frame):
             ncol=3,
         )
         self._canvas.draw_idle()
+
+    def _seleccionar_aresta(self, _evento=None):
+        seleccionados = self._tabela.selection()
+        if not seleccionados:
+            return
+        valores = self._tabela.item(seleccionados[0], "values")
+        if len(valores) < 2:
+            return
+        self._aresta_seleccionada = (valores[0], valores[1])
+        self._detalhes.configure(text=f"Ligação seleccionada: {valores[0]} → {valores[1]}")
+        self._desenhar()
 
     def _seleccionar(self, evento):
         nome = evento.artist.get_gid()

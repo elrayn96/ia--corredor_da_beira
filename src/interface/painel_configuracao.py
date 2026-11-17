@@ -1,5 +1,6 @@
 """Controlos de configuracao independentes da janela principal."""
 
+import time
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
@@ -69,56 +70,78 @@ def validar_configuracao(caminho_instancia, algoritmo, heuristica, peso, limite)
     }
 
 class PainelConfiguracao(ttk.Frame):
-    """Emite a instância seleccionada através de um callback opcional."""
+    """Selecção de instâncias e parâmetros, sem modificar o serviço."""
 
     def __init__(self, parent, ao_alterar_instancia=None):
-        super().__init__(parent, padding=8)
+        super().__init__(parent, padding=8, style="Cartao.TFrame")
         self._caminho_instancia = ""
         self._ao_alterar_instancia = ao_alterar_instancia
-        self._nome = tk.StringVar(value="Sem instância seleccionada.")
+        self._nome = tk.StringVar(value="Nenhuma instância seleccionada")
+        self._detalhes_instancia = tk.StringVar(value="Gera ou carrega uma instância para começar.")
         self._algoritmo = tk.StringVar(value="A*")
         self._heuristica = tk.StringVar(value="h1")
         self._peso = tk.StringVar(value="1,5")
         self._limite = tk.StringVar(value="30")
-        ttk.Label(self, text="Configuração").grid(row=0, column=0, sticky="w")
-        ttk.Label(self, textvariable=self._nome, wraplength=260).grid(
-            row=1, column=0, columnspan=2, sticky="w", pady=8
+        self._bloqueado = False
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=2)
+
+        ttk.Label(self, text="⚙  Configuração", style="Secao.TLabel").grid(
+            row=0, column=0, columnspan=2, sticky="ew", pady=(0, 12)
         )
-        ttk.Button(self, text="Carregar instância", style="Secundario.TButton", command=self._carregar).grid(
-            row=2, column=0, columnspan=2, sticky="ew", pady=3
+        self._botao_carregar = ttk.Button(
+            self, text="▣  Carregar instância", style="Secundario.TButton", command=self._carregar
         )
-        ttk.Button(
-            self,
-            text="Gerar nova instância",
-            style="Gerar.TButton",
-            command=self._gerar_instancia,
-        ).grid(row=3, column=0, columnspan=2, sticky="ew", pady=3)
+        self._botao_carregar.grid(row=1, column=0, columnspan=2, sticky="ew", pady=3)
+        self._botao_gerar = ttk.Button(
+            self, text="＋  Gerar nova instância", style="Gerar.TButton", command=self._gerar_instancia
+        )
+        self._botao_gerar.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(3, 9))
+
+        cartao = ttk.Frame(self, style="Instancia.TFrame", padding=10)
+        cartao.grid(row=3, column=0, columnspan=2, sticky="ew", pady=(0, 14))
+        ttk.Label(cartao, text="●  INSTÂNCIA SELECCIONADA", style="InstanciaTitulo.TLabel").pack(anchor="w")
+        ttk.Label(
+            cartao, textvariable=self._nome, style="InstanciaNome.TLabel", wraplength=235
+        ).pack(anchor="w", pady=(5, 3))
+        ttk.Label(
+            cartao, textvariable=self._detalhes_instancia,
+            style="InstanciaDetalhe.TLabel", wraplength=235
+        ).pack(anchor="w")
+
         self._campos = {}
         for linha, (rotulo, variavel, opcoes) in enumerate(
             (
                 ("Algoritmo", self._algoritmo, tuple(ALGORITMOS)),
                 ("Heurística", self._heuristica, HEURISTICAS),
                 ("Peso", self._peso, None),
-                ("Limite (IDS)", self._limite, None),
-            ),
-            4,
+                ("Limite (IDS/LDS)", self._limite, None),
+            ), 4,
         ):
-            ttk.Label(self, text=rotulo).grid(row=linha, column=0, sticky="w", pady=5)
-            campo = (
-                ttk.Combobox(
-                    self,
-                    textvariable=variavel,
-                    values=opcoes,
-                    state="readonly",
-                    width=17,
-                )
-                if opcoes
-                else ttk.Entry(self, textvariable=variavel, width=19)
+            ttk.Label(self, text=rotulo, style="Cartao.TLabel").grid(
+                row=linha, column=0, sticky="w", pady=7
             )
-            campo.grid(row=linha, column=1, sticky="ew", padx=(8, 0))
+            campo = (
+                ttk.Combobox(self, textvariable=variavel, values=opcoes,
+                             state="readonly", style="Moderno.TCombobox", width=14)
+                if opcoes else ttk.Entry(self, textvariable=variavel, width=15, style="Moderno.TEntry")
+            )
+            campo.grid(row=linha, column=1, sticky="ew", padx=(8, 0), pady=3)
             self._campos[rotulo] = campo
-        self.columnconfigure(1, weight=1)
+        self._ajuda_heuristica = ttk.Label(
+            self, text="h0: zero  ·  h1: distância  ·  h2: estimativa MST",
+            style="Ajuda.TLabel", wraplength=255, justify="left"
+        )
+        self._ajuda_heuristica.grid(row=8, column=0, columnspan=2, sticky="ew", pady=(6, 0))
         self._algoritmo.trace_add("write", self._actualizar_campos)
+        self._heuristica.trace_add("write", self._actualizar_campos)
+        self._actualizar_campos()
+
+    def definir_bloqueado(self, bloqueado):
+        """Protege a instância e as opções enquanto a busca está activa."""
+        self._bloqueado = bool(bloqueado)
+        for botao in (self._botao_carregar, self._botao_gerar):
+            botao.state(["disabled"] if bloqueado else ["!disabled"])
         self._actualizar_campos()
 
     def obter_configuracao(self):
@@ -137,30 +160,39 @@ class PainelConfiguracao(ttk.Frame):
         if self._ao_alterar_instancia:
             self._ao_alterar_instancia(instancia)
         self._caminho_instancia = str(Path(caminho).resolve())
-        self._nome.set(
-            f"{instancia.get('nome', 'Instância')} · "
-            f"{len(instancia['supermercados'])} supermercados"
+        self._nome.set(str(instancia.get("nome", "Instância")))
+        self._detalhes_instancia.set(
+            f"✓  {len(instancia['supermercados'])} supermercados  ·  "
+            f"Semente: {instancia.get('semente', 'não indicada')}\n"
+            f"Ficheiro: {Path(caminho).name}\n"
+            "Viabilidade: ainda não verificada"
         )
 
     def _actualizar_campos(self, *_):
         algoritmo = self._algoritmo.get()
-        for nome, activo in {
+        activos = {
+            "Algoritmo": True,
             "Heurística": algoritmo in ("Gulosa", "A*", "A* ponderada"),
             "Peso": algoritmo == "A* ponderada",
-            "Limite (IDS)": algoritmo in ("IDS", "LDS"),
-        }.items():
-            self._campos[nome].configure(
-                state=("readonly" if nome == "Heurística" else "normal")
-                if activo
-                else "disabled"
-            )
+            "Limite (IDS/LDS)": algoritmo in ("IDS", "LDS"),
+        }
+        for nome, campo in self._campos.items():
+            activo = activos[nome] and not self._bloqueado
+            campo.configure(state=("readonly" if isinstance(campo, ttk.Combobox)
+                                   else "normal") if activo else "disabled")
+        descricoes = {
+            "h0": "h0 — heurística nula: não estima o custo restante.",
+            "h1": "h1 — distância: aproximação ao destino por distâncias.",
+            "h2": "h2 — MST: estimativa baseada em árvore geradora mínima.",
+        }
+        self._ajuda_heuristica.configure(
+            text=descricoes.get(self._heuristica.get(), "Seleccione uma heurística.")
+        )
 
     def _gerar_instancia(self):
         """Gera e carrega automaticamente uma nova instância."""
         try:
-            from datetime import datetime
-
-            semente = int(datetime.now().timestamp() * 1000)
+            semente = time.time_ns() // 1000000
             nome = f"instancia_{semente}.json"
 
             _, caminho = gerar_problema(
@@ -170,11 +202,6 @@ class PainelConfiguracao(ttk.Frame):
 
             self.carregar_instancia(caminho)
 
-            messagebox.showinfo(
-                "Instância gerada",
-                f"Instância criada com sucesso:\n{caminho}",
-                parent=self,
-            )
 
         except (OSError, ValueError, KeyError, TypeError) as erro:
             messagebox.showerror(

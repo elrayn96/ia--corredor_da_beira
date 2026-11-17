@@ -138,7 +138,7 @@ def preparar_metricas(estatisticas):
 
 class PainelResultados(ttk.Frame):
     def __init__(self, parent):
-        super().__init__(parent)
+        super().__init__(parent, style="Cartao.TFrame")
 
         self.criar_componentes()
         self.limpar()
@@ -146,7 +146,7 @@ class PainelResultados(ttk.Frame):
     def criar_componentes(self):
         self.resumo = ttk.LabelFrame(
             self,
-            text="Resumo da solução"
+            text="✓  Resumo da solução", style="Cartao.TLabelframe"
         )
         self.resumo.pack(
             fill="x",
@@ -154,12 +154,12 @@ class PainelResultados(ttk.Frame):
             pady=5
         )
 
-        self.label_custo = ttk.Label(self.resumo)
-        self.label_estados = ttk.Label(self.resumo)
-        self.label_accoes = ttk.Label(self.resumo)
-        self.label_entregas = ttk.Label(self.resumo)
-        self.label_esperas = ttk.Label(self.resumo)
-        self.label_abastecimentos = ttk.Label(self.resumo)
+        self.label_custo = ttk.Label(self.resumo, style="Cartao.TLabel")
+        self.label_estados = ttk.Label(self.resumo, style="Cartao.TLabel")
+        self.label_accoes = ttk.Label(self.resumo, style="Cartao.TLabel")
+        self.label_entregas = ttk.Label(self.resumo, style="Cartao.TLabel")
+        self.label_esperas = ttk.Label(self.resumo, style="Cartao.TLabel")
+        self.label_abastecimentos = ttk.Label(self.resumo, style="Cartao.TLabel")
 
         etiquetas_resumo = (
             self.label_custo,
@@ -179,7 +179,7 @@ class PainelResultados(ttk.Frame):
 
         self.metricas_frame = ttk.LabelFrame(
             self,
-            text="Estatísticas da busca"
+            text="◉  Estatísticas da busca", style="Cartao.TLabelframe"
         )
         self.metricas_frame.pack(
             fill="x",
@@ -190,7 +190,7 @@ class PainelResultados(ttk.Frame):
         self.labels_metricas = {}
 
         for chave, titulo in METRICAS:
-            etiqueta = ttk.Label(self.metricas_frame)
+            etiqueta = ttk.Label(self.metricas_frame, style="Cartao.TLabel")
             etiqueta.pack(
                 anchor="w",
                 padx=10,
@@ -200,7 +200,7 @@ class PainelResultados(ttk.Frame):
 
         self.percurso_frame = ttk.LabelFrame(
             self,
-            text="Percurso"
+            text="➜  Percurso", style="Cartao.TLabelframe"
         )
         self.percurso_frame.pack(
             fill="x",
@@ -211,7 +211,7 @@ class PainelResultados(ttk.Frame):
         self.label_percurso = ttk.Label(
             self.percurso_frame,
             wraplength=850,
-            justify="left"
+            justify="left", style="Cartao.TLabel"
         )
         self.label_percurso.pack(
             anchor="w",
@@ -221,7 +221,7 @@ class PainelResultados(ttk.Frame):
 
         self.tabela_frame = ttk.LabelFrame(
             self,
-            text="Percurso e acções"
+            text="▤  Percurso e acções", style="Cartao.TLabelframe"
         )
         self.tabela_frame.pack(
             fill="both",
@@ -293,7 +293,7 @@ class PainelResultados(ttk.Frame):
 
         self.estado_frame = ttk.LabelFrame(
             self,
-            text="Estado final"
+            text="✓  Estado final", style="Cartao.TLabelframe"
         )
         self.estado_frame.pack(
             fill="x",
@@ -304,7 +304,7 @@ class PainelResultados(ttk.Frame):
         self.label_estado_final = ttk.Label(
             self.estado_frame,
             wraplength=850,
-            justify="left"
+            justify="left", style="Cartao.TLabel"
         )
         self.label_estado_final.pack(
             anchor="w",
