@@ -1,6 +1,7 @@
 """Regressões ligadas directamente aos requisitos obrigatórios do enunciado."""
 
 from dataclasses import FrozenInstanceError
+from itertools import pairwise
 
 import pytest
 
@@ -12,9 +13,15 @@ from src.contrato_busca import Problema as ProblemaAbstrato
 from src.estado import Estado
 from src.gerador import (
     carregar_json,
+    carregar_rede,
     converter_para_busca,
     gerar_instancias_experimentais,
 )
+from src.interface.mapa_rodoviario import (
+    rede_visual_da_instancia,
+    segmentos_percurso,
+)
+from src.interface.painel_resultados import localidades_percurso
 from src.problema import Problema
 
 
@@ -107,14 +114,41 @@ def test_gerador_cria_dez_instancias_viaveis_por_nivel(tmp_path):
     assert {nivel: niveis.count(nivel) for nivel in set(niveis)} == {
         "pequena": 10, "media": 10, "grande": 10,
     }
-    for nivel in ("pequena", "media", "grande"):
-        caminho = next(p for p in caminhos if carregar_json(p)["nivel"] == nivel)
-        dados = carregar_json(caminho)
+    rede_base = carregar_rede()
+    ligacoes_base = {
+        frozenset((estrada["origem"], estrada["destino"]))
+        for estrada in rede_base["estradas"]
+    }
+    for caminho_instancia in caminhos:
+        dados = carregar_json(caminho_instancia)
         problema = Problema(
             estradas=dados["estradas"], supermercados=dados["supermercados"]
         )
         solucao = a_star(problema, lambda estado, p: p.heuristica(estado, "h2"))
         assert solucao is not None
+        assert problema.teste_objectivo(solucao.get_estados()[-1])
+
+        segmentos = segmentos_percurso(
+            solucao.get_estados(), solucao.get_accoes()
+        )
+        percurso = localidades_percurso(
+            solucao.get_estados(), solucao.get_accoes()
+        )
+        assert percurso[0] == percurso[-1] == "Beira"
+        assert all(a != b for a, b in pairwise(percurso))
+        assert all(
+            destino in dados["estradas"][origem]
+            for origem, destino in segmentos
+        )
+
+        rede_visual = rede_visual_da_instancia(dados, rede_base)
+        ligacoes_visuais = {
+            frozenset((estrada["origem"], estrada["destino"]))
+            for estrada in rede_visual["estradas"]
+        }
+        assert ligacoes_base <= ligacoes_visuais
+        assert len(ligacoes_visuais) == len(rede_visual["estradas"])
+        assert all(frozenset(segmento) in ligacoes_visuais for segmento in segmentos)
 
 
 def test_factor_ramificacao_e_exemplo_distancia_tempo():
