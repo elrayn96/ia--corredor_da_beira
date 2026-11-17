@@ -134,3 +134,17 @@ def test_sem_solucao():
     assert dados["custo"] == "—"
     assert dados["estado_final"] == "Sem solução"
     assert dados["linhas"] == []
+
+
+def test_interrupcao_mostra_motivo_e_ultimo_estado():
+    ultimo = Estado(
+        "Inchope", entregas_concluidas={"Dondo"}, tempo=420, combustivel=175
+    )
+    dados = preparar_resultados(
+        None, {}, "interrompida", "Tempo máximo de execução atingido.", ultimo
+    )
+
+    assert dados["estado_execucao"] == "interrompida"
+    assert dados["mensagem"] == "Tempo máximo de execução atingido."
+    assert "Localidade: Inchope" in dados["estado_final"]
+    assert "Entregas concluídas: 1" in dados["estado_final"]

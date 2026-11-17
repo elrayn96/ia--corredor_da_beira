@@ -123,15 +123,20 @@ As heurísticas não substituem a verificação das restrições. O relatório a
 
 A interface gráfica desktop permite:
 
-1. Seleccionar ou gerar uma instância de distribuição.
+1. Seleccionar ou gerar uma instância de distribuição, incluindo a escolha
+   directa dos níveis Pequena, Média ou Grande e dos casos 01–10.
 2. Escolher o algoritmo e os parâmetros aplicáveis. A heurística só é apresentada aos algoritmos informados. Definir o tempo máximo em segundos ou optar por uma busca sem limite temporal.
-3. Executar a procura, acompanhar contagens de geração/expansão, visualizar a localidade em exploração no mapa e cancelar cooperativamente a operação.
+3. Executar a procura num processo separado, mantendo a janela responsiva,
+   acompanhar contagens de geração/expansão, visualizar a localidade em
+   exploração no mapa e terminar a operação manualmente.
 4. Consultar o mapa rodoviário e destacar a rota encontrada.
 5. Inspeccionar, passo a passo, as acções da solução e os estados sucessivos.
 6. Visualizar uma **árvore de procura interactiva**, com sequência de expansões, fronteira e valores `g`, `h` e `f`, quando disponíveis.
 7. Avançar e recuar por expansão completa (o nó pai e os filhos gerados no mesmo passo), reproduzir ou pausar, utilizar zoom com a roda do rato e mover a árvore por arrasto.
 8. Consultar custo total, nós gerados e expandidos, fronteira máxima, duração e memória de pico.
 9. Comparar algoritmos e consultar gráficos e resultados experimentais.
+10. Consultar o motivo do término e o último estado explorado quando o limite
+    de tempo é atingido ou o utilizador termina o algoritmo.
 
 O mapa de estradas e a árvore de procura são visualizações diferentes: o primeiro mostra a rede física e o percurso; a segunda mostra como o algoritmo explorou o espaço de estados.
 

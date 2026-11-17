@@ -30,7 +30,28 @@ METRICAS = (
 )
 
 
-def preparar_resultados(solucao, estatisticas):
+def _descrever_estado(estado):
+    if estado is None:
+        return None
+    if isinstance(estado, dict):
+        localidade = estado.get("localidade", "—")
+        tempo = estado.get("tempo", "—")
+        combustivel = estado.get("combustivel", "—")
+        entregas = estado.get("entregas_concluidas", ())
+    else:
+        localidade = estado.get_localidade()
+        tempo = estado.get_tempo()
+        combustivel = estado.get_combustivel()
+        entregas = estado.get_entregas_concluidas()
+    return (
+        f"Localidade: {localidade} | Tempo: {tempo} | "
+        f"Combustível: {combustivel} | Entregas concluídas: {len(entregas)}"
+    )
+
+
+def preparar_resultados(
+    solucao, estatisticas, estado_execucao=None, mensagem=None, ultimo_estado=None
+):
     if solucao is None:
         return {
             "custo": "—",
@@ -39,8 +60,10 @@ def preparar_resultados(solucao, estatisticas):
             "entregas": "—",
             "esperas": "—",
             "abastecimentos": "—",
-            "percurso": "—",
-            "estado_final": "Sem solução",
+            "percurso": "Não existe percurso completo.",
+            "estado_final": _descrever_estado(ultimo_estado) or "Sem solução",
+            "estado_execucao": estado_execucao or "sem_solucao",
+            "mensagem": mensagem or "A busca terminou sem encontrar solução.",
             "linhas": [],
             "metricas": preparar_metricas(estatisticas),
         }
@@ -118,6 +141,8 @@ def preparar_resultados(solucao, estatisticas):
         "estado_final": descricao_final,
         "linhas": linhas,
         "metricas": preparar_metricas(estatisticas),
+        "estado_execucao": estado_execucao or "concluida",
+        "mensagem": mensagem or "Solução encontrada.",
     }
 
 
@@ -150,6 +175,16 @@ class PainelResultados(ttk.Frame):
             self,
             text="Resumo da solução", style="Cartao.TLabelframe"
         )
+
+        self.execucao_frame = ttk.LabelFrame(
+            self, text="Estado da execução", style="Cartao.TLabelframe"
+        )
+        self.execucao_frame.pack(fill="x", padx=10, pady=5)
+        self.label_execucao = ttk.Label(
+            self.execucao_frame, style="Cartao.TLabel", wraplength=850,
+            justify="left",
+        )
+        self.label_execucao.pack(anchor="w", padx=10, pady=5)
         self.resumo.pack(
             fill="x",
             padx=10,
@@ -314,16 +349,30 @@ class PainelResultados(ttk.Frame):
             pady=5
         )
 
-    def mostrar_resultados(self, solucao, estatisticas):
+    def mostrar_resultados(
+        self, solucao, estatisticas, estado_execucao=None,
+        mensagem=None, ultimo_estado=None,
+    ):
         dados = preparar_resultados(
-            solucao,
-            estatisticas
+            solucao, estatisticas, estado_execucao, mensagem, ultimo_estado
         )
 
         self.limpar()
 
         self.label_custo.config(
             text=f"Custo total: {dados['custo']}"
+        )
+        nomes_estado = {
+            "concluida": "Concluída",
+            "sem_solucao": "Terminada sem solução",
+            "interrompida": "Interrompida",
+            "erro": "Erro",
+        }
+        self.label_execucao.config(
+            text=(
+                f"{nomes_estado.get(dados['estado_execucao'], dados['estado_execucao'])}"
+                f" — {dados['mensagem']}"
+            )
         )
         self.label_estados.config(
             text=f"Estados percorridos: {dados['numero_estados']}"
@@ -363,6 +412,7 @@ class PainelResultados(ttk.Frame):
             )
 
     def limpar(self):
+        self.label_execucao.config(text="Nenhuma busca executada.")
         self.label_custo.config(
             text="Custo total: —"
         )

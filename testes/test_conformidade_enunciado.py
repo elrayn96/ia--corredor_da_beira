@@ -18,6 +18,14 @@ from src.gerador import (
 from src.problema import Problema
 
 
+def test_selector_resolve_os_tres_niveis_de_instancia():
+    from src.interface.painel_configuracao import caminho_instancia_experimental
+
+    assert caminho_instancia_experimental("Pequena", "01").name == "pequena_01.json"
+    assert caminho_instancia_experimental("Média", 5).name == "media_05.json"
+    assert caminho_instancia_experimental("Grande", "10").name == "grande_10.json"
+
+
 class Grafo:
     def get_estado_inicial(self):
         return "S"

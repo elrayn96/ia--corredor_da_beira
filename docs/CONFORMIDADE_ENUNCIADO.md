@@ -43,6 +43,16 @@ Cada execução é isolada e limitada a 60 segundos e 2 GB em sistemas que
 disponibilizam `resource.RLIMIT_AS`. No Windows, a memória é medida com
 `tracemalloc` e qualquer valor acima do limite é marcado como falha.
 
+## Interface e controlo da execução
+
+- A interface permite seleccionar directamente o nível Pequena, Média ou
+  Grande e um dos dez casos desse nível.
+- A busca corre num processo separado do Tkinter, mantendo menus, separadores e
+  o botão **Terminar algoritmo** responsivos.
+- Cancelamento manual e limite de tempo são registados como motivos distintos.
+- Quando não existe solução completa, o painel Resultados apresenta o último
+  estado explorado, além das métricas recolhidas até à interrupção.
+
 ## Exemplo: menor distância não é menor tempo
 
 Na rede base:

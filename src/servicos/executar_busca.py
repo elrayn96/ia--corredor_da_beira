@@ -140,6 +140,7 @@ def executar_busca(configuracao, observador=None, cancelar=None, limite_segundos
     inicio = time.perf_counter()
     cancelar = cancelar if cancelar is not None else threading.Event()
     total_eventos = 0
+    ultimo_estado = None
     contagem_eventos = {"gerar": 0, "expandir": 0}
     fronteira_observada = {"actual": 0, "maxima": 0}
     iniciou_tracemalloc = not tracemalloc.is_tracing()
@@ -148,13 +149,15 @@ def executar_busca(configuracao, observador=None, cancelar=None, limite_segundos
     pico_inicial = tracemalloc.get_traced_memory()[1]
 
     def registar_evento(evento):
-        nonlocal total_eventos
+        nonlocal total_eventos, ultimo_estado
         if cancelar.is_set():
             raise BuscaCancelada("Busca cancelada pelo utilizador.")
         if limite_segundos is not None and time.perf_counter() - inicio > limite_segundos:
             raise BuscaCancelada("Tempo máximo de execução atingido.")
         total_eventos += 1
         tipo = evento.get("tipo")
+        if evento.get("estado") is not None:
+            ultimo_estado = evento["estado"]
         if tipo in contagem_eventos:
             contagem_eventos[tipo] += 1
         if tipo == "inicio":
@@ -192,6 +195,11 @@ def executar_busca(configuracao, observador=None, cancelar=None, limite_segundos
         solucao = None
         estado_execucao = "interrompida"
         mensagem = str(erro)
+        motivo_termino = (
+            "limite_tempo"
+            if mensagem == "Tempo máximo de execução atingido."
+            else "cancelamento_utilizador"
+        )
     except (OSError, ValueError, TypeError, KeyError) as erro:
         solucao = None
         estado_execucao = "erro"
@@ -229,4 +237,6 @@ def executar_busca(configuracao, observador=None, cancelar=None, limite_segundos
         "total_eventos": total_eventos,
         "estado_execucao": estado_execucao,
         "mensagem": mensagem,
+        "motivo_termino": locals().get("motivo_termino"),
+        "ultimo_estado": ultimo_estado,
     }

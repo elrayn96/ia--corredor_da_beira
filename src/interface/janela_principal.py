@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import logging
+import multiprocessing
 import queue
-import threading
 import time
 import tkinter as tk
 from tkinter import messagebox, ttk
@@ -21,6 +21,60 @@ from src.servicos.executar_busca import executar_busca
 
 logger = logging.getLogger(__name__)
 LIMITE_TEMPO_GUI = 60  # Limite do enunciado, alterável no painel.
+
+
+def _resumir_estado(estado):
+    """Converte o estado corrente num valor pequeno e serializável."""
+    if estado is None:
+        return None
+    if isinstance(estado, dict):
+        return estado
+    return {
+        "localidade": estado.get_localidade(),
+        "tempo": estado.get_tempo(),
+        "combustivel": estado.get_combustivel(),
+        "entregas_concluidas": tuple(estado.get_entregas_concluidas()),
+    }
+
+
+def _executar_em_processo(configuracao, fila, cancelar):
+    """Executa CPU intensiva fora do processo Tk, inclusive no Windows."""
+    contadores = {"gerar": 0, "expandir": 0, "descartar": 0}
+    inicio = time.perf_counter()
+    ultimo_envio = inicio
+
+    def acompanhar(evento):
+        nonlocal ultimo_envio
+        tipo = evento.get("tipo")
+        if tipo in contadores:
+            contadores[tipo] += 1
+        agora = time.perf_counter()
+        if agora - ultimo_envio >= 0.25 or tipo == "objectivo":
+            ultimo_envio = agora
+            try:
+                fila.put_nowait((
+                    "progresso", None,
+                    (
+                        contadores.copy(), tipo, agora - inicio,
+                        _resumir_estado(evento.get("estado")),
+                    ),
+                ))
+            except queue.Full:
+                pass
+
+    try:
+        resultado = executar_busca(
+            configuracao, observador=acompanhar, cancelar=cancelar,
+            limite_segundos=configuracao.get(
+                "limite_segundos", LIMITE_TEMPO_GUI
+            ),
+        )
+        fila.put(("resultado", configuracao, resultado))
+    except Exception as erro:  # noqa: BLE001 - fronteira do processo filho
+        fila.put((
+            "falha", configuracao,
+            f"{type(erro).__name__}: {erro}",
+        ))
 
 
 class IndicadorActividade(tk.Canvas):
@@ -59,10 +113,17 @@ class JanelaPrincipal(tk.Tk):
         self.geometry("1450x900")
         self.minsize(1100, 700)
         self.configure(bg="#F3F6F8")
-        self._fila = queue.Queue(maxsize=48)
+        self._contexto_mp = multiprocessing.get_context("spawn")
+        self._fila = None
         self._resultados = []
         self._em_execucao = False
-        self._cancelar = threading.Event()
+        self._cancelar = None
+        self._processo = None
+        self._configuracao_activa = None
+        self._contadores_actuais = {"gerar": 0, "expandir": 0, "descartar": 0}
+        self._ultimo_estado_progresso = None
+        self._max_fronteira_actual = 0
+        self._polls_processo_morto = 0
         self._ultimo_progresso = 0.0
         self._ultima_actualizacao_mapa = 0.0
         self._inicio_busca = None
@@ -335,7 +396,13 @@ class JanelaPrincipal(tk.Tk):
             messagebox.showerror("Configuração inválida", str(erro), parent=self)
             return
         self._em_execucao = True
-        self._cancelar.clear()
+        self._fila = self._contexto_mp.Queue(maxsize=48)
+        self._cancelar = self._contexto_mp.Event()
+        self._configuracao_activa = configuracao
+        self._contadores_actuais = {"gerar": 0, "expandir": 0, "descartar": 0}
+        self._ultimo_estado_progresso = None
+        self._max_fronteira_actual = 0
+        self._polls_processo_morto = 0
         self._inicio_busca = time.perf_counter()
         self._arvore.definir_algoritmo(configuracao["algoritmo"])
         self._mapa.limpar_exploracao()
@@ -345,16 +412,19 @@ class JanelaPrincipal(tk.Tk):
         self._configuracao.definir_bloqueado(True)
         self._botao_limpar.state(["disabled"])
         self._botao_executar.configure(
-            text="Cancelar busca", image=self._icone_cancelar,
+            text="Terminar algoritmo", image=self._icone_cancelar,
             style="Cancelar.TButton"
         )
         self._spinner.iniciar()
         self._estado.set("Busca em execução")
         self._progresso_texto.set("A preparar problema e a iniciar o algoritmo...")
         # Separadores continuam acessíveis para consulta; as configurações ficam bloqueadas.
-        threading.Thread(
-            target=self._executar_em_fundo, args=(configuracao,), daemon=True
-        ).start()
+        self._processo = self._contexto_mp.Process(
+            target=_executar_em_processo,
+            args=(configuracao, self._fila, self._cancelar),
+            daemon=True,
+        )
+        self._processo.start()
         self._agendar_consulta()
 
     def _cancelar_busca(self):
@@ -362,46 +432,43 @@ class JanelaPrincipal(tk.Tk):
             return
         self._cancelar.set()
         self._botao_executar.state(["disabled"])
-        self._estado.set("A interromper a busca...")
-        self._progresso_texto.set("A aguardar a próxima verificação do algoritmo.")
+        self._estado.set("Cancelamento solicitado pelo utilizador")
+        self._progresso_texto.set(
+            "A terminar o algoritmo e a recolher o último estado explorado."
+        )
+        self.after(2000, self._forcar_cancelamento, self._processo)
 
-    def _executar_em_fundo(self, configuracao):
-        contadores = {"gerar": 0, "expandir": 0, "descartar": 0}
-        ultimo_envio = time.perf_counter()
-
-        def acompanhar(evento):
-            nonlocal ultimo_envio
-            tipo = evento.get("tipo")
-            if tipo in contadores:
-                contadores[tipo] += 1
-            agora = time.perf_counter()
-            if agora - ultimo_envio >= 0.30 or tipo == "objectivo":
-                ultimo_envio = agora
-                try:
-                    localidade = None
-                    estado = evento.get("estado")
-                    if isinstance(estado, dict):
-                        localidade = estado.get("localidade")
-                    elif hasattr(estado, "get_localidade"):
-                        localidade = estado.get_localidade()
-                    self._fila.put_nowait(("progresso", None, (
-                        contadores.copy(), tipo, agora - self._inicio_busca,
-                        localidade,
-                    )))
-                except queue.Full:
-                    pass
-
-        try:
-            resultado = executar_busca(
-                configuracao, observador=acompanhar,
-                cancelar=self._cancelar,
-                limite_segundos=configuracao.get("limite_segundos", LIMITE_TEMPO_GUI),
-            )
-            self._fila.put(("resultado", configuracao, resultado))
-        except Exception:
-            logger.exception("Falha inesperada durante a busca")
-            self._fila.put(("falha", configuracao,
-                            "Erro inesperado. Consulte o terminal."))
+    def _forcar_cancelamento(self, processo):
+        """Garante que o botão Terminar não fica dependente do algoritmo."""
+        if not self._em_execucao or processo is not self._processo:
+            return
+        if not processo.is_alive():
+            return
+        processo.terminate()
+        processo.join(timeout=0.5)
+        decorrido = time.perf_counter() - self._inicio_busca
+        contadores = self._contadores_actuais
+        resultado = {
+            "solucao": None,
+            "estatisticas": {
+                "nos_gerados": contadores["gerar"],
+                "nos_expandidos": contadores["expandir"],
+                "nos_reexpandidos": 0,
+                "max_fronteira": self._max_fronteira_actual,
+                "comprimento_caminho": 0,
+                "tempo_segundos": decorrido,
+                "memoria_pico_bytes": 0,
+            },
+            "eventos": [],
+            "total_eventos": sum(contadores.values()),
+            "estado_execucao": "interrompida",
+            "mensagem": "Busca cancelada pelo utilizador.",
+            "motivo_termino": "cancelamento_utilizador",
+            "ultimo_estado": self._ultimo_estado_progresso,
+        }
+        configuracao = self._configuracao_activa
+        self._finalizar_execucao()
+        self._apresentar_resultado(configuracao, resultado)
 
     def _agendar_consulta(self):
         if self._poll_id is None:
@@ -409,13 +476,22 @@ class JanelaPrincipal(tk.Tk):
 
     def _consultar_fila(self):
         self._poll_id = None
+        if self._fila is None:
+            return
         for _ in range(40):
             try:
                 tipo, configuracao, conteudo = self._fila.get_nowait()
             except queue.Empty:
                 break
             if tipo == "progresso":
-                contadores, evento, decorrido, localidade = conteudo
+                contadores, evento, decorrido, estado = conteudo
+                self._contadores_actuais = contadores
+                self._ultimo_estado_progresso = estado
+                self._max_fronteira_actual = max(
+                    self._max_fronteira_actual,
+                    max(0, contadores["gerar"] - contadores["expandir"]),
+                )
+                localidade = None if estado is None else estado.get("localidade")
                 if (localidade and evento in {"expandir", "objectivo"}
                         and time.perf_counter() - self._ultima_actualizacao_mapa > 0.8):
                     self._mapa.mostrar_exploracao(localidade)
@@ -423,7 +499,8 @@ class JanelaPrincipal(tk.Tk):
                 self._progresso_texto.set(
                     f"{contadores['expandir']:,} expandidos · "
                     f"{contadores['gerar']:,} gerados\n"
-                    f"Último evento: {evento} · {decorrido:.1f} s"
+                    f"Último estado: {localidade or '—'} · "
+                    f"{evento} · {decorrido:.1f} s"
                 )
                 continue
             self._finalizar_execucao()
@@ -439,6 +516,22 @@ class JanelaPrincipal(tk.Tk):
                     messagebox.showerror("Erro de apresentação",
                                          "Consulte o terminal.", parent=self)
             break
+        if (
+            self._em_execucao and self._processo is not None
+            and not self._processo.is_alive()
+        ):
+            self._polls_processo_morto += 1
+            if self._polls_processo_morto >= 10:
+                self._finalizar_execucao()
+                self._estado.set("O processo de busca terminou inesperadamente")
+                messagebox.showerror(
+                    "Erro na execução",
+                    "O processo terminou sem devolver um resultado.",
+                    parent=self,
+                )
+                return
+        else:
+            self._polls_processo_morto = 0
         if self._em_execucao:
             self._agendar_consulta()
 
@@ -477,11 +570,25 @@ class JanelaPrincipal(tk.Tk):
             text="Executar busca", image=self._icone_executar,
             style="Executar.TButton"
         )
+        processo = self._processo
+        self._processo = None
+        if processo is not None:
+            self.after(100, self._recolher_processo, processo)
+
+    def _recolher_processo(self, processo):
+        if processo.is_alive():
+            self.after(100, self._recolher_processo, processo)
+        else:
+            processo.join(timeout=0)
 
     def _apresentar_resultado(self, configuracao, resultado):
         solucao = resultado["solucao"]
         estatisticas = resultado["estatisticas"]
-        self._painel_resultados.mostrar_resultados(solucao, estatisticas)
+        self._painel_resultados.mostrar_resultados(
+            solucao, estatisticas,
+            resultado.get("estado_execucao"), resultado.get("mensagem"),
+            resultado.get("ultimo_estado"),
+        )
         eventos = resultado.get("eventos") or []
         self._arvore.carregar_eventos(eventos)
         self._mapa.limpar_percurso()
@@ -504,6 +611,8 @@ class JanelaPrincipal(tk.Tk):
         )
         if solucao is not None:
             self._separadores.select(self._mapa)
+        elif resultado["estado_execucao"] == "interrompida":
+            self._separadores.select(self._painel_resultados)
         elif eventos:
             self._separadores.select(self._arvore)
             # Pré-visualização do ramo de exploração, em vez da raiz isolada.
@@ -526,7 +635,11 @@ class JanelaPrincipal(tk.Tk):
         self._estado.set("Resultados limpos")
 
     def _fechar(self):
-        self._cancelar.set()
+        if self._cancelar is not None:
+            self._cancelar.set()
+        if self._processo is not None and self._processo.is_alive():
+            self._processo.terminate()
+            self._processo.join(timeout=0.5)
         self._spinner.parar()
         self._parar_sobreposicao()
         if self._poll_id is not None:
