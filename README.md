@@ -99,6 +99,7 @@ O domínio é implementado em módulos próprios (`src/estado.py`, `src/accao.py
 
 ### Procura não informada
 
+- **LDS** — procura em profundidade limitada (*Limited Depth Search*).
 - **BFS** — procura em largura (*Breadth-First Search*).
 - **DFS** — procura em profundidade (*Depth-First Search*), com controlo de ciclos e limite configurável quando aplicável.
 - **IDS** — aprofundamento iterativo (*Iterative Deepening Search*), incluindo contabilização de reexpansões.
@@ -123,12 +124,12 @@ As heurísticas não substituem a verificação das restrições. O relatório a
 A interface gráfica desktop permite:
 
 1. Seleccionar ou gerar uma instância de distribuição.
-2. Escolher o algoritmo, a heurística e os parâmetros relevantes (peso e limites).
-3. Executar a procura e acompanhar o estado da operação.
+2. Escolher o algoritmo e os parâmetros aplicáveis. A heurística só é apresentada aos algoritmos informados. Definir o tempo máximo em segundos ou optar por uma busca sem limite temporal.
+3. Executar a procura, acompanhar contagens de geração/expansão, visualizar a localidade em exploração no mapa e cancelar cooperativamente a operação.
 4. Consultar o mapa rodoviário e destacar a rota encontrada.
 5. Inspeccionar, passo a passo, as acções da solução e os estados sucessivos.
 6. Visualizar uma **árvore de procura interactiva**, com sequência de expansões, fronteira e valores `g`, `h` e `f`, quando disponíveis.
-7. Avançar, recuar, reproduzir e pausar a visualização da procura.
+7. Avançar e recuar por expansão completa (o nó pai e os filhos gerados no mesmo passo), reproduzir ou pausar, utilizar zoom com a roda do rato e mover a árvore por arrasto.
 8. Consultar custo total, nós gerados e expandidos, fronteira máxima, duração e memória de pico.
 9. Comparar algoritmos e consultar gráficos e resultados experimentais.
 
@@ -156,7 +157,7 @@ O mapa de estradas e a árvore de procura são visualizações diferentes: o pri
 
 ### Pré-requisitos
 
-- Python 3.11 ou superior, com `pip` e suporte a Tkinter.
+- Python 3.11 ou superior, com `pip` e suporte a Tkinter. Recomenda-se Python 3.12 para reproduzir o ambiente da integração contínua.
 - Git.
 - Ambiente gráfico para executar a interface.
 
@@ -406,3 +407,26 @@ Convenções do código: **AO90**, identificadores em **`snake_case`**, `accao`/
 ---
 
 **Projecto académico — Inteligência Artificial I · Universidade Eduardo Mondlane · 2026**
+
+
+## Submissão ao docente (18 de Novembro de 2026)
+
+A entrega do Grupo 01 é efectuada por **um único elemento**, até **quarta-feira, 18 de Novembro de 2026, às 23h59**, através do Assignment disponibilizado no Vula. Devem ser submetidos:
+
+1. **Relatório em PDF**, com identificação clara de todos os membros. O ficheiro-fonte Word está em `docs/relatorio/IA_RELATORIO_GRUPO_01_LAB.docx`.
+2. **Vídeo de apresentação e demonstração**, preferencialmente em MP4, substituindo a defesa presencial.
+3. **Link de acesso ao sistema** ou **link do repositório/pacote do projecto**, incluindo a base de dados do cenário (`dados/`).
+
+Se o vídeo ou os ficheiros ultrapassarem os limites do Vula, podem ser partilhados por Google Drive, desde que o docente disponha das permissões de acesso. Antes do prazo, o grupo deve confirmar a integridade de todos os ficheiros e a acessibilidade dos links.
+
+### Utilização dos controlos gráficos
+
+- **Gerar nova instância** cria e selecciona automaticamente um JSON; a ficha verde apresenta a instância activa. A indicação de viabilidade não substitui uma busca que confirme uma solução.
+- **Tempo máximo (s)** determina o limite cooperativo de execução. A opção **Sem limite de tempo** desactiva o prazo, mas não torna a busca ilimitada em memória.
+- **Executar busca / Cancelar busca** partilham o mesmo botão. Os parâmetros são bloqueados durante uma execução; os separadores mantêm-se acessíveis para consulta.
+- **Árvore de busca:** os controlos situam-se acima do desenho. Um avanço revela a expansão de um nó com os filhos correspondentes. A roda do rato amplia/reduz a vista, o arrasto move-a e o botão de ajuste repõe o enquadramento.
+- **Mapa:** durante uma busca, um anel assinala a localidade do último estado expandido; este sinal não deve ser confundido com a rota da solução, apresentada apenas quando é encontrada e validada.
+
+### Limitações verificadas
+
+A geração de instâncias assegura consistência estrutural, mas **não garante uma solução viável** para todas as sementes. A procura pode ser interrompida por limite de tempo e a árvore limita os eventos retidos para controlar a memória. O desempenho depende da instância, do algoritmo e do computador; não se deve interpretar uma execução interrompida como prova de inexistência de solução.

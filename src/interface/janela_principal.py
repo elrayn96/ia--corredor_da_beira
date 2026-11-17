@@ -11,6 +11,7 @@ from tkinter import messagebox, ttk
 
 from src.gerador import carregar_rede
 from src.interface.arvore_busca import ArvoreBusca
+from src.interface.icones import carregar_icone
 from src.interface.mapa_rodoviario import MapaRodoviario
 from src.interface.painel_comparacao import PainelComparacao
 from src.interface.painel_configuracao import PainelConfiguracao
@@ -19,7 +20,7 @@ from src.interface.tema import configurar_estilos
 from src.servicos.executar_busca import executar_busca
 
 logger = logging.getLogger(__name__)
-LIMITE_TEMPO_GUI = 40  # segundos; evita buscas ilimitadas em computadores lentos.
+LIMITE_TEMPO_GUI = 40  # Valor padrão, alterável no painel.
 
 
 class IndicadorActividade(tk.Canvas):
@@ -64,6 +65,7 @@ class JanelaPrincipal(tk.Tk):
         self._cancelar = threading.Event()
         self._ultimo_progresso = 0.0
         self._inicio_busca = None
+        self._imagens = []
         self._poll_id = None
         self._criar_estilo()
         self._criar_menu()
@@ -139,7 +141,7 @@ class JanelaPrincipal(tk.Tk):
                 item.configure(
                     bg="#E6F4ED",
                     fg="#064D38",
-                    font=("Segoe UI", 11, "bold"),
+                    font=("Segoe UI", 10, "bold"),
                 )
 
             def ao_sair(event):
@@ -191,8 +193,11 @@ class JanelaPrincipal(tk.Tk):
         cabecalho = tk.Frame(self, bg="#064D38", height=66)
         cabecalho.pack(fill="x")
         cabecalho.pack_propagate(False)
-        ttk.Label(cabecalho, text="❄  Cadeia de Frio no Corredor da Beira",
-                  style="Cabecalho.TLabel").pack(side="left", padx=12)
+        self._icone_frio = carregar_icone(self, "frio")
+        tk.Label(cabecalho, image=self._icone_frio, bg="#064D38").pack(
+            side="left", padx=(17, 2))
+        ttk.Label(cabecalho, text="Cadeia de Frio no Corredor da Beira",
+                  style="Cabecalho.TLabel").pack(side="left", padx=4)
         self._estado = tk.StringVar(value="Pronto para começar")
         self._status = tk.Label(
             cabecalho, textvariable=self._estado, bg="#106548", fg="white",
@@ -212,13 +217,18 @@ class JanelaPrincipal(tk.Tk):
             lateral, ao_alterar_instancia=self._ao_carregar_instancia
         )
         self._configuracao.pack(fill="x")
+        self._icone_executar = carregar_icone(self, "executar")
+        self._icone_cancelar = carregar_icone(self, "cancelar")
+        self._icone_limpar = carregar_icone(self, "limpar")
         self._botao_executar = ttk.Button(
-            lateral, text="▶  Executar busca", style="Executar.TButton",
+            lateral, text="Executar busca", image=self._icone_executar,
+            compound="left", style="Executar.TButton",
             command=self._iniciar_busca,
         )
         self._botao_executar.pack(fill="x", padx=8, pady=(13, 5))
         self._botao_limpar = ttk.Button(
-            lateral, text="⌫  Limpar resultados", style="Secundario.TButton",
+            lateral, text="Limpar resultados", image=self._icone_limpar,
+            compound="left", style="Secundario.TButton",
             command=self._limpar_resultados,
         )
         self._botao_limpar.pack(fill="x", padx=8, pady=(3, 8))
@@ -246,14 +256,20 @@ class JanelaPrincipal(tk.Tk):
         self._painel_resultados = PainelResultados(self._separadores)
         self._arvore = ArvoreBusca(self._separadores)
         self._comparacao = PainelComparacao(self._separadores)
-        self._separadores.add(self._mapa, text="◫  Mapa")
-        self._separadores.add(self._painel_resultados, text="▥  Resultados")
-        self._separadores.add(self._arvore, text="♧  Árvore de busca")
-        self._separadores.add(self._comparacao, text="▤  Comparação")
+        for painel, titulo, nome in (
+            (self._mapa, "Mapa", "mapa"),
+            (self._painel_resultados, "Resultados", "resultados"),
+            (self._arvore, "Árvore de busca", "arvore"),
+            (self._comparacao, "Comparação", "comparacao"),
+        ):
+            imagem = carregar_icone(self, nome)
+            self._imagens.append(imagem)
+            self._separadores.add(painel, text=f"  {titulo}  ",
+                                   image=imagem, compound="left")
 
     def _ao_carregar_instancia(self, instancia):
         self._mapa.mostrar_instancia(instancia)
-        self._estado.set("✓  Instância seleccionada · pronto para executar")
+        self._estado.set("Instância seleccionada. Pronto para executar.")
 
     def obter_configuracao(self):
         return self._configuracao.obter_configuracao()
@@ -276,11 +292,17 @@ class JanelaPrincipal(tk.Tk):
         self._em_execucao = True
         self._cancelar.clear()
         self._inicio_busca = time.perf_counter()
+        self._arvore.definir_algoritmo(configuracao["algoritmo"])
+        self._mapa.limpar_exploracao()
+        self._separadores.select(self._mapa)
         self._configuracao.definir_bloqueado(True)
         self._botao_limpar.state(["disabled"])
-        self._botao_executar.configure(text="■  Cancelar busca", style="Cancelar.TButton")
+        self._botao_executar.configure(
+            text="Cancelar busca", image=self._icone_cancelar,
+            style="Cancelar.TButton"
+        )
         self._spinner.iniciar()
-        self._estado.set("◌  Busca em execução")
+        self._estado.set("Busca em execução")
         self._progresso_texto.set("A preparar problema e a iniciar o algoritmo...")
         # Separadores continuam acessíveis para consulta; as configurações ficam bloqueadas.
         threading.Thread(
@@ -309,8 +331,15 @@ class JanelaPrincipal(tk.Tk):
             if agora - ultimo_envio >= 0.30 or tipo == "objectivo":
                 ultimo_envio = agora
                 try:
+                    localidade = None
+                    estado = evento.get("estado")
+                    if isinstance(estado, dict):
+                        localidade = estado.get("localidade")
+                    elif hasattr(estado, "get_localidade"):
+                        localidade = estado.get_localidade()
                     self._fila.put_nowait(("progresso", None, (
-                        contadores.copy(), tipo, agora - self._inicio_busca
+                        contadores.copy(), tipo, agora - self._inicio_busca,
+                        localidade,
                     )))
                 except queue.Full:
                     pass
@@ -318,7 +347,8 @@ class JanelaPrincipal(tk.Tk):
         try:
             resultado = executar_busca(
                 configuracao, observador=acompanhar,
-                cancelar=self._cancelar, limite_segundos=LIMITE_TEMPO_GUI,
+                cancelar=self._cancelar,
+                limite_segundos=configuracao.get("limite_segundos", LIMITE_TEMPO_GUI),
             )
             self._fila.put(("resultado", configuracao, resultado))
         except Exception:
@@ -338,7 +368,9 @@ class JanelaPrincipal(tk.Tk):
             except queue.Empty:
                 break
             if tipo == "progresso":
-                contadores, evento, decorrido = conteudo
+                contadores, evento, decorrido, localidade = conteudo
+                if localidade and evento in {"expandir", "objectivo"}:
+                    self._mapa.mostrar_exploracao(localidade)
                 self._progresso_texto.set(
                     f"{contadores['expandir']:,} expandidos · "
                     f"{contadores['gerar']:,} gerados\n"
@@ -369,7 +401,8 @@ class JanelaPrincipal(tk.Tk):
         self._botao_limpar.state(["!disabled"])
         self._botao_executar.state(["!disabled"])
         self._botao_executar.configure(
-            text="▶  Executar busca", style="Executar.TButton"
+            text="Executar busca", image=self._icone_executar,
+            style="Executar.TButton"
         )
 
     def _apresentar_resultado(self, configuracao, resultado):
@@ -415,6 +448,7 @@ class JanelaPrincipal(tk.Tk):
         self._arvore.carregar_eventos([])
         self._comparacao.limpar()
         self._mapa.limpar_percurso()
+        self._mapa.limpar_exploracao()
         self._progresso_texto.set("Ao executar, verá aqui os passos da busca.")
         self._estado.set("Resultados limpos")
 

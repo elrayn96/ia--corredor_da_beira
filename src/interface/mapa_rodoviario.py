@@ -103,6 +103,7 @@ class MapaRodoviario(ttk.Frame):
         self._rede = {"localidades": [], "estradas": []}
         self._segmentos = []
         self._aresta_seleccionada = None
+        self._ultima_explorada = None
         self._supermercados = {}
         self._origem = "Beira"
         self._posicoes = {}
@@ -146,15 +147,27 @@ class MapaRodoviario(ttk.Frame):
     def _ajustar_paineis(self):
         largura = self._divisao_mapa.winfo_width()
         if largura > 650:
-            self._divisao_mapa.sashpos(0, max(350, largura - 350))
+            self._divisao_mapa.sashpos(0, max(360, largura - 385))
+
+    def mostrar_exploracao(self, localidade):
+        """Assinala a localidade expandida, sem a confundir com uma solução."""
+        if localidade in self._posicoes and localidade != self._ultima_explorada:
+            self._ultima_explorada = localidade
+            self._detalhes.configure(text=f"Em exploração: {localidade} (não é a rota final)")
+            self._desenhar()
+
+    def limpar_exploracao(self):
+        if self._ultima_explorada is not None:
+            self._ultima_explorada = None
+            self._desenhar()
 
     def _criar_legendas(self, parent):
-        legenda = ttk.LabelFrame(parent, text="ⓘ  Legenda", padding=10, style="Cartao.TLabelframe")
+        legenda = ttk.LabelFrame(parent, text="Legenda", padding=10, style="Cartao.TLabelframe")
         legenda.pack(fill="x", pady=(0, 10))
         for texto, cor in (
-            ("●  Localidade", "#b17e00"),
-            ("■  Posto de abastecimento", "#416e60"),
-            ("●  Supermercado", "#b17e00"),
+            ("Localidade", "#b17e00"),
+            ("Posto de abastecimento", "#416e60"),
+            ("Supermercado", "#b17e00"),
             ("→  Caminho da solução", CORES["solucao"]),
         ):
             ttk.Label(legenda, text=texto, foreground=cor).pack(anchor="w", pady=2)
@@ -205,6 +218,7 @@ class MapaRodoviario(ttk.Frame):
         self._posicoes = preparar_posicoes(rede["localidades"])
         self._segmentos = []
         self._aresta_seleccionada = None
+        self._ultima_explorada = None
         self._supermercados = {}
         self._tabela.delete(*self._tabela.get_children())
         for estrada in rede["estradas"]:
@@ -372,6 +386,12 @@ class MapaRodoviario(ttk.Frame):
                 fontweight="bold",
                 color="#004D30",
             )
+        if self._ultima_explorada in self._posicoes:
+            x, y = self._posicoes[self._ultima_explorada]
+            eixo.scatter(x, y, s=780, facecolors="none", edgecolors="#FFFFFF",
+                         linewidths=3.5, zorder=5)
+            eixo.scatter(x, y, s=580, facecolors="none", edgecolors="#FFCA56",
+                         linewidths=3, zorder=5.1)
         for nome, (x, y) in self._posicoes.items():
             tipo = (
                 "origem"

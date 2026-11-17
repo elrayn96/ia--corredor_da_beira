@@ -146,7 +146,7 @@ class PainelResultados(ttk.Frame):
     def criar_componentes(self):
         self.resumo = ttk.LabelFrame(
             self,
-            text="✓  Resumo da solução", style="Cartao.TLabelframe"
+            text="Resumo da solução", style="Cartao.TLabelframe"
         )
         self.resumo.pack(
             fill="x",
@@ -221,7 +221,7 @@ class PainelResultados(ttk.Frame):
 
         self.tabela_frame = ttk.LabelFrame(
             self,
-            text="▤  Percurso e acções", style="Cartao.TLabelframe"
+            text="Percurso e acções", style="Cartao.TLabelframe"
         )
         self.tabela_frame.pack(
             fill="both",
@@ -293,7 +293,7 @@ class PainelResultados(ttk.Frame):
 
         self.estado_frame = ttk.LabelFrame(
             self,
-            text="✓  Estado final", style="Cartao.TLabelframe"
+            text="Estado final", style="Cartao.TLabelframe"
         )
         self.estado_frame.pack(
             fill="x",

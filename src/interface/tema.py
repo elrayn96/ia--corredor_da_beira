@@ -68,3 +68,38 @@ def configurar_estilos(raiz):
                     font=('Segoe UI', 10, 'bold'), padding=(12, 11), borderwidth=0)
     estilo.map('Cancelar.TButton', background=[('active', '#92332D'),
                ('pressed', '#762722'), ('disabled', '#B8C5C0')])
+
+    # Fundos de botões verdadeiramente arredondados. As imagens são locais;
+    # o elemento ttk preserva os cantos ao esticar apenas a área central.
+    import tkinter as tk
+    from pathlib import Path
+
+    pasta = Path(__file__).resolve().parents[2] / 'docs' / 'figuras' / 'icones'
+    imagens = getattr(raiz, '_imagens_botoes_tema', [])
+    for estilo_nome, prefixo, texto in (
+        ('Executar.TButton', 'principal', '#FFFFFF'),
+        ('Gerar.TButton', 'gerar', '#064D38'),
+        ('Secundario.TButton', 'secundario', '#17212B'),
+        ('Cancelar.TButton', 'cancelar', '#FFFFFF'),
+    ):
+        normal, hover, desactivado = (
+            tk.PhotoImage(master=raiz, file=str(pasta / f'botao_{nome}.png'))
+            for nome in (prefixo, prefixo + '_hover', prefixo + '_disabled')
+        )
+        imagens.extend((normal, hover, desactivado))
+        elemento = f'Fundo.{prefixo}'
+        if elemento not in estilo.element_names():
+            estilo.element_create(
+                elemento, 'image', normal,
+                ('disabled', desactivado), ('pressed', hover), ('active', hover),
+                border=12, sticky='nsew',
+            )
+        estilo.layout(estilo_nome, [
+            (elemento, {'sticky': 'nsew', 'children': [
+                ('Button.padding', {'sticky': 'nsew', 'children': [
+                    ('Button.label', {'sticky': 'nsew'})
+                ]})
+            ]})
+        ])
+        estilo.configure(estilo_nome, foreground=texto, borderwidth=0)
+    raiz._imagens_botoes_tema = imagens
