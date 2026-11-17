@@ -7,6 +7,7 @@ from src.estado import Estado
 from src.gerador import carregar_rede, gerar_instancia
 from src.interface.mapa_rodoviario import (
     preparar_posicoes,
+    rede_visual_da_instancia,
     segmentos_percurso,
     supermercados_da_instancia,
 )
@@ -43,6 +44,58 @@ def test_supermercados_aceitam_os_dois_formatos():
     directo = {"supermercados": {"Dondo": {"abertura": "06:00"}}}
     assert supermercados_da_instancia(gerado)["Dondo"]["abertura"] == "06:00"
     assert supermercados_da_instancia(directo)["Dondo"]["localidade"] == "Dondo"
+
+
+def test_rede_visual_inclui_ligacao_declarada_na_instancia():
+    rede_base = carregar_rede()
+    instancia = {
+        "estradas": {
+            "Chimoio": {
+                "Beira": {
+                    "distancia": 200, "piso": 5, "simulada": True,
+                }
+            },
+            "Beira": {},
+        }
+    }
+    rede = rede_visual_da_instancia(instancia, rede_base)
+
+    assert rede["localidades"] == rede_base["localidades"]
+    assert rede["estradas"] == [{
+        "origem": "Chimoio",
+        "destino": "Beira",
+        "distanciaKm": 200,
+        "piso": 5,
+        "simulada": True,
+    }]
+
+
+def test_rede_visual_pequena_aceita_todo_o_percurso_encontrado():
+    from pathlib import Path
+
+    from src.gerador import carregar_json
+
+    caminho = (
+        Path(__file__).resolve().parents[1]
+        / "dados" / "instancias_experimentais" / "pequena_01.json"
+    )
+    instancia = carregar_json(caminho)
+    rede = rede_visual_da_instancia(instancia, carregar_rede())
+    ligacoes = {
+        frozenset((estrada["origem"], estrada["destino"]))
+        for estrada in rede["estradas"]
+    }
+
+    assert frozenset(("Chimoio", "Beira")) in ligacoes
+    assert all(
+        frozenset(segmento) in ligacoes
+        for segmento in (
+            ("Beira", "Dondo"), ("Dondo", "Nhamatanda"),
+            ("Nhamatanda", "Inchope"), ("Inchope", "Gondola"),
+            ("Gondola", "Vanduzi"), ("Vanduzi", "Manica"),
+            ("Manica", "Chimoio"), ("Chimoio", "Beira"),
+        )
+    )
 
 
 @pytest.mark.parametrize("algoritmo", ALGORITMOS.values())
