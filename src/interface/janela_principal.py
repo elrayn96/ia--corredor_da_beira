@@ -20,7 +20,7 @@ from src.interface.tema import configurar_estilos
 from src.servicos.executar_busca import executar_busca
 
 logger = logging.getLogger(__name__)
-LIMITE_TEMPO_GUI = 40  # Valor padrão, alterável no painel.
+LIMITE_TEMPO_GUI = 60  # Limite do enunciado, alterável no painel.
 
 
 class IndicadorActividade(tk.Canvas):

@@ -2,10 +2,11 @@ from math import ceil
 from typing import ClassVar
 
 from src.accao import Accao
+from src.contrato_busca import Problema as ProblemaAbstrato
 from src.estado import Estado
 
 
-class Problema:
+class Problema(ProblemaAbstrato):
     # Coordena as regras da cadeia de frio e fornece sucessores aos algoritmos
     VELOCIDADES: ClassVar[dict[int, int]] = {
         1: 40,
@@ -56,6 +57,9 @@ class Problema:
     def get_estado_inicial(self):
         return Estado(self.__origem, set(), 0, self.CAPACIDADE)
 
+    def estado_inicial(self):
+        return self.get_estado_inicial()
+
     def criar_estado(self, localidade, entregas_concluidas, tempo, combustivel):
         return Estado(localidade, set(entregas_concluidas), tempo, combustivel)
 
@@ -72,6 +76,9 @@ class Problema:
         return (estado.get_localidade() == self.__origem
                 and set(self.__supermercados).issubset(estado.get_entregas_concluidas()))
 
+    def e_objectivo(self, estado):
+        return self.teste_objectivo(estado)
+
     def custo_transicao(self, estado, accao, estado_seguinte=None):
         # Calcula o custo de cada accao em minutos
         tipo = accao.get_tipo()
@@ -87,6 +94,35 @@ class Problema:
             return int(accao.get_parametro('minutos'))
         raise ValueError('Accao desconhecida')
 
+    def custo(self, estado, accao, estado_seguinte):
+        return self.custo_transicao(estado, accao, estado_seguinte)
+
+    @staticmethod
+    def _mesma_accao(primeira, segunda):
+        return (primeira.get_tipo() == segunda.get_tipo()
+                and primeira.get_parametros() == segunda.get_parametros())
+
+    def accoes(self, estado):
+        return [accao for accao, _, _ in self.get_sucessores(estado)]
+
+    def resultado(self, estado, accao):
+        for candidata, seguinte, _ in self.get_sucessores(estado):
+            if self._mesma_accao(candidata, accao):
+                return seguinte
+        raise ValueError("A acção não é aplicável ao estado informado")
+
+    def heuristica(self, estado, nome):
+        from src.heuristicas import h0, h1, h2
+
+        funcoes = {"h0": h0, "h1": h1, "h2": h2}
+        try:
+            return funcoes[nome](estado, self)
+        except KeyError as erro:
+            raise ValueError(f"Heurística desconhecida: {nome!r}") from erro
+
+    def sucessores(self, estado):
+        return self.get_sucessores(estado)
+
     @staticmethod
     def __circulacao_permitida(inicio, duracao):
         # A partida ocorre as 05:00; nao circular durante 22:00-05:00
@@ -101,6 +137,11 @@ class Problema:
         tempo = estado.get_tempo()
         combustivel = estado.get_combustivel()
         entregas = estado.get_entregas_concluidas()
+        pendentes = set(self.__supermercados) - entregas
+
+        # Com carga pendente, ultrapassar 14 horas invalida definitivamente o estado.
+        if pendentes and tempo >= self.LIMITE_FRIO_MINUTOS:
+            return []
 
         # Deslocacoes para localidades directamente ligadas
         for destino, via in self.__estradas.get(localidade, {}).items():
@@ -149,5 +190,22 @@ class Problema:
                 accao = Accao('esperar', minutos=espera)
                 novo = self.criar_estado(localidade, entregas, tempo + espera, combustivel)
                 sucessores.append((accao, novo, espera))
+
+        # Se nenhuma estrada pode ser concluída antes das 22:00, é permitido
+        # aguardar até às 05:00. Isto evita um bloqueio artificial às 21:xx.
+        elif not pendentes:
+            viagens_possiveis = []
+            for via in self.__estradas.get(localidade, {}).values():
+                distancia = float(via['distancia'])
+                consumo = ceil(distancia * self.CONSUMO)
+                duracao = ceil(distancia / self.VELOCIDADES[int(via['piso'])] * 60)
+                if consumo <= combustivel:
+                    viagens_possiveis.append(self.__circulacao_permitida(tempo, duracao))
+            if viagens_possiveis and not any(viagens_possiveis):
+                espera = (300 - hora_actual) % 1440
+                if espera:
+                    accao = Accao('esperar', minutos=espera)
+                    novo = self.criar_estado(localidade, entregas, tempo + espera, combustivel)
+                    sucessores.append((accao, novo, espera))
 
         return sucessores

@@ -59,7 +59,7 @@ def test_contrato_configuracao(tmp_path, algoritmo):
         "limite_maximo",
     }
     assert config["peso"] == (1.5 if algoritmo == "a_star_ponderada" else None)
-    assert config["limite"] == (0 if algoritmo in ("lds", "ids") else None)
+    assert config["limite"] == (0 if algoritmo in ("dfs", "lds", "ids") else None)
 
 
 @pytest.mark.parametrize("peso", ["0", "-1", "nan", "inf", "texto"])

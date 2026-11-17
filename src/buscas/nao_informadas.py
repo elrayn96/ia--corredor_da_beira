@@ -8,19 +8,8 @@ from collections import deque
 from itertools import count
 
 from src.buscas.eventos_busca import emitir_evento
+from src.contrato_busca import No, caminho, e_objectivo, estado_inicial, sucessores
 from src.solucao import Solucao
-
-
-class _No:
-    __slots__ = ("accao", "estado", "g", "no_id", "pai", "profundidade")
-
-    def __init__(self, estado, pai, accao, g, no_id):
-        self.estado = estado
-        self.pai = pai
-        self.accao = accao
-        self.g = g
-        self.no_id = no_id
-        self.profundidade = 0 if pai is None else pai.profundidade + 1
 
 
 class _Emissor:
@@ -48,14 +37,9 @@ class _Emissor:
 
 
 def _solucao(no):
-    accoes, estados = [], []
-    final = no
-    while no is not None:
-        estados.append(no.estado)
-        if no.pai is not None:
-            accoes.append(no.accao)
-        no = no.pai
-    return Solucao(list(reversed(accoes)), list(reversed(estados)), final.g)
+    nos = caminho(no)
+    return Solucao([item.accao for item in nos[1:]],
+                   [item.estado for item in nos], no.g)
 
 
 def _registar(estatisticas, contadores, inicio):
@@ -66,13 +50,17 @@ def _registar(estatisticas, contadores, inicio):
             "nos_gerados": contadores["gerados"],
             "nos_expandidos": contadores["expandidos"],
             "max_fronteira": contadores["max_fronteira"],
+            "nos_reexpandidos": contadores["reexpandidos"],
             "tempo": time.perf_counter() - inicio,
         }
     )
 
 
 def _novo_contador():
-    return {"gerados": 0, "expandidos": 0, "max_fronteira": 0}
+    return {
+        "gerados": 0, "expandidos": 0, "max_fronteira": 0,
+        "reexpandidos": 0, "estados_expandidos": set(),
+    }
 
 
 def bfs(problema, estatisticas=None, observador=None):
@@ -81,13 +69,13 @@ def bfs(problema, estatisticas=None, observador=None):
     ids = count()
     emissor = _Emissor(observador)
     contadores = _novo_contador()
-    raiz = _No(problema.get_estado_inicial(), None, None, 0, next(ids))
+    raiz = No(estado_inicial(problema), None, None, 0, next(ids))
     fronteira = deque([raiz])
     visitados = {raiz.estado}
     contadores.update(gerados=1, max_fronteira=1)
     emissor.emitir("inicio", raiz)
 
-    if problema.teste_objectivo(raiz.estado):
+    if e_objectivo(problema, raiz.estado):
         emissor.emitir("objectivo", raiz)
         _registar(estatisticas, contadores, inicio)
         return _solucao(raiz)
@@ -96,15 +84,15 @@ def bfs(problema, estatisticas=None, observador=None):
         no = fronteira.popleft()
         emissor.emitir("expandir", no)
         contadores["expandidos"] += 1
-        for accao, seguinte, custo in problema.get_sucessores(no.estado):
-            novo = _No(seguinte, no, accao, no.g + custo, next(ids))
+        for accao, seguinte, custo in sucessores(problema, no.estado):
+            novo = No(seguinte, no, accao, no.g + custo, next(ids))
             contadores["gerados"] += 1
             if seguinte in visitados:
                 emissor.emitir("descartar", novo)
                 continue
             visitados.add(seguinte)
             emissor.emitir("gerar", novo)
-            if problema.teste_objectivo(seguinte):
+            if e_objectivo(problema, seguinte):
                 emissor.emitir("objectivo", novo)
                 _registar(estatisticas, contadores, inicio)
                 return _solucao(novo)
@@ -117,39 +105,37 @@ def bfs(problema, estatisticas=None, observador=None):
     return None
 
 
-def dfs(problema, estatisticas=None, observador=None):
-    """Busca em profundidade, preservando a ordem anterior dos sucessores."""
+def dfs(problema, limite=None, estatisticas=None, observador=None):
+    """DFS com controlo de ciclos no caminho e limite configurável."""
+    if limite is not None and limite < 0:
+        raise ValueError("O limite não pode ser negativo")
     inicio = time.perf_counter()
     ids = count()
     emissor = _Emissor(observador)
     contadores = _novo_contador()
-    raiz = _No(problema.get_estado_inicial(), None, None, 0, next(ids))
+    raiz = No(estado_inicial(problema), None, None, 0, next(ids))
     fronteira = [raiz]
-    descobertos = {raiz.estado}
-    visitados = set()
     contadores.update(gerados=1, max_fronteira=1)
     emissor.emitir("inicio", raiz)
 
     while fronteira:
         no = fronteira.pop()
-        if no.estado in visitados:
-            emissor.emitir("descartar", no)
-            continue
-        visitados.add(no.estado)
-        if problema.teste_objectivo(no.estado):
+        if e_objectivo(problema, no.estado):
             emissor.emitir("objectivo", no)
             _registar(estatisticas, contadores, inicio)
             return _solucao(no)
+        if limite is not None and no.profundidade >= limite:
+            emissor.emitir("descartar", no)
+            continue
         emissor.emitir("expandir", no)
         contadores["expandidos"] += 1
 
-        for accao, seguinte, custo in reversed(problema.get_sucessores(no.estado)):
-            novo = _No(seguinte, no, accao, no.g + custo, next(ids))
+        for accao, seguinte, custo in reversed(list(sucessores(problema, no.estado))):
+            novo = No(seguinte, no, accao, no.g + custo, next(ids))
             contadores["gerados"] += 1
-            if seguinte in visitados or seguinte in descobertos:
+            if _contem_no_caminho(no, seguinte):
                 emissor.emitir("descartar", novo)
                 continue
-            descobertos.add(seguinte)
             emissor.emitir("gerar", novo)
             fronteira.append(novo)
         contadores["max_fronteira"] = max(
@@ -169,7 +155,7 @@ def _contem_no_caminho(no, estado):
 
 
 def _busca_limitada(problema, limite, emissor, ids, contadores):
-    raiz = _No(problema.get_estado_inicial(), None, None, 0, next(ids))
+    raiz = No(estado_inicial(problema), None, None, 0, next(ids))
     fronteira = [raiz]
     menor_profundidade = {raiz.estado: 0}
     contadores["gerados"] += 1
@@ -181,7 +167,7 @@ def _busca_limitada(problema, limite, emissor, ids, contadores):
         if no.profundidade > menor_profundidade.get(no.estado, no.profundidade):
             emissor.emitir("descartar", no)
             continue
-        if problema.teste_objectivo(no.estado):
+        if e_objectivo(problema, no.estado):
             emissor.emitir("objectivo", no)
             return no
         if no.profundidade >= limite:
@@ -189,9 +175,12 @@ def _busca_limitada(problema, limite, emissor, ids, contadores):
             continue
 
         emissor.emitir("expandir", no)
+        if no.estado in contadores["estados_expandidos"]:
+            contadores["reexpandidos"] += 1
+        contadores["estados_expandidos"].add(no.estado)
         contadores["expandidos"] += 1
-        for accao, seguinte, custo in reversed(problema.get_sucessores(no.estado)):
-            novo = _No(seguinte, no, accao, no.g + custo, next(ids))
+        for accao, seguinte, custo in reversed(list(sucessores(problema, no.estado))):
+            novo = No(seguinte, no, accao, no.g + custo, next(ids))
             contadores["gerados"] += 1
             if _contem_no_caminho(no, seguinte):
                 emissor.emitir("descartar", novo)
@@ -243,7 +232,7 @@ def ucs(problema, estatisticas=None, observador=None):
     desempate = count()
     emissor = _Emissor(observador)
     contadores = _novo_contador()
-    raiz = _No(problema.get_estado_inicial(), None, None, 0, next(ids))
+    raiz = No(estado_inicial(problema), None, None, 0, next(ids))
     fronteira = [(0, next(desempate), raiz)]
     custos = {raiz.estado: 0}
     contadores.update(gerados=1, max_fronteira=1)
@@ -254,16 +243,16 @@ def ucs(problema, estatisticas=None, observador=None):
         if custo_actual > custos[no.estado]:
             emissor.emitir("descartar", no)
             continue
-        if problema.teste_objectivo(no.estado):
+        if e_objectivo(problema, no.estado):
             emissor.emitir("objectivo", no)
             _registar(estatisticas, contadores, inicio)
             return _solucao(no)
         emissor.emitir("expandir", no)
         contadores["expandidos"] += 1
 
-        for accao, seguinte, custo in problema.get_sucessores(no.estado):
+        for accao, seguinte, custo in sucessores(problema, no.estado):
             novo_g = no.g + custo
-            novo = _No(seguinte, no, accao, novo_g, next(ids))
+            novo = No(seguinte, no, accao, novo_g, next(ids))
             contadores["gerados"] += 1
             if novo_g >= custos.get(seguinte, float("inf")):
                 emissor.emitir("descartar", novo)

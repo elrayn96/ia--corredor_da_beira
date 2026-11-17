@@ -11,9 +11,13 @@ def test_executar_experiencia_preserva_configuracao(monkeypatch):
         def get_custo_total():
             return 42
 
+        @staticmethod
+        def get_accoes():
+            return []
+
     monkeypatch.setattr(
         "experiencias.executar.executar_busca",
-        lambda configuracao: {
+        lambda configuracao, **_limites: {
             "solucao": SolucaoFalsa(),
             "estatisticas": {
                 "nos_gerados": 10,
@@ -40,6 +44,7 @@ def test_executar_experiencia_preserva_configuracao(monkeypatch):
     assert resultado["heuristica"] == "h2"
     assert resultado["semente"] == 202601
     assert resultado["custo_total"] == 42
+    assert resultado["comprimento_caminho"] == 0
 
 
 def test_guardar_resultados_csv(tmp_path):

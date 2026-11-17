@@ -1,0 +1,281 @@
+{
+  "nome": "grande_06",
+  "nivel": "grande",
+  "indice": 6,
+  "semente_base": 202601,
+  "semente": 202806,
+  "dimensao": 25,
+  "origem": "Beira",
+  "estadoInicial": {
+    "localidade": "Beira",
+    "horaPartida": "05:00",
+    "combustivelLitros": 300
+  },
+  "postosAbastecimento": [
+    "Beira",
+    "Inchope",
+    "Chimoio"
+  ],
+  "estradas": {
+    "Beira": {
+      "Mutua": {
+        "distancia": 200.0,
+        "piso": 2
+      },
+      "Dondo": {
+        "distancia": 42.0,
+        "piso": 5
+      }
+    },
+    "Dondo": {
+      "Lamego": {
+        "distancia": 131.0,
+        "piso": 2
+      },
+      "Nhamatanda": {
+        "distancia": 90.0,
+        "piso": 4
+      },
+      "Beira": {
+        "distancia": 42.0,
+        "piso": 5
+      }
+    },
+    "Nhamatanda": {
+      "Gorongosa": {
+        "distancia": 88.0,
+        "piso": 4
+      },
+      "Mafambisse": {
+        "distancia": 60.0,
+        "piso": 4
+      },
+      "Inchope": {
+        "distancia": 72.0,
+        "piso": 4
+      },
+      "Dondo": {
+        "distancia": 90.0,
+        "piso": 4
+      }
+    },
+    "Inchope": {
+      "Lamego": {
+        "distancia": 90.0,
+        "piso": 3
+      },
+      "Mutua": {
+        "distancia": 122.0,
+        "piso": 2
+      },
+      "Chimoio": {
+        "distancia": 102.0,
+        "piso": 4
+      },
+      "Nhamatanda": {
+        "distancia": 72.0,
+        "piso": 4
+      },
+      "Gondola": {
+        "distancia": 68.0,
+        "piso": 4
+      }
+    },
+    "Gorongosa": {
+      "Muxunguè": {
+        "distancia": 141.0,
+        "piso": 3
+      },
+      "Chimoio": {
+        "distancia": 132.0,
+        "piso": 3
+      },
+      "Caia": {
+        "distancia": 152.0,
+        "piso": 3
+      },
+      "Nhamatanda": {
+        "distancia": 88.0,
+        "piso": 4
+      }
+    },
+    "Gondola": {
+      "Chimoio": {
+        "distancia": 62.0,
+        "piso": 4
+      },
+      "Vanduzi": {
+        "distancia": 45.0,
+        "piso": 4
+      },
+      "Inchope": {
+        "distancia": 68.0,
+        "piso": 4
+      }
+    },
+    "Chimoio": {
+      "Gorongosa": {
+        "distancia": 132.0,
+        "piso": 3
+      },
+      "Catandica": {
+        "distancia": 160.0,
+        "piso": 2
+      },
+      "Gondola": {
+        "distancia": 62.0,
+        "piso": 4
+      },
+      "Muxunguè": {
+        "distancia": 100.0,
+        "piso": 3
+      },
+      "Inchope": {
+        "distancia": 102.0,
+        "piso": 4
+      },
+      "Manica": {
+        "distancia": 81.0,
+        "piso": 3
+      }
+    },
+    "Manica": {
+      "Catandica": {
+        "distancia": 179.0,
+        "piso": 2
+      },
+      "Vanduzi": {
+        "distancia": 72.0,
+        "piso": 3
+      },
+      "Chimoio": {
+        "distancia": 81.0,
+        "piso": 3
+      }
+    },
+    "Catandica": {
+      "Manica": {
+        "distancia": 179.0,
+        "piso": 2
+      },
+      "Chimoio": {
+        "distancia": 160.0,
+        "piso": 2
+      },
+      "Muxunguè": {
+        "distancia": 119.0,
+        "piso": 3
+      }
+    },
+    "Muxunguè": {
+      "Gorongosa": {
+        "distancia": 141.0,
+        "piso": 3
+      },
+      "Catandica": {
+        "distancia": 119.0,
+        "piso": 3
+      },
+      "Chimoio": {
+        "distancia": 100.0,
+        "piso": 3
+      }
+    },
+    "Caia": {
+      "Mafambisse": {
+        "distancia": 111.0,
+        "piso": 3
+      },
+      "Gorongosa": {
+        "distancia": 152.0,
+        "piso": 3
+      }
+    },
+    "Mafambisse": {
+      "Caia": {
+        "distancia": 111.0,
+        "piso": 3
+      },
+      "Nhamatanda": {
+        "distancia": 60.0,
+        "piso": 4
+      }
+    },
+    "Mutua": {
+      "Beira": {
+        "distancia": 200.0,
+        "piso": 2
+      },
+      "Lamego": {
+        "distancia": 62.0,
+        "piso": 3
+      },
+      "Inchope": {
+        "distancia": 122.0,
+        "piso": 2
+      }
+    },
+    "Lamego": {
+      "Dondo": {
+        "distancia": 131.0,
+        "piso": 2
+      },
+      "Mutua": {
+        "distancia": 62.0,
+        "piso": 3
+      },
+      "Inchope": {
+        "distancia": 90.0,
+        "piso": 3
+      },
+      "Vanduzi": {
+        "distancia": 110.0,
+        "piso": 3
+      }
+    },
+    "Vanduzi": {
+      "Lamego": {
+        "distancia": 110.0,
+        "piso": 3
+      },
+      "Manica": {
+        "distancia": 72.0,
+        "piso": 3
+      },
+      "Gondola": {
+        "distancia": 45.0,
+        "piso": 4
+      }
+    }
+  },
+  "supermercados": {
+    "Dondo": {
+      "abertura": "06:00",
+      "fecho": "10:00"
+    },
+    "Nhamatanda": {
+      "abertura": "07:00",
+      "fecho": "11:30"
+    },
+    "Inchope": {
+      "abertura": "08:00",
+      "fecho": "13:00"
+    },
+    "Gondola": {
+      "abertura": "09:00",
+      "fecho": "14:30"
+    },
+    "Vanduzi": {
+      "abertura": "10:00",
+      "fecho": "16:00"
+    },
+    "Manica": {
+      "abertura": "11:00",
+      "fecho": "17:30"
+    },
+    "Chimoio": {
+      "abertura": "12:00",
+      "fecho": "19:00"
+    }
+  }
+}

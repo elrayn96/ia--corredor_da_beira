@@ -47,7 +47,7 @@ def validar_configuracao(caminho_instancia, algoritmo, heuristica, peso, limite)
 
         limite_normalizado = (
             int(str(limite))
-            if algoritmo in ("ids", "lds")
+            if algoritmo in ("dfs", "ids", "lds")
             else None
         )
     except (TypeError, ValueError):
@@ -119,7 +119,7 @@ class PainelConfiguracao(ttk.Frame):
                 ("Algoritmo", self._algoritmo, tuple(ALGORITMOS)),
                 ("Heurística", self._heuristica, HEURISTICAS),
                 ("Peso", self._peso, None),
-                ("Limite (IDS/LDS)", self._limite, None),
+                ("Limite (DFS/IDS/LDS)", self._limite, None),
             ), 4,
         ):
             etiqueta = ttk.Label(self, text=rotulo, style="Cartao.TLabel")
@@ -201,7 +201,7 @@ class PainelConfiguracao(ttk.Frame):
             "Algoritmo": True,
             "Heurística": algoritmo in ("Gulosa", "A*", "A* ponderada"),
             "Peso": algoritmo == "A* ponderada",
-            "Limite (IDS/LDS)": algoritmo in ("IDS", "LDS"),
+            "Limite (DFS/IDS/LDS)": algoritmo in ("DFS", "IDS", "LDS"),
         }
         for nome, campo in self._campos.items():
             activo = activos[nome] and not self._bloqueado

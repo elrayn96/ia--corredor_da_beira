@@ -23,6 +23,8 @@ METRICAS = (
     ("nos_gerados", "Nós gerados"),
     ("nos_expandidos", "Nós expandidos"),
     ("max_fronteira", "Máximo da fronteira"),
+    ("nos_reexpandidos", "Nós reexpandidos"),
+    ("comprimento_caminho", "Comprimento do caminho"),
     ("tempo_segundos", "Tempo de execução (s)"),
     ("memoria_pico_bytes", "Memória de pico (bytes)"),
 )

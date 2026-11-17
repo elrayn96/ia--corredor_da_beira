@@ -321,6 +321,17 @@ Os módulos auxiliares legados (`src/custos.py`, `src/transicoes.py` e `src/busc
 
 ## Experiências e avaliação
 
+Para gerar as 30 instâncias, executar a bateria com os limites do enunciado,
+exportar o CSV e produzir os três gráficos obrigatórios:
+
+```bash
+python -m experiencias.bateria --limite 60 --quantidade-por-nivel 10
+```
+
+Os resultados ficam em `resultados_experimentais/`. A correspondência completa
+entre requisitos, código e testes está documentada em
+[`docs/CONFORMIDADE_ENUNCIADO.md`](docs/CONFORMIDADE_ENUNCIADO.md).
+
 O protocolo experimental prevê **três níveis de dimensão** (pequeno, médio e grande), com **dez instâncias aleatórias por nível**, geradas com sementes reproduzíveis. Cada execução está sujeita aos limites definidos no enunciado: **60 segundos e 2 GB de memória**.
 
 Para cada combinação de algoritmo e instância, recolhem-se:
