@@ -84,34 +84,109 @@ class JanelaPrincipal(tk.Tk):
     def _criar_estilo(self):
         configurar_estilos(self)
 
-    def _criar_menu(self):
-        """Menu leve com hover/pressed, mantendo Ficheiro e Ajuda."""
-        barra = tk.Frame(self, bg="#EDF3F1", height=36)
-        barra.pack(fill="x")
-        barra.pack_propagate(False)
-        ficheiro = tk.Menu(self, tearoff=False, bg="#FFFFFF", fg="#17212B")
-        ficheiro.add_command(label="Sair", command=self._fechar)
-        ajuda = tk.Menu(self, tearoff=False, bg="#FFFFFF", fg="#17212B")
-        ajuda.add_command(
-            label="Sobre",
-            command=lambda: messagebox.showinfo(
-                "Sobre", "Inteligência Artificial I - Grupo 01\n"
-                "Cadeia de frio no Corredor da Beira", parent=self,
-            ),
-        )
-        for nome, menu in (("Ficheiro", ficheiro), ("Ajuda", ajuda)):
-            botao = tk.Menubutton(
-                barra, text=nome, menu=menu, bg="#EDF3F1", fg="#17212B",
-                activebackground="#D6EBE1", activeforeground="#064D38",
-                relief="flat", bd=0, padx=16, pady=7,
-                font=("Segoe UI", 10), cursor="hand2",
-            )
-            botao.pack(side="left", padx=(4, 0))
-            botao.bind("<Enter>", lambda evento: evento.widget.configure(bg="#D6EBE1"))
-            botao.bind("<Leave>", lambda evento: evento.widget.configure(bg="#EDF3F1"))
-        self._menu_ficheiro = ficheiro
-        self._menu_ajuda = ajuda
 
+    def _criar_menu(self):
+        """Cria um menu superior personalizado com efeitos interactivos."""
+
+        self._menu_superior = tk.Frame(
+            self,
+            bg="#FFFFFF",
+            height=42,
+        )
+        self._menu_superior.pack(fill="x")
+        self._menu_superior.pack_propagate(False)
+
+        def criar_menu_item(titulo, opcoes):
+            menu_dropdown = tk.Menu(
+                self,
+                tearoff=False,
+                bg="#FFFFFF",
+                fg="#17212B",
+                activebackground="#E6F4ED",
+                activeforeground="#064D38",
+                font=("Segoe UI", 10),
+                borderwidth=1,
+                relief="solid",
+                activeborderwidth=0,
+            )
+
+            for texto, comando in opcoes:
+                menu_dropdown.add_command(
+                    label=texto,
+                    command=comando,
+                )
+
+            item = tk.Menubutton(
+                self._menu_superior,
+                text=titulo,
+                menu=menu_dropdown,
+                direction="below",
+                bg="#FFFFFF",
+                fg="#17212B",
+                activebackground="#E6F4ED",
+                activeforeground="#064D38",
+                font=("Segoe UI", 10),
+                relief="flat",
+                borderwidth=0,
+                highlightthickness=0,
+                padx=16,
+                pady=7,
+                cursor="hand2",
+            )
+            item.pack(side="left", padx=(5, 0), pady=3)
+
+            def ao_entrar(event):
+                item.configure(
+                    bg="#E6F4ED",
+                    fg="#064D38",
+                    font=("Segoe UI", 11, "bold"),
+                )
+
+            def ao_sair(event):
+                item.configure(
+                    bg="#FFFFFF",
+                    fg="#17212B",
+                    font=("Segoe UI", 10),
+                )
+
+            def ao_pressionar(event):
+                item.configure(bg="#C7E6D6")
+
+            item.bind("<Enter>", ao_entrar)
+            item.bind("<Leave>", ao_sair)
+            item.bind("<ButtonPress-1>", ao_pressionar)
+
+            return item
+
+        criar_menu_item(
+            "Ficheiro",
+            [
+                ("Sair", self.destroy),
+            ],
+        )
+
+        criar_menu_item(
+            "Ajuda",
+            [
+                (
+                    "Sobre",
+                    lambda: messagebox.showinfo(
+                        "Sobre",
+                        "Inteligência Artificial I - Grupo 01\n"
+                        "Cadeia de frio no Corredor da Beira",
+                        parent=self,
+                    ),
+                ),
+            ],
+        )
+
+        tk.Frame(
+            self._menu_superior,
+            bg="#D9E2E8",
+            height=1,
+        ).pack(side="bottom", fill="x")
+
+    
     def _criar_conteudo(self):
         cabecalho = tk.Frame(self, bg="#064D38", height=66)
         cabecalho.pack(fill="x")
