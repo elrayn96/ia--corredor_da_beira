@@ -5,6 +5,7 @@ from src.accao import Accao
 from src.estado import Estado
 from src.interface.painel_resultados import (
     PainelResultados,
+    localidades_percurso,
     preparar_metricas,
     preparar_resultados,
 )
@@ -94,11 +95,25 @@ def test_percurso_e_estado_final():
 
     dados = preparar_resultados(solucao, {})
 
-    assert dados["percurso"].startswith("Beira → Dondo")
+    assert dados["percurso"] == "Beira → Dondo"
     assert "Localidade: Dondo" in dados["estado_final"]
     assert "Tempo: 50" in dados["estado_final"]
     assert "Combustível: 100" in dados["estado_final"]
     assert "Entregas concluídas: 1" in dados["estado_final"]
+
+
+def test_percurso_mantem_revisitas_reais_mas_remove_operacoes_locais():
+    estados = [
+        Estado("Beira"), Estado("Dondo"), Estado("Dondo"),
+        Estado("Beira"),
+    ]
+    accoes = [
+        Accao("deslocar", destino="Dondo"),
+        Accao("entregar", supermercado="Dondo"),
+        Accao("deslocar", destino="Beira"),
+    ]
+
+    assert localidades_percurso(estados, accoes) == ["Beira", "Dondo", "Beira"]
 
 
 def test_metricas_obrigatorias():

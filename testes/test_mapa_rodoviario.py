@@ -61,13 +61,37 @@ def test_rede_visual_inclui_ligacao_declarada_na_instancia():
     rede = rede_visual_da_instancia(instancia, rede_base)
 
     assert rede["localidades"] == rede_base["localidades"]
-    assert rede["estradas"] == [{
+    assert len(rede["estradas"]) == len(rede_base["estradas"]) + 1
+    assert {
+        chave: valor
+        for chave, valor in rede["estradas"][-1].items()
+        if chave != "da_instancia"
+    } == {
         "origem": "Chimoio",
         "destino": "Beira",
         "distanciaKm": 200,
         "piso": 5,
         "simulada": True,
-    }]
+    }
+    assert rede["estradas"][-1]["da_instancia"] is True
+
+
+def test_rede_visual_preserva_as_rotas_que_nao_fazem_parte_da_instancia():
+    rede_base = carregar_rede()
+    instancia = {
+        "estradas": {
+            "Beira": {"Dondo": {"distancia": 30, "piso": 5}},
+            "Dondo": {},
+        }
+    }
+    rede = rede_visual_da_instancia(instancia, rede_base)
+    ligacoes = {
+        frozenset((estrada["origem"], estrada["destino"]))
+        for estrada in rede["estradas"]
+    }
+
+    assert frozenset(("Beira", "Dondo")) in ligacoes
+    assert frozenset(("Nhamatanda", "Gorongosa")) in ligacoes
 
 
 def test_rede_visual_pequena_aceita_todo_o_percurso_encontrado():

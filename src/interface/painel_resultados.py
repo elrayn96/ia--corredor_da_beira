@@ -49,6 +49,18 @@ def _descrever_estado(estado):
     )
 
 
+def localidades_percurso(estados, accoes):
+    """Lista apenas localidades alcançadas por deslocações reais."""
+    estados, accoes = list(estados), list(accoes)
+    if not estados:
+        return []
+    localidades = [str(estados[0].get_localidade())]
+    for accao, estado in zip(accoes, estados[1:]):
+        if accao.get_tipo() == "deslocar":
+            localidades.append(str(estado.get_localidade()))
+    return localidades
+
+
 def preparar_resultados(
     solucao, estatisticas, estado_execucao=None, mensagem=None, ultimo_estado=None
 ):
@@ -84,10 +96,7 @@ def preparar_resultados(
         for accao in accoes
     )
 
-    percurso = " → ".join(
-        str(estado.get_localidade())
-        for estado in estados
-    )
+    percurso = " → ".join(localidades_percurso(estados, accoes))
 
     estado_final = estados[-1]
 

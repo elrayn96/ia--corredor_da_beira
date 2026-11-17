@@ -98,28 +98,36 @@ def supermercados_da_instancia(instancia):
 
 
 def rede_visual_da_instancia(instancia, rede_base):
-    """Converte a adjacência directa de uma instância para o formato do mapa."""
+    """Mostra a rede-base inteira e acrescenta/actualiza ligações da instância."""
     adjacencia = instancia.get("estradas")
     if not isinstance(adjacencia, dict):
         return rede_base
 
-    estradas = []
-    vistas = set()
+    estradas = [dict(estrada) for estrada in rede_base["estradas"]]
+    indices = {
+        frozenset((estrada["origem"], estrada["destino"])): indice
+        for indice, estrada in enumerate(estradas)
+    }
     for origem, vizinhos in adjacencia.items():
         if not isinstance(vizinhos, dict):
             continue
         for destino, dados in vizinhos.items():
             par = frozenset((origem, destino))
-            if par in vistas:
+            if par in indices and estradas[indices[par]].get("da_instancia"):
                 continue
-            vistas.add(par)
-            estradas.append({
+            estrada = {
                 "origem": origem,
                 "destino": destino,
                 "distanciaKm": dados.get("distancia", dados.get("distanciaKm")),
                 "piso": dados.get("piso", 3),
                 "simulada": bool(dados.get("simulada", False)),
-            })
+                "da_instancia": True,
+            }
+            if par in indices:
+                estradas[indices[par]] = estrada
+            else:
+                indices[par] = len(estradas)
+                estradas.append(estrada)
     return {
         "localidades": list(rede_base["localidades"]),
         "estradas": estradas,
