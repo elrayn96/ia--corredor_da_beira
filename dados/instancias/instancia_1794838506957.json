@@ -1,0 +1,77 @@
+{
+  "nome": "instancia_1794838506957",
+  "semente": 1794838506957,
+  "rede": {
+    "localidades": "../localidades.json",
+    "estradas": "../estradas.json"
+  },
+  "estadoInicial": {
+    "localidade": "Beira",
+    "horaPartida": "05:00",
+    "combustivelLitros": 300
+  },
+  "parametros": {
+    "duracaoFrioHoras": 14,
+    "consumoLitrosPorKm": 0.35,
+    "tempoDescargaMin": 30,
+    "tempoAbastecimentoMin": 20,
+    "inicioRestricaoCirculacao": "22:00",
+    "fimRestricaoCirculacao": "05:00"
+  },
+  "postosAbastecimento": [
+    "Beira",
+    "Inchope",
+    "Chimoio"
+  ],
+  "supermercados": [
+    {
+      "id": "SM01",
+      "nome": "Supermercado 1",
+      "localidade": "Gondola",
+      "abertura": "06:00",
+      "fecho": "10:00"
+    },
+    {
+      "id": "SM02",
+      "nome": "Supermercado 2",
+      "localidade": "Lamego",
+      "abertura": "07:00",
+      "fecho": "11:30"
+    },
+    {
+      "id": "SM03",
+      "nome": "Supermercado 3",
+      "localidade": "Muxunguè",
+      "abertura": "08:00",
+      "fecho": "13:00"
+    },
+    {
+      "id": "SM04",
+      "nome": "Supermercado 4",
+      "localidade": "Mafambisse",
+      "abertura": "09:00",
+      "fecho": "14:30"
+    },
+    {
+      "id": "SM05",
+      "nome": "Supermercado 5",
+      "localidade": "Manica",
+      "abertura": "10:00",
+      "fecho": "16:00"
+    },
+    {
+      "id": "SM06",
+      "nome": "Supermercado 6",
+      "localidade": "Caia",
+      "abertura": "11:00",
+      "fecho": "17:30"
+    },
+    {
+      "id": "SM07",
+      "nome": "Supermercado 7",
+      "localidade": "Dondo",
+      "abertura": "12:00",
+      "fecho": "19:00"
+    }
+  ]
+}

@@ -209,7 +209,15 @@ def converter_para_busca(instancia, rede=None):
         }
         estradas[origem][destino] = atributos
         estradas[destino][origem] = atributos.copy()
+    locais = [
+        supermercado["localidade"]
+        for supermercado in instancia["supermercados"]
+    ]
 
+    if len(locais) != len(set(locais)):
+        raise ValueError(
+            "Supermercados duplicados na instância."
+        )
     supermercados = {
         supermercado["localidade"]: {
             "abertura": supermercado["abertura"],
@@ -283,3 +291,85 @@ if __name__ == "__main__":
             f"- {supermercado['localidade']}: "
             f"{supermercado['abertura']} - {supermercado['fecho']}"
         )
+
+
+
+# Percurso de demonstração, construído para a rede distribuída com o projecto.
+# Não altera a distribuição aleatória do gerador normal.
+PERCURSO_DEMONSTRACAO = (
+    "Beira", "Dondo", "Nhamatanda", "Inchope", "Gondola",
+    "Vanduzi", "Manica", "Chimoio", "Inchope",
+    "Nhamatanda", "Dondo", "Beira",
+)
+DESTINOS_DEMONSTRACAO = (
+    "Dondo", "Nhamatanda", "Inchope", "Gondola",
+    "Vanduzi", "Manica", "Chimoio",
+)
+
+
+def gerar_demonstracao_validada(semente=202601, nome_ficheiro=None):
+    """Guarda uma instância com percurso testemunha verificado pelo domínio.
+
+    Devolve (instancia, caminho, solucao). Não significa que qualquer
+    algoritmo consiga descobrir a solução antes do seu limite de tempo.
+    """
+    from src.problema import Problema
+    from src.solucao import Solucao
+
+    instancia = gerar_instancia(semente=semente)
+    instancia["nome"] = f"demonstracao_{semente}"
+    instancia["supermercados"] = gerar_janelas_horario(DESTINOS_DEMONSTRACAO)
+    problema = Problema(**converter_para_busca(instancia))
+    estado = problema.get_estado_inicial()
+    estados = [estado]
+    accoes = []
+    custo_total = 0
+
+    for destino in PERCURSO_DEMONSTRACAO[1:]:
+        sucessores = problema.get_sucessores(estado)
+        movimentos = [
+            (accao, seguinte, custo)
+            for accao, seguinte, custo in sucessores
+            if accao.get_tipo() == "deslocar"
+            and accao.get_parametro("destino") == destino
+        ]
+        if not movimentos:
+            raise ValueError(f"Percurso de demonstração inválido: {destino}")
+        accao, estado, custo = movimentos[0]
+        estados.append(estado)
+        accoes.append(accao)
+        custo_total += custo
+
+        if destino in DESTINOS_DEMONSTRACAO and destino not in estado.get_entregas_concluidas():
+            entregas = [
+                item for item in problema.get_sucessores(estado)
+                if item[0].get_tipo() == "entregar"
+            ]
+            if not entregas:
+                esperas = [
+                    item for item in problema.get_sucessores(estado)
+                    if item[0].get_tipo() == "esperar"
+                ]
+                if not esperas:
+                    raise ValueError(f"Não é possível entregar em {destino}")
+                accao, estado, custo = esperas[0]
+                estados.append(estado)
+                accoes.append(accao)
+                custo_total += custo
+                entregas = [
+                    item for item in problema.get_sucessores(estado)
+                    if item[0].get_tipo() == "entregar"
+                ]
+            if not entregas:
+                raise ValueError(f"Entrega impossível em {destino}")
+            accao, estado, custo = entregas[0]
+            estados.append(estado)
+            accoes.append(accao)
+            custo_total += custo
+
+    if not problema.teste_objectivo(estado):
+        raise ValueError("O percurso demonstrativo não atingiu o objectivo")
+    solucao = Solucao(accoes, estados, custo_total)
+    nome_ficheiro = nome_ficheiro or f"demonstracao_{semente}.json"
+    caminho = guardar_instancia(instancia, nome_ficheiro)
+    return instancia, caminho, solucao
