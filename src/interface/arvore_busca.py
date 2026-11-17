@@ -6,9 +6,10 @@ src/buscas/eventos_busca.py.
 """
 
 import tkinter as tk
-from tkinter import ttk
+from tkinter import filedialog, messagebox, ttk
 
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib import rc_context
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 from matplotlib.patches import Patch
 
@@ -56,7 +57,9 @@ def formatar_numero(valor):
 
 def rotulo_estado(estado):
     """Devolve um rótulo curto com a localidade do estado."""
-    if hasattr(estado, "get_localidade"):
+    if isinstance(estado, dict):
+        texto = estado.get("localidade", estado)
+    elif hasattr(estado, "get_localidade"):
         texto = estado.get_localidade()
     else:
         texto = getattr(estado, "localidade", estado)
@@ -242,6 +245,51 @@ def desenhar_arvore(eixo, modelo, indice):
     eixo.set_title(modelo.descricao_passo(indice), fontsize=9)
 
 
+def exportar_arvore(modelo, indice, caminho):
+    """Exporta todos os nós mostrados até ao passo, não só a vista ampliada.
+
+    SVG e PDF são vectoriais. PNG fica limitado para evitar ficheiros enormes.
+    A figura temporária é isolada do canvas Tkinter.
+    """
+    if modelo is None or not modelo.eventos:
+        raise ValueError("Não há uma árvore de busca para exportar.")
+    if not 0 <= indice < len(modelo.eventos):
+        raise ValueError("Passo inválido para exportação.")
+
+    destino = str(caminho)
+    extensao = destino.rsplit(".", 1)[-1].lower()
+    if extensao not in {"svg", "pdf", "png"}:
+        raise ValueError("Utilize SVG, PDF ou PNG.")
+
+    visiveis = modelo.nos_visiveis(indice)
+    xs = [modelo.posicoes[n][0] for n in visiveis]
+    ys = [modelo.posicoes[n][1] for n in visiveis]
+    largura_dados = max(xs) - min(xs)
+    altura_dados = max(ys) - min(ys)
+    # Reservar espaço suficiente para etiquetas e ramificações.
+    # SVG/PDF podem ser ampliados pelo docente sem perda de nitidez.
+    largura = min(100.0 if extensao != "png" else 24.0,
+                  max(12.0, largura_dados / 3.2 * 0.85))
+    altura = min(90.0 if extensao != "png" else 18.0,
+                 max(7.0, altura_dados / 2.1 * 0.85 + 3.0))
+    figura = Figure(figsize=(largura, altura), dpi=100, facecolor="white")
+    try:
+        eixo = figura.add_subplot(111)
+        desenhar_arvore(eixo, modelo, indice)
+        margem_x = max(3.0, largura_dados * 0.025)
+        margem_y = max(2.0, altura_dados * 0.05)
+        eixo.set_xlim(min(xs) - margem_x, max(xs) + margem_x)
+        eixo.set_ylim(min(ys) - margem_y, max(ys) + margem_y)
+        figura.subplots_adjust(left=0.015, right=0.985, top=0.955, bottom=0.025)
+        # Manter texto SVG como texto seleccionável em vez de contornos.
+        with rc_context({"svg.fonttype": "none"}):
+            figura.savefig(destino, format=extensao,
+                           dpi=300 if extensao == "png" else 100,
+                           facecolor="white")
+    finally:
+        figura.clear()
+
+
 class ArvoreBusca(ttk.Frame):
     """Painel que mostra, passo a passo, a árvore de busca."""
 
@@ -287,6 +335,17 @@ class ArvoreBusca(ttk.Frame):
                                style="Secundario.TButton", width=3)
             botao.pack(side="left", padx=3)
             self._botoes[nome] = botao
+        # A exportação SVG é vectorial; não perde nitidez ao ampliar.
+        self._botao_exportar = ttk.Button(
+            barra, text="Exportar árvore", command=self.exportar_imagem,
+            style="Secundario.TButton",
+        )
+        self._botao_exportar.pack(side="left", padx=(13, 3))
+        self._botao_fullscreen = ttk.Button(
+            barra, text="Ecrã inteiro", command=self.abrir_ecran_inteiro,
+            style="Secundario.TButton",
+        )
+        self._botao_fullscreen.pack(side="left", padx=3)
         self._contador = tk.StringVar(value="Sem eventos")
         ttk.Label(barra, textvariable=self._contador, style="Cartao.TLabel").pack(
             side="right", padx=8
@@ -304,6 +363,68 @@ class ArvoreBusca(ttk.Frame):
         self._canvas.mpl_connect("button_press_event", self._ao_press)
         self._canvas.mpl_connect("motion_notify_event", self._ao_mover)
         self._canvas.mpl_connect("button_release_event", self._ao_soltar)
+
+    def exportar_imagem(self):
+        """Permite guardar a árvore visível até ao passo actual em alta qualidade."""
+        if self._modelo is None or not self._modelo.eventos:
+            messagebox.showinfo("Exportar árvore", "Execute primeiro uma busca.",
+                                parent=self)
+            return
+        caminho = filedialog.asksaveasfilename(
+            parent=self,
+            title="Exportar árvore de busca",
+            initialfile=f"arvore_passo_{self._passo + 1}.svg",
+            defaultextension=".svg",
+            filetypes=[("SVG vectorial (recomendado)", "*.svg"),
+                       ("PDF vectorial", "*.pdf"),
+                       ("PNG 300 dpi", "*.png")],
+        )
+        if not caminho:
+            return
+        try:
+            exportar_arvore(self._modelo, self._indice, caminho)
+        except (OSError, ValueError, RuntimeError) as erro:
+            messagebox.showerror("Falha na exportação", str(erro), parent=self)
+        else:
+            messagebox.showinfo("Árvore exportada", f"Ficheiro guardado em:\n{caminho}",
+                                parent=self)
+
+    def abrir_ecran_inteiro(self):
+        """Abre uma vista ampliada real; Esc fecha e devolve à janela principal."""
+        if getattr(self, "_janela_fullscreen", None) is not None and self._janela_fullscreen.winfo_exists():
+            self._janela_fullscreen.lift()
+            return
+        janela = tk.Toplevel(self)
+        janela.title("Árvore de busca – Ecrã inteiro")
+        janela.configure(background="#FFFFFF")
+        self._janela_fullscreen = janela
+        topo = ttk.Frame(janela, padding=(10, 5))
+        topo.pack(fill="x")
+        ttk.Label(topo, text="Árvore de busca – arraste com a barra de navegação para mover",
+                  style="Cartao.TLabel").pack(side="left", padx=8)
+        ttk.Button(topo, text="Exportar árvore", command=self.exportar_imagem,
+                   style="Secundario.TButton").pack(side="right", padx=6)
+        ttk.Button(topo, text="Sair (Esc)", command=janela.destroy,
+                   style="Secundario.TButton").pack(side="right")
+        figura = Figure(figsize=(12, 8), dpi=100, facecolor="#FFFFFF")
+        eixo = figura.add_subplot(111)
+        desenhar_arvore(eixo, self._modelo, self._indice)
+        canvas = FigureCanvasTkAgg(figura, master=janela)
+        canvas.get_tk_widget().pack(fill="both", expand=True)
+        ferramentas = NavigationToolbar2Tk(canvas, janela, pack_toolbar=False)
+        ferramentas.update()
+        ferramentas.pack(fill="x")
+        canvas.draw_idle()
+        janela.bind("<Escape>", lambda _evento: janela.destroy())
+        janela.protocol("WM_DELETE_WINDOW", janela.destroy)
+        try:
+            janela.attributes("-fullscreen", True)
+        except tk.TclError:
+            try:
+                janela.state("zoomed")
+            except tk.TclError:
+                janela.geometry("1200x800")
+        janela.focus_set()
 
     def definir_algoritmo(self, algoritmo):
         self._mostrar_heuristica = algoritmo in {
@@ -488,6 +609,7 @@ class ArvoreBusca(ttk.Frame):
         }
         for nome, activo in estados.items():
             self._botoes[nome].state(["!disabled"] if activo else ["disabled"])
+        self._botao_exportar.state(["!disabled"] if total else ["disabled"])
         # A mesma superfície alterna visualmente entre reprodução e pausa.
         nome_icone = "pausar" if self._a_reproduzir else "reproduzir"
         if getattr(self, "_icone_play_actual", None) != nome_icone:

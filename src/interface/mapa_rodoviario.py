@@ -104,33 +104,33 @@ class MapaRodoviario(ttk.Frame):
         self._segmentos = []
         self._aresta_seleccionada = None
         self._ultima_explorada = None
+        self._marcador_exploracao = None
         self._supermercados = {}
         self._origem = "Beira"
         self._posicoes = {}
-        cabecalho = ttk.Frame(self, padding=(16, 12), style="Cartao.TFrame")
-        cabecalho.pack(fill="x")
-        ttk.Label(
-            cabecalho,
-            text="Rede Rodoviária — Cadeia de Frio no Corredor da Beira",
-            font=("Segoe UI", 14, "bold"),
-            style="Cartao.TLabel",
-            wraplength=900,
-        ).pack(anchor="w")
-        ttk.Label(
-            cabecalho, text="Localidades, ligações, distâncias (km) e estado do piso",
-            style="Cartao.TLabel"
-        ).pack(anchor="w")
         corpo = ttk.Panedwindow(self, orient="horizontal")
         corpo.pack(fill="both", expand=True, padx=8, pady=(0, 8))
         area_mapa = tk.Frame(corpo, bg="#173c37")
-        lateral = ttk.Frame(corpo, padding=8, width=340, style="Cartao.TFrame")
+        # O cabeçalho pertence à coluna do mapa: os três cartões começam no topo.
+        cabecalho = ttk.Frame(area_mapa, padding=(12, 9), style="Cartao.TFrame")
+        cabecalho.pack(fill="x")
+        ttk.Label(
+            cabecalho,
+            text="Rede Rodoviária – Cadeia de Frio no Corredor da Beira",
+            font=("Segoe UI", 14, "bold"), style="Cartao.TLabel",
+        ).pack(anchor="w")
+        ttk.Label(
+            cabecalho, text="Localidades, ligações, distâncias (km) e estado do piso",
+            style="Cartao.TLabel",
+        ).pack(anchor="w")
+        lateral = ttk.Frame(corpo, padding=(3, 5), width=340, style="Cartao.TFrame")
         corpo.add(area_mapa, weight=5)
         corpo.add(lateral, weight=2)
         self._divisao_mapa = corpo
         self._criar_legendas(lateral)
         self.after_idle(self._ajustar_paineis)
         self._figura = Figure(figsize=(9, 7), dpi=100, facecolor="#173c37")
-        self._figura.subplots_adjust(left=0.02, right=0.98, top=0.98, bottom=0.02)
+        self._figura.subplots_adjust(left=0.02, right=0.98, top=0.98, bottom=0.12)
         self._eixo = self._figura.add_subplot(111)
         self._canvas = FigureCanvasTkAgg(self._figura, master=area_mapa)
         self._canvas.get_tk_widget().pack(fill="both", expand=True)
@@ -154,30 +154,41 @@ class MapaRodoviario(ttk.Frame):
         if localidade in self._posicoes and localidade != self._ultima_explorada:
             self._ultima_explorada = localidade
             self._detalhes.configure(text=f"Em exploração: {localidade} (não é a rota final)")
-            self._desenhar()
+            if self._marcador_exploracao is not None:
+                self._marcador_exploracao.set_offsets([self._posicoes[localidade]])
+                self._marcador_exploracao.set_visible(True)
+                self._canvas.draw_idle()
+            else:
+                self._desenhar()
 
     def limpar_exploracao(self):
         if self._ultima_explorada is not None:
             self._ultima_explorada = None
-            self._desenhar()
+            if self._marcador_exploracao is not None:
+                self._marcador_exploracao.set_visible(False)
+                self._canvas.draw_idle()
+            else:
+                self._desenhar()
 
     def _criar_legendas(self, parent):
         legenda = ttk.LabelFrame(parent, text="Legenda", padding=10, style="Cartao.TLabelframe")
-        legenda.pack(fill="x", pady=(0, 10))
+        legenda.pack(fill="x", pady=(0, 6))
         for texto, cor in (
-            ("Localidade", "#b17e00"),
-            ("Posto de abastecimento", "#416e60"),
-            ("Supermercado", "#b17e00"),
-            ("→  Caminho da solução", CORES["solucao"]),
+            ("● Localidade", "#B98600"),
+            ("◆ Supermercado", "#C89C00"),
+            ("■ Abastecimento", "#1388B6"),
+            ("★ Supermercado e abastecimento", "#8651C5"),
+            ("★ Origem", "#086B47"),
+            ("━ Caminho da solução", CORES["solucao"]),
         ):
             ttk.Label(legenda, text=texto, foreground=cor).pack(anchor="w", pady=2)
         pisos = ttk.LabelFrame(
             parent, text="Estado do piso e velocidade média", padding=10, style="Cartao.TLabelframe"
         )
-        pisos.pack(fill="x", pady=(0, 8))
+        pisos.pack(fill="x", pady=(0, 6))
         for piso, (cor, nome, velocidade) in PISOS.items():
             linha = ttk.Frame(pisos)
-            linha.pack(fill="x", pady=3)
+            linha.pack(fill="x", pady=1)
             ttk.Label(
                 linha, text="━━", foreground=cor, font=("Segoe UI", 12, "bold")
             ).pack(side="left")
@@ -338,8 +349,8 @@ class MapaRodoviario(ttk.Frame):
             eixo.plot(
                 [a[0], b[0]],
                 [a[1], b[1]],
-                color=PISOS.get(estrada["piso"], (CORES["estrada"],))[0],
-                lw=2.2,
+                color="#A9B8B6",
+                lw=2.3,
                 zorder=1,
             )
             eixo.text(
@@ -386,28 +397,31 @@ class MapaRodoviario(ttk.Frame):
                 fontweight="bold",
                 color="#004D30",
             )
-        if self._ultima_explorada in self._posicoes:
-            x, y = self._posicoes[self._ultima_explorada]
-            eixo.scatter(x, y, s=780, facecolors="none", edgecolors="#FFFFFF",
-                         linewidths=3.5, zorder=5)
-            eixo.scatter(x, y, s=580, facecolors="none", edgecolors="#FFCA56",
-                         linewidths=3, zorder=5.1)
+        # Actualização incremental: o marcador muda de posição sem redesenhar a rede.
+        posicao = self._posicoes.get(self._ultima_explorada, (-1000, -1000))
+        self._marcador_exploracao = eixo.scatter(
+            *posicao, s=580, facecolors="none", edgecolors="#FFCA56",
+            linewidths=3, zorder=6,
+        )
+        self._marcador_exploracao.set_visible(self._ultima_explorada in self._posicoes)
         for nome, (x, y) in self._posicoes.items():
-            tipo = (
-                "origem"
-                if nome == self._origem
-                else ("supermercado" if nome in self._supermercados else "localidade")
-            )
             localidade = next(l for l in self._rede["localidades"] if l["nome"] == nome)
+            posto = bool(localidade.get("abastecimento"))
+            supermercado = nome in self._supermercados
+            origem = nome == self._origem
+            # Círculo amarelo: localidade; losango dourado: supermercado;
+            # quadrado azul: posto; estrela roxa: ambas as funções;
+            # estrela verde: origem, independentemente das outras funções.
+            cor, forma, tamanho = (
+                ("#30D69A", "*", 360) if origem else
+                ("#A879ED", "*", 315) if posto and supermercado else
+                ("#63C5E9", "s", 210) if posto else
+                ("#FFE18A", "D", 175) if supermercado else
+                ("#FFCB45", "o", 150)
+            )
             artista = eixo.scatter(
-                x,
-                y,
-                s=160,
-                c="#ffcb45" if tipo == "localidade" else CORES[tipo],
-                edgecolors="#fff5c6",
-                marker="s" if localidade.get("abastecimento") else "o",
-                picker=6,
-                zorder=3,
+                x, y, s=tamanho, c=cor, edgecolors="#FFF7CF",
+                linewidths=1.4, marker=forma, picker=6, zorder=3,
             )
             artista.set_gid(nome)
             eixo.annotate(
@@ -442,27 +456,19 @@ class MapaRodoviario(ttk.Frame):
         eixo.set_aspect("equal")
         eixo.legend(
             handles=[
-                Line2D([], [], marker="o", linestyle="", color=CORES[t], label=n)
-                for t, n in (
-                    ("localidade", "Localidade"),
-                    ("supermercado", "Supermercado"),
-                    ("origem", "Origem / regresso"),
-                    ("solucao", "Caminho da solução"),
-                )
-            ]
-            + [
-                Line2D(
-                    [],
-                    [],
-                    marker="s",
-                    linestyle="",
-                    color="#555555",
-                    label="Posto de abastecimento",
+                Line2D([], [], marker=forma, linestyle="", color=cor,
+                       markersize=7, label=nome)
+                for nome, cor, forma in (
+                    ("Localidade", "#FFCB45", "o"),
+                    ("Supermercado", "#FFE18A", "D"),
+                    ("Abastecimento", "#63C5E9", "s"),
+                    ("Ambos", "#A879ED", "*"),
+                    ("Origem", "#30D69A", "*"),
+                    ("Solução", "#008C48", "o"),
                 )
             ],
-            loc="lower center",
-            fontsize=7,
-            ncol=3,
+            loc="lower center", fontsize=7, ncol=3,
+            facecolor="#F9FBF9", framealpha=0.94,
         )
         self._canvas.draw_idle()
 

@@ -9,7 +9,7 @@ import time
 import tkinter as tk
 from tkinter import messagebox, ttk
 
-from src.gerador import carregar_rede
+from src.gerador import carregar_rede, gerar_demonstracao_validada
 from src.interface.arvore_busca import ArvoreBusca
 from src.interface.icones import carregar_icone
 from src.interface.mapa_rodoviario import MapaRodoviario
@@ -64,6 +64,7 @@ class JanelaPrincipal(tk.Tk):
         self._em_execucao = False
         self._cancelar = threading.Event()
         self._ultimo_progresso = 0.0
+        self._ultima_actualizacao_mapa = 0.0
         self._inicio_busca = None
         self._imagens = []
         self._poll_id = None
@@ -163,7 +164,8 @@ class JanelaPrincipal(tk.Tk):
         criar_menu_item(
             "Ficheiro",
             [
-                ("Sair", self.destroy),
+                ("Gerar demonstração viável", self._gerar_demonstracao),
+                ("Sair", self._fechar),
             ],
         )
 
@@ -207,9 +209,36 @@ class JanelaPrincipal(tk.Tk):
 
         corpo = tk.Frame(self, bg="#F3F6F8")
         corpo.pack(fill="both", expand=True, padx=10, pady=10)
-        lateral = ttk.Frame(corpo, padding=10, style="Cartao.TFrame", width=274)
-        lateral.pack(side="left", fill="y", padx=(0, 10))
-        lateral.pack_propagate(False)
+        # Coluna lateral deslocável, inclusive em ecrãs de 1366 × 768.
+        coluna_lateral = tk.Frame(corpo, bg="#FFFFFF", width=292)
+        coluna_lateral.pack(side="left", fill="y", padx=(0, 10))
+        coluna_lateral.pack_propagate(False)
+        self._lateral_canvas = tk.Canvas(
+            coluna_lateral, bg="#FFFFFF", bd=0, highlightthickness=0,
+        )
+        self._lateral_scroll = ttk.Scrollbar(
+            coluna_lateral, orient="vertical",
+            command=self._lateral_canvas.yview,
+        )
+        self._lateral_canvas.configure(yscrollcommand=self._lateral_scroll.set)
+        self._lateral_scroll.pack(side="right", fill="y")
+        self._lateral_canvas.pack(side="left", fill="both", expand=True)
+        lateral = ttk.Frame(self._lateral_canvas, padding=6, style="Cartao.TFrame")
+        janela_lateral = self._lateral_canvas.create_window(
+            (0, 0), window=lateral, anchor="nw",
+        )
+        lateral.bind(
+            "<Configure>",
+            lambda _evento: self._lateral_canvas.configure(
+                scrollregion=self._lateral_canvas.bbox("all")
+            ),
+        )
+        self._lateral_canvas.bind(
+            "<Configure>",
+            lambda evento: self._lateral_canvas.itemconfigure(
+                janela_lateral, width=evento.width,
+            ),
+        )
         principal = ttk.Frame(corpo, style="Cartao.TFrame")
         principal.pack(side="left", fill="both", expand=True)
 
@@ -267,6 +296,22 @@ class JanelaPrincipal(tk.Tk):
             self._separadores.add(painel, text=f"  {titulo}  ",
                                    image=imagem, compound="left")
 
+    def _gerar_demonstracao(self):
+        """Mostra um percurso testemunha, diferente de uma busca calculada."""
+        if self._em_execucao:
+            return
+        try:
+            _instancia, caminho, solucao = gerar_demonstracao_validada()
+            self._configuracao.carregar_instancia(caminho)
+            self._mapa.destacar_percurso(solucao.get_estados(), solucao.get_accoes())
+            self._estado.set(
+                f"Demonstração validada: percurso de referência de "
+                f"{solucao.get_custo_total():.0f} min. Não é um resultado de busca."
+            )
+            self._separadores.select(self._mapa)
+        except (OSError, ValueError, KeyError, TypeError) as erro:
+            messagebox.showerror("Demonstração indisponível", str(erro), parent=self)
+
     def _ao_carregar_instancia(self, instancia):
         self._mapa.mostrar_instancia(instancia)
         self._estado.set("Instância seleccionada. Pronto para executar.")
@@ -294,7 +339,9 @@ class JanelaPrincipal(tk.Tk):
         self._inicio_busca = time.perf_counter()
         self._arvore.definir_algoritmo(configuracao["algoritmo"])
         self._mapa.limpar_exploracao()
+        self._mapa.limpar_percurso()
         self._separadores.select(self._mapa)
+        self._iniciar_sobreposicao()
         self._configuracao.definir_bloqueado(True)
         self._botao_limpar.state(["disabled"])
         self._botao_executar.configure(
@@ -369,8 +416,10 @@ class JanelaPrincipal(tk.Tk):
                 break
             if tipo == "progresso":
                 contadores, evento, decorrido, localidade = conteudo
-                if localidade and evento in {"expandir", "objectivo"}:
+                if (localidade and evento in {"expandir", "objectivo"}
+                        and time.perf_counter() - self._ultima_actualizacao_mapa > 0.8):
                     self._mapa.mostrar_exploracao(localidade)
+                    self._ultima_actualizacao_mapa = time.perf_counter()
                 self._progresso_texto.set(
                     f"{contadores['expandir']:,} expandidos · "
                     f"{contadores['gerar']:,} gerados\n"
@@ -393,9 +442,33 @@ class JanelaPrincipal(tk.Tk):
         if self._em_execucao:
             self._agendar_consulta()
 
+    def _iniciar_sobreposicao(self):
+        """Indicador não modal sobre o mapa, preservando acesso ao Cancelar."""
+        if getattr(self, "_sobreposicao", None) is None:
+            self._sobreposicao = tk.Frame(
+                self._mapa._canvas.get_tk_widget(), bg="#E6F4ED",
+                highlightbackground="#8CBBA5", highlightthickness=1,
+            )
+            self._spinner_mapa = IndicadorActividade(self._sobreposicao, "#E6F4ED")
+            self._spinner_mapa.pack(side="left", padx=(15, 10), pady=12)
+            tk.Label(
+                self._sobreposicao, text="A explorar estados...",
+                bg="#E6F4ED", fg="#064D38",
+                font=("Segoe UI", 12, "bold"),
+            ).pack(side="left", padx=(0, 15))
+        self._sobreposicao.place(relx=0.5, rely=0.14, anchor="center")
+        self._sobreposicao.lift()
+        self._spinner_mapa.iniciar()
+
+    def _parar_sobreposicao(self):
+        if getattr(self, "_sobreposicao", None) is not None:
+            self._spinner_mapa.parar()
+            self._sobreposicao.place_forget()
+
     def _finalizar_execucao(self):
         self._em_execucao = False
         self._spinner.parar()
+        self._parar_sobreposicao()
         self._progresso.stop()
         self._configuracao.definir_bloqueado(False)
         self._botao_limpar.state(["!disabled"])
@@ -455,6 +528,7 @@ class JanelaPrincipal(tk.Tk):
     def _fechar(self):
         self._cancelar.set()
         self._spinner.parar()
+        self._parar_sobreposicao()
         if self._poll_id is not None:
             self.after_cancel(self._poll_id)
             self._poll_id = None

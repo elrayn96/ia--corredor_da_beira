@@ -106,16 +106,11 @@ class PainelConfiguracao(ttk.Frame):
         )
         self._botao_gerar.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(3, 9))
 
-        cartao = ttk.Frame(self, style="Instancia.TFrame", padding=10)
-        cartao.grid(row=3, column=0, columnspan=2, sticky="ew", pady=(0, 14))
+        cartao = ttk.Frame(self, style="Instancia.TFrame", padding=8)
+        cartao.grid(row=3, column=0, columnspan=2, sticky="ew", pady=(0, 6))
         ttk.Label(cartao, text="INSTÂNCIA SELECCIONADA", style="InstanciaTitulo.TLabel").pack(anchor="w")
-        ttk.Label(
-            cartao, textvariable=self._nome, style="InstanciaNome.TLabel", wraplength=235
-        ).pack(anchor="w", pady=(5, 3))
-        ttk.Label(
-            cartao, textvariable=self._detalhes_instancia,
-            style="InstanciaDetalhe.TLabel", wraplength=235
-        ).pack(anchor="w")
+        # O cartão comunica apenas o estado; os metadados ficam no JSON.
+
 
         self._campos = {}
         self._rotulos = {}
@@ -128,7 +123,7 @@ class PainelConfiguracao(ttk.Frame):
             ), 4,
         ):
             etiqueta = ttk.Label(self, text=rotulo, style="Cartao.TLabel")
-            etiqueta.grid(row=linha, column=0, sticky="w", pady=7)
+            etiqueta.grid(row=linha, column=0, sticky="w", pady=4)
             self._rotulos[rotulo] = etiqueta
             campo = (
                 ttk.Combobox(self, textvariable=variavel, values=opcoes,
@@ -142,7 +137,7 @@ class PainelConfiguracao(ttk.Frame):
             style="Ajuda.TLabel", wraplength=255, justify="left"
         )
         self._ajuda_heuristica.grid(row=8, column=0, columnspan=2, sticky="ew", pady=(6, 0))
-        ttk.Label(self, text="Tempo máximo (s)", style="Cartao.TLabel").grid(
+        ttk.Label(self, text="Tempo máx. (s)", style="Cartao.TLabel").grid(
             row=9, column=0, sticky="w", pady=(9, 3))
         self._campo_tempo = ttk.Entry(
             self, textvariable=self._limite_tempo, style="Moderno.TEntry", width=15
@@ -192,7 +187,7 @@ class PainelConfiguracao(ttk.Frame):
         if self._ao_alterar_instancia:
             self._ao_alterar_instancia(instancia)
         self._caminho_instancia = str(Path(caminho).resolve())
-        self._nome.set(str(instancia.get("nome", "Instância")))
+        self._nome.set("Seleccionada  ·  " + str(instancia.get("nome", "Instância")))
         self._detalhes_instancia.set(
             f"{len(instancia['supermercados'])} supermercados  ·  "
             f"Semente: {instancia.get('semente', 'não indicada')}\n"

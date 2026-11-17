@@ -1,7 +1,7 @@
 # Cadeia de Frio no Corredor da Beira
 
-**Projecto P1 — Inteligência Artificial I | Universidade Eduardo Mondlane (UEM) | 2026**  
-**Grupo 01 — Laboral**
+**Projecto P1 – Inteligência Artificial I | Universidade Eduardo Mondlane (UEM) | 2026**  
+**Grupo 01 – Laboral**
 
 > Aplicação de Inteligência Artificial para planificação e comparação de rotas de distribuição de produtos refrigerados no Corredor da Beira, em Moçambique.
 
@@ -99,17 +99,17 @@ O domínio é implementado em módulos próprios (`src/estado.py`, `src/accao.py
 
 ### Procura não informada
 
-- **LDS** — procura em profundidade limitada (*Limited Depth Search*).
-- **BFS** — procura em largura (*Breadth-First Search*).
-- **DFS** — procura em profundidade (*Depth-First Search*), com controlo de ciclos e limite configurável quando aplicável.
-- **IDS** — aprofundamento iterativo (*Iterative Deepening Search*), incluindo contabilização de reexpansões.
-- **UCS** — procura de custo uniforme (*Uniform-Cost Search*).
+- **LDS** – procura em profundidade limitada (*Limited Depth Search*).
+- **BFS** – procura em largura (*Breadth-First Search*).
+- **DFS** – procura em profundidade (*Depth-First Search*), com controlo de ciclos e limite configurável quando aplicável.
+- **IDS** – aprofundamento iterativo (*Iterative Deepening Search*), incluindo contabilização de reexpansões.
+- **UCS** – procura de custo uniforme (*Uniform-Cost Search*).
 
 ### Procura informada
 
 - **Procura gulosa** (*Greedy Best-First Search*).
-- **A\*** — utiliza `f(n) = g(n) + h(n)`.
-- **A\* ponderada** — utiliza `f(n) = g(n) + w × h(n)`; pesos experimentais: **1,25; 1,5; 2; 3**.
+- **A\*** – utiliza `f(n) = g(n) + h(n)`.
+- **A\* ponderada** – utiliza `f(n) = g(n) + w × h(n)`; pesos experimentais: **1,25; 1,5; 2; 3**.
 
 ### Heurísticas
 
@@ -134,6 +134,22 @@ A interface gráfica desktop permite:
 9. Comparar algoritmos e consultar gráficos e resultados experimentais.
 
 O mapa de estradas e a árvore de procura são visualizações diferentes: o primeiro mostra a rede física e o percurso; a segunda mostra como o algoritmo explorou o espaço de estados.
+
+## Demonstração com solução validada
+
+Para confirmar o funcionamento completo sem depender de uma instância aleatória possivelmente inviável:
+
+1. Abre a aplicação com `python main.py`.
+2. No menu **Ficheiro**, selecciona **Gerar demonstração viável**.
+3. O mapa destaca um percurso testemunha, gerado e **validado pelas transições do domínio**. Trata-se de um percurso de referência, não do resultado de uma busca.
+4. Selecciona **A\*** e a heurística **h2** e executa a busca. A procura apaga o percurso de referência e desenha apenas a solução que encontrar.
+5. Consulta **Mapa** e **Resultados**: o ensaio controlado desta revisão encontrou uma solução de **830 minutos** com **sete entregas** e **19 acções**.
+
+O percurso demonstrativo é reproduzível pela semente `202601` e fica em `dados/instancias/demonstracao_202601.json` após a sua geração. O gerador aleatório disponível em **Gerar nova instância** permanece independente e **não garante** que uma rota completa seja viável. Uma execução interrompida por limite de tempo não prova que não exista solução.
+
+O mapa mostra inicialmente todas as estradas com a mesma cor; as cores dos estados de piso continuam na legenda, preservando os dados originais. Os marcadores distinguem localidades, supermercados, postos de abastecimento, localidades com as duas funções e origem. A rota definitiva destaca-se depois da busca. O painel lateral possui deslocação vertical; a indicação de processamento é apresentada sobre o mapa durante execuções demoradas.
+
+**Verificação preliminar, não campanha experimental:** numa execução por heurística sobre a demonstração, A* com h0 e h1 atingiu o limite de três segundos, enquanto A* com h2 concluiu em aproximadamente 0,37 s, expandindo 1 410 nós. Estes valores não são médias estatísticas nem resultados de diferentes tamanhos de instância.
 
 ## Tecnologias
 
@@ -344,7 +360,7 @@ A integração contínua é configurada em `.github/workflows/ci.yml`. Experiên
 
 ## Equipa e responsabilidades
 
-**Universidade Eduardo Mondlane — Grupo 01, Laboral (2026)**
+**Universidade Eduardo Mondlane – Grupo 01, Laboral (2026)**
 
 | Integrante | Responsabilidade principal | Contribuições |
 | --- | --- | --- |
@@ -406,7 +422,7 @@ Convenções do código: **AO90**, identificadores em **`snake_case`**, `accao`/
 
 ---
 
-**Projecto académico — Inteligência Artificial I · Universidade Eduardo Mondlane · 2026**
+**Projecto académico – Inteligência Artificial I · Universidade Eduardo Mondlane · 2026**
 
 
 ## Submissão ao docente (18 de Novembro de 2026)

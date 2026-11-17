@@ -36,6 +36,13 @@ def configurar_estilos(raiz):
     estilo.configure('TNotebook', background=FUNDO, borderwidth=0)
     estilo.configure('TNotebook.Tab', background='#E9EEF2', foreground=TEXTO, font=('Segoe UI',10), padding=(17,11), borderwidth=1)
     estilo.map('TNotebook.Tab', background=[('selected',VERDE_PRINCIPAL),('active',VERDE_CLARO)], foreground=[('selected','white'),('!selected',TEXTO)])
+    estilo.configure('Vertical.TScrollbar', troughcolor='#EDF3F5',
+                    background='#BACBC8', arrowcolor='#086B47',
+                    borderwidth=0, width=12)
+    estilo.map('Vertical.TScrollbar', background=[('active', '#86ACA0'),
+                ('pressed', '#609D89')])
+    estilo.configure('Horizontal.TScrollbar', troughcolor='#EDF3F5',
+                    background='#BACBC8', borderwidth=0)
     estilo.configure('TCombobox', padding=(6,6))
     estilo.configure('TEntry', padding=(6,6))
     estilo.configure('Horizontal.TProgressbar', background=VERDE_PRINCIPAL, troughcolor=BORDA, borderwidth=0, thickness=7)
