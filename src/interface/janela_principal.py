@@ -14,6 +14,7 @@ from src.interface.mapa_rodoviario import MapaRodoviario
 from src.interface.painel_comparacao import PainelComparacao
 from src.interface.painel_configuracao import PainelConfiguracao
 from src.interface.painel_resultados import PainelResultados
+from src.interface.tema import configurar_estilos
 from src.servicos.executar_busca import executar_busca
 
 logger = logging.getLogger(__name__)
@@ -26,6 +27,7 @@ class JanelaPrincipal(tk.Tk):
         super().__init__()
         self.title("Cadeia de Frio no Corredor da Beira")
         self.geometry("1450x900")
+        self.configure(bg="#F3F6F8")
         self.minsize(1100, 700)
         self._fila = queue.Queue()
         self._resultados = []
@@ -37,11 +39,7 @@ class JanelaPrincipal(tk.Tk):
         self.protocol("WM_DELETE_WINDOW", self.destroy)
 
     def _criar_estilo(self):
-        estilo = ttk.Style(self)
-        if "clam" in estilo.theme_names():
-            estilo.theme_use("clam")
-        estilo.configure("Titulo.TLabel", font=("Segoe UI", 15, "bold"))
-        estilo.configure("Executar.TButton", font=("Segoe UI", 10, "bold"))
+        configurar_estilos(self)
 
     def _criar_menu(self):
         menu = tk.Menu(self)
@@ -62,22 +60,37 @@ class JanelaPrincipal(tk.Tk):
         self.configure(menu=menu)
 
     def _criar_conteudo(self):
-        cabecalho = ttk.Frame(self, padding=(12, 8))
+        cabecalho = tk.Frame(
+            self,
+            bg="#064D38",
+            height=66,
+        )
         cabecalho.pack(fill="x")
+        cabecalho.pack_propagate(False)
+
         ttk.Label(
             cabecalho,
-            text="Cadeia de Frio no Corredor da Beira",
-            style="Titulo.TLabel",
-        ).pack(side="left")
-        self._estado = tk.StringVar(value="Seleccione uma instância para começar.")
-        ttk.Label(cabecalho, textvariable=self._estado).pack(side="right")
+            text="❄  Cadeia de Frio no Corredor da Beira",
+            style="Cabecalho.TLabel",
+        ).pack(side="left", padx=12)
 
-        corpo = ttk.Panedwindow(self, orient="horizontal")
-        corpo.pack(fill="both", expand=True)
-        lateral = ttk.Frame(corpo, padding=8, width=310)
-        principal = ttk.Frame(corpo)
-        corpo.add(lateral, weight=1)
-        corpo.add(principal, weight=5)
+        self._estado = tk.StringVar(
+            value="Seleccione uma instância para começar."
+        )
+
+        ttk.Label(
+            cabecalho,
+            textvariable=self._estado,
+            style="Estado.TLabel",
+        ).pack(side="right", padx=18)
+
+        corpo = tk.Frame(self, bg="#F3F6F8")
+        corpo.pack(fill="both", expand=True, padx=10, pady=10)
+        lateral = ttk.Frame(corpo, padding=12, style="Cartao.TFrame", width=285)
+        lateral.pack(side="left", fill="y", padx=(0, 10))
+        lateral.pack_propagate(False)
+        principal = ttk.Frame(corpo, style="Cartao.TFrame")
+        principal.pack(side="left", fill="both", expand=True)
 
         self._configuracao = PainelConfiguracao(
             lateral, ao_alterar_instancia=self._ao_carregar_instancia
@@ -85,15 +98,15 @@ class JanelaPrincipal(tk.Tk):
         self._configuracao.pack(fill="x")
         self._botao_executar = ttk.Button(
             lateral,
-            text="Executar busca",
+            text="▶  Executar busca",
             style="Executar.TButton",
             command=self._iniciar_busca,
         )
         self._botao_executar.pack(fill="x", padx=8, pady=(8, 4))
         ttk.Button(
-            lateral, text="Limpar resultados", command=self._limpar_resultados
+            lateral, text="Limpar resultados", style="Secundario.TButton", command=self._limpar_resultados
         ).pack(fill="x", padx=8, pady=4)
-        self._progresso = ttk.Progressbar(lateral, mode="indeterminate")
+        self._progresso = ttk.Progressbar(lateral, orient="horizontal", mode="indeterminate", style="Horizontal.TProgressbar")
         self._progresso.pack(fill="x", padx=8, pady=8)
 
         self._separadores = ttk.Notebook(principal)

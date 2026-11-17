@@ -1,6 +1,7 @@
 """Mapa esquematico da rede: nao representa coordenadas geograficas."""
 
 import math
+import tkinter as tk
 from tkinter import ttk
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
@@ -98,29 +99,32 @@ def supermercados_da_instancia(instancia):
 
 class MapaRodoviario(ttk.Frame):
     def __init__(self, parent):
-        super().__init__(parent)
+        super().__init__(parent, style="Cartao.TFrame")
         self._rede = {"localidades": [], "estradas": []}
         self._segmentos = []
         self._supermercados = {}
         self._origem = "Beira"
         self._posicoes = {}
-        cabecalho = ttk.Frame(self, padding=(12, 10))
+        cabecalho = ttk.Frame(self, padding=(16, 12), style="Cartao.TFrame")
         cabecalho.pack(fill="x")
         ttk.Label(
             cabecalho,
             text="Rede Rodoviária — Cadeia de Frio no Corredor da Beira",
             font=("Segoe UI", 14, "bold"),
+            style="Cartao.TLabel",
             wraplength=900,
         ).pack(anchor="w")
         ttk.Label(
-            cabecalho, text="Localidades, ligações, distâncias (km) e estado do piso"
+            cabecalho, text="Localidades, ligações, distâncias (km) e estado do piso",
+            style="Cartao.TLabel"
         ).pack(anchor="w")
-        corpo = ttk.Panedwindow(self, orient="horizontal")
-        corpo.pack(fill="both", expand=True)
-        area_mapa = ttk.Frame(corpo)
-        lateral = ttk.Frame(corpo, padding=8, width=310)
-        corpo.add(area_mapa, weight=4)
-        corpo.add(lateral, weight=1)
+        corpo = tk.Frame(self, bg="#F3F6F8")
+        corpo.pack(fill="both", expand=True, padx=8, pady=(0, 8))
+        area_mapa = tk.Frame(corpo, bg="#173c37")
+        area_mapa.pack(side="left", fill="both", expand=True, padx=(0, 10))
+        lateral = ttk.Frame(corpo, padding=8, width=310, style="Cartao.TFrame")
+        lateral.pack(side="right", fill="y")
+        lateral.pack_propagate(False)
         self._criar_legendas(lateral)
         self._figura = Figure(figsize=(9, 7), dpi=100, facecolor="#173c37")
         self._figura.subplots_adjust(left=0.02, right=0.98, top=0.98, bottom=0.02)
@@ -128,7 +132,8 @@ class MapaRodoviario(ttk.Frame):
         self._canvas = FigureCanvasTkAgg(self._figura, master=area_mapa)
         self._canvas.get_tk_widget().pack(fill="both", expand=True)
         self._barra = NavigationToolbar2Tk(self._canvas, area_mapa, pack_toolbar=False)
-        self._barra.pack(fill="x")
+        # A barra de ferramentas fica disponível no código, mas oculta por padrão.
+        # O mapa ganha espaço vertical; pode ser reactivada quando necessário.
         self._detalhes = ttk.Label(
             self, text="Seleccione uma localidade para ver os detalhes."
         )
@@ -137,8 +142,8 @@ class MapaRodoviario(ttk.Frame):
         self._desenhar()
 
     def _criar_legendas(self, parent):
-        legenda = ttk.LabelFrame(parent, text="Legenda", padding=8)
-        legenda.pack(fill="x", pady=(0, 8))
+        legenda = ttk.LabelFrame(parent, text="ⓘ  Legenda", padding=10)
+        legenda.pack(fill="x", pady=(0, 10))
         for texto, cor in (
             ("●  Localidade", "#b17e00"),
             ("■  Posto de abastecimento", "#416e60"),
@@ -147,7 +152,7 @@ class MapaRodoviario(ttk.Frame):
         ):
             ttk.Label(legenda, text=texto, foreground=cor).pack(anchor="w", pady=2)
         pisos = ttk.LabelFrame(
-            parent, text="Estado do piso e velocidade média", padding=8
+            parent, text="Estado do piso e velocidade média", padding=10
         )
         pisos.pack(fill="x", pady=(0, 8))
         for piso, (cor, nome, velocidade) in PISOS.items():
@@ -159,7 +164,7 @@ class MapaRodoviario(ttk.Frame):
             ttk.Label(linha, text=f" {piso} · {nome} · {velocidade} km/h").pack(
                 side="left"
             )
-        ligacoes = ttk.LabelFrame(parent, text="Lista de ligações (arestas)", padding=4)
+        ligacoes = ttk.LabelFrame(parent, text="Lista de ligações (arestas)", padding=8)
         ligacoes.pack(fill="both", expand=True)
         self._tabela = ttk.Treeview(
             ligacoes,
@@ -179,14 +184,7 @@ class MapaRodoviario(ttk.Frame):
         self._tabela.configure(yscrollcommand=scroll.set)
         scroll.pack(side="right", fill="y")
         self._tabela.pack(fill="both", expand=True)
-        ttk.Label(
-            parent,
-            text="Esquema ilustrativo, sem escala geográfica.\n"
-            "Rótulo da estrada: distância (km) | piso.\n"
-            "Dados e ligações preservados da rede do projecto.",
-            wraplength=280,
-            foreground="#58665f",
-        ).pack(fill="x", pady=(8, 0))
+        # Informação metodológica preservada em tooltip ou documentação futura.
 
     def mostrar_rede(self, rede):
         nomes = [localidade["nome"] for localidade in rede["localidades"]]

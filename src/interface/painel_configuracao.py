@@ -84,12 +84,13 @@ class PainelConfiguracao(ttk.Frame):
         ttk.Label(self, textvariable=self._nome, wraplength=260).grid(
             row=1, column=0, columnspan=2, sticky="w", pady=8
         )
-        ttk.Button(self, text="Carregar instância", command=self._carregar).grid(
+        ttk.Button(self, text="Carregar instância", style="Secundario.TButton", command=self._carregar).grid(
             row=2, column=0, columnspan=2, sticky="ew", pady=3
         )
         ttk.Button(
             self,
             text="Gerar nova instância",
+            style="Gerar.TButton",
             command=self._gerar_instancia,
         ).grid(row=3, column=0, columnspan=2, sticky="ew", pady=3)
         self._campos = {}
