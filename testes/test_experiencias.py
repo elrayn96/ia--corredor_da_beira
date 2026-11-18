@@ -2,6 +2,7 @@ import csv
 
 from experiencias.bateria import _carregar_checkpoint, _guardar_checkpoint
 from experiencias.executar import executar_experiencia
+from experiencias.graficos import _rotulo, gerar_graficos
 from experiencias.resultados import CABECALHOS, guardar_resultados_csv
 from src.interface.painel_comparacao import preparar_comparacao
 
@@ -101,3 +102,35 @@ def test_checkpoint_da_bateria_e_atomico_e_compativel(tmp_path):
     assert _carregar_checkpoint(caminho, "outra", 60) == []
     assert _carregar_checkpoint(caminho, "abc123", 30) == []
     assert not caminho.with_suffix(".json.tmp").exists()
+
+
+def test_graficos_usam_rotulos_legiveis_e_criam_as_tres_figuras(tmp_path):
+    assert _rotulo(("a_star_ponderada", "h2", "1.25")) == "A* pond. h2 (w=1,25)"
+    caminho = tmp_path / "resultados.csv"
+    guardar_resultados_csv(
+        [
+            {
+                "algoritmo": "a_star",
+                "heuristica": "h2",
+                "estado_execucao": "concluida",
+                "custo_total": 10,
+                "custo_optimo": 10,
+                "razao_custo_optimo": 1,
+                "nos_expandidos": 20,
+                "tempo_segundos": 0.1,
+                "nivel": nivel,
+                "dimensao": dimensao,
+            }
+            for nivel, dimensao in zip(("pequena", "media", "grande"), (4, 16, 25))
+        ],
+        caminho,
+    )
+
+    criados = gerar_graficos(caminho, tmp_path / "graficos")
+
+    assert [item.name for item in criados] == [
+        "nos_expandidos_vs_dimensao.png",
+        "tempo_vs_dimensao.png",
+        "custo_vs_optimo.png",
+    ]
+    assert all(item.stat().st_size > 10_000 for item in criados)

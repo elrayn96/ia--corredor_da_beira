@@ -10,8 +10,10 @@ from collections import defaultdict
 from pathlib import Path
 
 from docx import Document
+from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches
+from docx.text.paragraph import Paragraph
 
 
 def numero(valor):
@@ -32,15 +34,18 @@ def remover_capa_duplicada(documento):
     corpo = documento.element.body
     ocorrencias = []
     for indice, elemento in enumerate(list(corpo)):
-        texto = "".join(
-            no.text or "" for no in elemento.iter()
-            if no.tag == qn("w:t")
-        )
+        texto = "".join(no.text or "" for no in elemento.iter() if no.tag == qn("w:t"))
         if "UNIVERSIDADE EDUARDO MONDLANE" in texto:
             ocorrencias.append(indice)
     if len(ocorrencias) >= 2:
-        for elemento in list(corpo)[:ocorrencias[1]]:
+        for elemento in list(corpo)[: ocorrencias[1]]:
             corpo.remove(elemento)
+
+
+def inserir_paragrafo_depois(paragrafo):
+    novo_elemento = OxmlElement("w:p")
+    paragrafo._p.addnext(novo_elemento)
+    return Paragraph(novo_elemento, paragrafo._parent)
 
 
 def media(linhas, campo):
@@ -57,7 +62,8 @@ def fmt(valor, casas=1):
 
 def chave_linha(linha):
     return (
-        linha.get("algoritmo", ""), linha.get("heuristica", ""),
+        linha.get("algoritmo", ""),
+        linha.get("heuristica", ""),
         numero(linha.get("peso")),
     )
 
@@ -67,11 +73,14 @@ def preencher_tabela_resultados(tabela, linhas):
     for linha in linhas:
         grupos[chave_linha(linha)].append(linha)
     mapa = {
-        1: ("bfs", "h0", None), 2: ("dfs", "h0", None),
-        3: ("ids", "h0", None), 4: ("ucs", "h0", None),
+        1: ("bfs", "h0", None),
+        2: ("dfs", "h0", None),
+        3: ("ids", "h0", None),
+        4: ("ucs", "h0", None),
         5: ("busca_gulosa", "h1", None),
         6: ("busca_gulosa", "h2", None),
-        7: ("a_star", "h1", None), 8: ("a_star", "h2", None),
+        7: ("a_star", "h1", None),
+        8: ("a_star", "h2", None),
         9: ("a_star_ponderada", "h2", 1.5),
         14: ("a_star_ponderada", "h2", 1.25),
         15: ("a_star_ponderada", "h2", 2.0),
@@ -82,13 +91,14 @@ def preencher_tabela_resultados(tabela, linhas):
         items = grupos.get(chave, [])
         resolvidas = [x for x in items if x.get("estado_execucao") == "concluida"]
         valores = (
-            f"{len(resolvidas)}/{len(items)}", fmt(media(resolvidas, "custo_total")),
+            f"{len(resolvidas)}/{len(items)}",
+            fmt(media(resolvidas, "custo_total")),
             fmt(media(resolvidas, "razao_custo_optimo"), 3),
             fmt(media(items, "nos_expandidos"), 0),
             fmt(media(items, "nos_gerados"), 0),
             fmt(media(items, "max_fronteira"), 0),
             fmt(media(items, "tempo_segundos"), 3),
-            fmt((media(items, "memoria_pico_bytes") or 0) / 1024 ** 2, 2),
+            fmt((media(items, "memoria_pico_bytes") or 0) / 1024**2, 2),
         )
         for coluna, valor in enumerate(valores, 2):
             tabela.cell(indice, coluna).text = valor
@@ -116,10 +126,8 @@ def actualizar(caminho_docx, caminho_csv, grafico, destino, testes):
         "Type equation here.": "|S| ≤ |L| × 2^7 × N_T × N_F",
         "2128 combinações": "2^7 = 128 combinações",
         "Error! Bookmark not defined.": "ver Anexo D",
-        "A bateria experimental global de comparação de algoritmos permanece por realizar":
-            "A bateria experimental global foi executada de forma reproduzível",
-        "a execução de uma campanha experimental reproduzível com limites de recursos e registo estatístico":
-            "a repetição da campanha experimental noutras máquinas para estudar a variabilidade",
+        "A bateria experimental global de comparação de algoritmos permanece por realizar": "A bateria experimental global foi executada de forma reproduzível",
+        "a execução de uma campanha experimental reproduzível com limites de recursos e registo estatístico": "a repetição da campanha experimental noutras máquinas para estudar a variabilidade",
     }
     for antigo, novo in substituicoes.items():
         substituir_em_xml(documento, antigo, novo)
@@ -167,15 +175,18 @@ def actualizar(caminho_docx, caminho_csv, grafico, destino, testes):
     for linha_tabela, nivel in ((2, "media"), (3, "grande")):
         amostra = [x for x in linhas if x.get("nivel") == nivel]
         h2_concluida = [
-            x for x in amostra
-            if x.get("algoritmo") == "a_star" and x.get("heuristica") == "h2"
+            x
+            for x in amostra
+            if x.get("algoritmo") == "a_star"
+            and x.get("heuristica") == "h2"
             and x.get("estado_execucao") == "concluida"
         ]
         documento.tables[6].cell(linha_tabela, 1).text = fmt(
             media(h2_concluida, "comprimento_caminho"), 1
         )
         h0_items = [
-            x for x in amostra
+            x
+            for x in amostra
             if x.get("algoritmo") == "a_star" and x.get("heuristica") == "h0"
         ]
         documento.tables[6].cell(linha_tabela, 2).text = fmt(
@@ -183,7 +194,8 @@ def actualizar(caminho_docx, caminho_csv, grafico, destino, testes):
         )
         for coluna, heuristica in ((3, "h1"), (4, "h2")):
             items = [
-                x for x in amostra
+                x
+                for x in amostra
                 if x.get("algoritmo") == "a_star" and x.get("heuristica") == heuristica
             ]
             documento.tables[6].cell(linha_tabela, coluna).text = fmt(
@@ -191,7 +203,8 @@ def actualizar(caminho_docx, caminho_csv, grafico, destino, testes):
             )
         for coluna, heuristica in ((5, "h1"), (6, "h2")):
             items = [
-                x for x in amostra
+                x
+                for x in amostra
                 if x.get("algoritmo") == "a_star" and x.get("heuristica") == heuristica
             ]
             documento.tables[6].cell(linha_tabela, coluna).text = fmt(
@@ -201,17 +214,6 @@ def actualizar(caminho_docx, caminho_csv, grafico, destino, testes):
         "As médias incluem as execuções interrompidas nas métricas de recursos; "
         "custos são calculados apenas para soluções encontradas."
     )
-
-    paragrafo_figura = documento.paragraphs[316]
-    paragrafo_figura.text = ""
-    graficos = (
-        Path(grafico), Path(grafico).with_name("tempo_vs_dimensao.png"),
-        Path(grafico).with_name("custo_vs_optimo.png"),
-    )
-    for indice, imagem in enumerate(graficos, 1):
-        paragrafo_figura.add_run(f"Gráfico {indice}\n")
-        paragrafo_figura.add_run().add_picture(str(imagem), width=Inches(6.2))
-        paragrafo_figura.add_run("\n")
 
     documento.paragraphs[318].text = (
         "As instâncias pequenas confirmam o funcionamento dos sete algoritmos. À medida "
@@ -252,6 +254,21 @@ def actualizar(caminho_docx, caminho_csv, grafico, destino, testes):
         "(h0, h1 e h2); experiencias/bateria.py e experiencias/graficos.py. O código "
         "integral acompanha o relatório no repositório entregue."
     )
+    paragrafo_figura = documento.paragraphs[316]
+    paragrafo_figura.text = ""
+    graficos = (
+        Path(grafico),
+        Path(grafico).with_name("tempo_vs_dimensao.png"),
+        Path(grafico).with_name("custo_vs_optimo.png"),
+    )
+    paragrafo_actual = paragrafo_figura
+    for indice, imagem in enumerate(graficos):
+        if indice:
+            paragrafo_actual = inserir_paragrafo_depois(paragrafo_actual)
+            paragrafo_actual.paragraph_format.page_break_before = True
+        paragrafo_actual.paragraph_format.keep_together = True
+        paragrafo_actual.add_run().add_picture(str(imagem), width=Inches(5.6))
+
     documento.add_heading("ANEXO D – LISTA DE VERIFICAÇÃO ANTES DA ENTREGA", level=1)
     for item in (
         "Relatório PDF abre e contém tabelas e gráficos.",
@@ -267,7 +284,9 @@ def actualizar(caminho_docx, caminho_csv, grafico, destino, testes):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--docx", default="docs/relatorio/IA_RELATORIO_GRUPO_01_LAB.docx")
+    parser.add_argument(
+        "--docx", default="docs/relatorio/IA_RELATORIO_GRUPO_01_LAB.docx"
+    )
     parser.add_argument("--csv", default="resultados_experimentais/resultados.csv")
     parser.add_argument(
         "--grafico",
