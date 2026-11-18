@@ -1,4 +1,5 @@
 import csv
+import textwrap
 
 from experiencias.bateria import (
     LIMITE_MEMORIA_BYTES,
@@ -128,18 +129,25 @@ def test_alocacao_e_recusada_no_processo_filho():
     import sys
     from pathlib import Path
 
-    codigo = """
-    from src.servicos.limite_memoria import aplicar_limite
-    aplicar_limite(256 * 1024**2)
-    try:
-        bytearray(320 * 1024**2)
-    except MemoryError:
-        print('alocação recusada')
-    else:
-        raise AssertionError('O sistema permitiu exceder o limite')
-    """
-    subprocess.run([sys.executable, "-c", codigo], check=True,
-                   cwd=Path(__file__).resolve().parents[1], timeout=30)
+    codigo = textwrap.dedent("""
+        from src.servicos.limite_memoria import aplicar_limite
+
+        aplicar_limite(256 * 1024**2)
+
+        try:
+            bytearray(320 * 1024**2)
+        except MemoryError:
+            print('alocação recusada')
+        else:
+            raise AssertionError('O sistema permitiu exceder o limite')
+    """)
+
+    subprocess.run(
+        [sys.executable, "-c", codigo],
+        check=True,
+        cwd=Path(__file__).resolve().parents[1],
+        timeout=30,
+    )
 
 
 def test_graficos_usam_rotulos_legiveis_e_criam_as_tres_figuras(tmp_path):
