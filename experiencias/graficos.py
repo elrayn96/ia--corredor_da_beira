@@ -217,7 +217,7 @@ def _grafico_custo(linhas, destino):
             sucessos[i, j] = 100 * len(razoes) / len(grupo) if grupo else 0
 
     mapa_custos = plt.get_cmap("YlGn").copy()
-    mapa_custos.set_bad("#e2e8f0")
+    mapa_custos.with_extremes(bad="#e2e8f0")
     maximo = max(
         1.05,
         float(np.nanmax(custos)) if np.any(~np.isnan(custos)) else 1.05,

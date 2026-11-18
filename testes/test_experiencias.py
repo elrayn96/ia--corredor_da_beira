@@ -124,20 +124,20 @@ def test_bateria_nao_inicia_sem_limite(monkeypatch):
 
 
 def test_alocacao_e_recusada_no_processo_filho():
-    from pathlib import Path
     import subprocess
     import sys
+    from pathlib import Path
 
     codigo = """
-from src.servicos.limite_memoria import aplicar_limite
-aplicar_limite(256 * 1024**2)
-try:
-    bytearray(320 * 1024**2)
-except MemoryError:
-    print('alocação recusada')
-else:
-    raise AssertionError('O sistema permitiu exceder o limite')
-"""
+    from src.servicos.limite_memoria import aplicar_limite
+    aplicar_limite(256 * 1024**2)
+    try:
+        bytearray(320 * 1024**2)
+    except MemoryError:
+        print('alocação recusada')
+    else:
+        raise AssertionError('O sistema permitiu exceder o limite')
+    """
     subprocess.run([sys.executable, "-c", codigo], check=True,
                    cwd=Path(__file__).resolve().parents[1], timeout=30)
 

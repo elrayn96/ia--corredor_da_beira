@@ -27,7 +27,7 @@ def _aplicar_no_windows(limite):
 
     global _job_windows
     novo = _job_windows is None
-    job = win32job.CreateJobObject(None, None) if novo else _job_windows
+    job = win32job.CreateJobObject(None, "") if novo else _job_windows
     classe = win32job.JobObjectExtendedLimitInformation
     info = win32job.QueryInformationJobObject(job, classe)
     info["BasicLimitInformation"]["LimitFlags"] |= win32job.JOB_OBJECT_LIMIT_PROCESS_MEMORY
