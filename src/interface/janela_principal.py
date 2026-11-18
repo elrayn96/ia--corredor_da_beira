@@ -19,6 +19,7 @@ from src.interface.painel_configuracao import PainelConfiguracao
 from src.interface.painel_resultados import PainelResultados
 from src.interface.tema import configurar_estilos
 from src.servicos.executar_busca import executar_busca
+from src.servicos.limite_memoria import aplicar_limite
 
 logger = logging.getLogger(__name__)
 LIMITE_TEMPO_GUI = 60  # Limite do enunciado, alterável no painel.
@@ -64,6 +65,7 @@ def _executar_em_processo(configuracao, fila, cancelar):
                 pass
 
     try:
+        aplicar_limite()
         resultado = executar_busca(
             configuracao, observador=acompanhar, cancelar=cancelar,
             limite_segundos=configuracao.get(
@@ -71,6 +73,8 @@ def _executar_em_processo(configuracao, fila, cancelar):
             ),
         )
         fila.put(("resultado", configuracao, resultado))
+    except MemoryError:
+        fila.put(("falha", configuracao, "Memória insuficiente sob o limite de 2 GiB."))
     except Exception as erro:  # noqa: BLE001 - fronteira do processo filho
         fila.put((
             "falha", configuracao,

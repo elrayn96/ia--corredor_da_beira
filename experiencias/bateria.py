@@ -15,12 +15,12 @@ from experiencias.executar import executar_experiencia
 from experiencias.graficos import gerar_graficos
 from experiencias.resultados import CABECALHOS
 from src.gerador import gerar_instancias_experimentais
+from src.servicos.limite_memoria import LIMITE_MEMORIA_BYTES, aplicar_limite
 
 RAIZ = Path(__file__).resolve().parent.parent
 PASTA_INSTANCIAS = RAIZ / "dados" / "instancias_experimentais"
 PASTA_RESULTADOS = RAIZ / "resultados_experimentais"
-FICHEIRO_CHECKPOINT = PASTA_RESULTADOS / ".bateria_parcial.json"
-LIMITE_MEMORIA_BYTES = 2 * 1024**3
+FICHEIRO_CHECKPOINT = PASTA_RESULTADOS / ".bateria_parcial_memoria_v2.json"
 
 
 def _assinatura_instancias(caminhos):
@@ -87,36 +87,18 @@ def configuracoes(caminho):
         }
 
 
-def _limitar_memoria_processo(limite_memoria_bytes):
-    """Impõe o limite de memória quando o sistema fornece RLIMIT_AS."""
-    try:
-        import resource
-
-        resource.setrlimit(
-            resource.RLIMIT_AS, (limite_memoria_bytes, limite_memoria_bytes)
-        )
-        return True
-    except (ImportError, OSError, ValueError):
-        # Windows não expõe resource.RLIMIT_AS; nesse sistema a memória de
-        # pico continua a ser medida e o excesso é marcado após a execução.
-        return False
-
-
 def _executar_caso(configuracao, limite_segundos, limite_memoria_bytes):
     """Executa um caso num processo isolado e devolve apenas dados escalares."""
-    _limitar_memoria_processo(limite_memoria_bytes)
     try:
+        aplicar_limite(limite_memoria_bytes)
         registo = executar_experiencia(configuracao, limite_segundos)
         registo.pop("solucao", None)
         registo.pop("eventos", None)
-        if registo.get("memoria_pico_bytes", 0) > limite_memoria_bytes:
-            registo["estado_execucao"] = "falhou"
-            registo["mensagem"] = "Limite de 2 GB excedido."
         return registo
     except MemoryError:
         return {
             **configuracao, "estado_execucao": "falhou",
-            "mensagem": "Limite de 2 GB excedido.", "custo_total": None,
+            "mensagem": "Memória insuficiente sob o limite de memória do processo.", "custo_total": None,
         }
     except Exception as erro:  # noqa: BLE001 - cada ensaio tem de gerar uma linha
         return {

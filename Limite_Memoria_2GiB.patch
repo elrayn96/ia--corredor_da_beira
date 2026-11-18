@@ -1,0 +1,198 @@
+diff --git a/experiencias/bateria.py b/experiencias/bateria.py
+index dae0f0d..7997448 100644
+--- a/experiencias/bateria.py
++++ b/experiencias/bateria.py
+@@ -15,12 +15,12 @@ from experiencias.executar import executar_experiencia
+ from experiencias.graficos import gerar_graficos
+ from experiencias.resultados import CABECALHOS
+ from src.gerador import gerar_instancias_experimentais
++from src.servicos.limite_memoria import LIMITE_MEMORIA_BYTES, aplicar_limite
+ 
+ RAIZ = Path(__file__).resolve().parent.parent
+ PASTA_INSTANCIAS = RAIZ / "dados" / "instancias_experimentais"
+ PASTA_RESULTADOS = RAIZ / "resultados_experimentais"
+-FICHEIRO_CHECKPOINT = PASTA_RESULTADOS / ".bateria_parcial.json"
+-LIMITE_MEMORIA_BYTES = 2 * 1024**3
++FICHEIRO_CHECKPOINT = PASTA_RESULTADOS / ".bateria_parcial_memoria_v2.json"
+ 
+ 
+ def _assinatura_instancias(caminhos):
+@@ -87,36 +87,18 @@ def configuracoes(caminho):
+         }
+ 
+ 
+-def _limitar_memoria_processo(limite_memoria_bytes):
+-    """Impõe o limite de memória quando o sistema fornece RLIMIT_AS."""
+-    try:
+-        import resource
+-
+-        resource.setrlimit(
+-            resource.RLIMIT_AS, (limite_memoria_bytes, limite_memoria_bytes)
+-        )
+-        return True
+-    except (ImportError, OSError, ValueError):
+-        # Windows não expõe resource.RLIMIT_AS; nesse sistema a memória de
+-        # pico continua a ser medida e o excesso é marcado após a execução.
+-        return False
+-
+-
+ def _executar_caso(configuracao, limite_segundos, limite_memoria_bytes):
+     """Executa um caso num processo isolado e devolve apenas dados escalares."""
+-    _limitar_memoria_processo(limite_memoria_bytes)
+     try:
++        aplicar_limite(limite_memoria_bytes)
+         registo = executar_experiencia(configuracao, limite_segundos)
+         registo.pop("solucao", None)
+         registo.pop("eventos", None)
+-        if registo.get("memoria_pico_bytes", 0) > limite_memoria_bytes:
+-            registo["estado_execucao"] = "falhou"
+-            registo["mensagem"] = "Limite de 2 GB excedido."
+         return registo
+     except MemoryError:
+         return {
+             **configuracao, "estado_execucao": "falhou",
+-            "mensagem": "Limite de 2 GB excedido.", "custo_total": None,
++            "mensagem": "Memória insuficiente sob o limite de memória do processo.", "custo_total": None,
+         }
+     except Exception as erro:  # noqa: BLE001 - cada ensaio tem de gerar uma linha
+         return {
+diff --git a/requirements.txt b/requirements.txt
+index 9cfd071..3e7c033 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -2,3 +2,4 @@ matplotlib>=3.8
+ pytest>=8.0
+ ruff>=0.6
+ python-docx>=1.1
++pywin32>=306; sys_platform == "win32"
+diff --git a/src/interface/janela_principal.py b/src/interface/janela_principal.py
+index 0785d50..6432bb5 100644
+--- a/src/interface/janela_principal.py
++++ b/src/interface/janela_principal.py
+@@ -19,6 +19,7 @@ from src.interface.painel_configuracao import PainelConfiguracao
+ from src.interface.painel_resultados import PainelResultados
+ from src.interface.tema import configurar_estilos
+ from src.servicos.executar_busca import executar_busca
++from src.servicos.limite_memoria import aplicar_limite
+ 
+ logger = logging.getLogger(__name__)
+ LIMITE_TEMPO_GUI = 60  # Limite do enunciado, alterável no painel.
+@@ -64,6 +65,7 @@ def _executar_em_processo(configuracao, fila, cancelar):
+                 pass
+ 
+     try:
++        aplicar_limite()
+         resultado = executar_busca(
+             configuracao, observador=acompanhar, cancelar=cancelar,
+             limite_segundos=configuracao.get(
+@@ -71,6 +73,8 @@ def _executar_em_processo(configuracao, fila, cancelar):
+             ),
+         )
+         fila.put(("resultado", configuracao, resultado))
++    except MemoryError:
++        fila.put(("falha", configuracao, "Memória insuficiente sob o limite de 2 GiB."))
+     except Exception as erro:  # noqa: BLE001 - fronteira do processo filho
+         fila.put((
+             "falha", configuracao,
+diff --git a/src/servicos/limite_memoria.py b/src/servicos/limite_memoria.py
+new file mode 100644
+index 0000000..7c11eec
+--- /dev/null
++++ b/src/servicos/limite_memoria.py
+@@ -0,0 +1,39 @@
++"""Limite de memória do processo de busca, instalado antes de carregar a instância."""
++
++import os
++
++LIMITE_MEMORIA_BYTES = 2 * 1024**3
++_job_windows = None
++
++
++def aplicar_limite(limite=LIMITE_MEMORIA_BYTES):
++    """Deve ser chamado no processo de trabalho, nunca na janela principal."""
++    if limite <= 0:
++        raise ValueError("O limite de memória deve ser positivo.")
++    if os.name == "nt":
++        _aplicar_no_windows(limite)
++        return
++
++    import resource
++
++    actual, maximo = resource.getrlimit(resource.RLIMIT_AS)
++    alvo = min(v for v in (limite, actual, maximo) if v != resource.RLIM_INFINITY)
++    resource.setrlimit(resource.RLIMIT_AS, (alvo, alvo))
++
++
++def _aplicar_no_windows(limite):
++    import win32api
++    import win32job
++
++    global _job_windows
++    novo = _job_windows is None
++    job = win32job.CreateJobObject(None, None) if novo else _job_windows
++    classe = win32job.JobObjectExtendedLimitInformation
++    info = win32job.QueryInformationJobObject(job, classe)
++    info["BasicLimitInformation"]["LimitFlags"] |= win32job.JOB_OBJECT_LIMIT_PROCESS_MEMORY
++    previo = info["ProcessMemoryLimit"]
++    info["ProcessMemoryLimit"] = min(previo, limite) if previo else limite
++    win32job.SetInformationJobObject(job, classe, info)
++    if novo:
++        win32job.AssignProcessToJobObject(job, win32api.GetCurrentProcess())
++        _job_windows = job
+diff --git a/testes/test_experiencias.py b/testes/test_experiencias.py
+index adb8618..fac76bd 100644
+--- a/testes/test_experiencias.py
++++ b/testes/test_experiencias.py
+@@ -113,25 +113,33 @@ def test_bateria_define_limite_de_memoria_de_dois_gib():
+     assert LIMITE_MEMORIA_BYTES == 2 * 1024**3
+ 
+ 
+-def test_bateria_marca_execucao_que_ultrapassa_limite(monkeypatch):
+-    monkeypatch.setattr(
+-        "experiencias.bateria._limitar_memoria_processo", lambda _limite: False
+-    )
+-    monkeypatch.setattr(
+-        "experiencias.bateria.executar_experiencia",
+-        lambda configuracao, _tempo: {
+-            **configuracao,
+-            "solucao": None,
+-            "eventos": [],
+-            "memoria_pico_bytes": 101,
+-            "estado_execucao": "concluida",
+-        },
+-    )
+-
+-    resultado = _executar_caso({"algoritmo": "bfs"}, 60, 100)
+-
+-    assert resultado["estado_execucao"] == "falhou"
+-    assert resultado["mensagem"] == "Limite de 2 GB excedido."
++def test_bateria_nao_inicia_sem_limite(monkeypatch):
++    def recusar(_limite):
++        raise OSError("Limite indisponível")
++
++    monkeypatch.setattr("experiencias.bateria.aplicar_limite", recusar)
++    resposta = _executar_caso({"algoritmo": "bfs"}, 60, 100)
++    assert resposta["estado_execucao"] == "erro"
++    assert "Limite indisponível" in resposta["mensagem"]
++
++
++def test_alocacao_e_recusada_no_processo_filho():
++    from pathlib import Path
++    import subprocess
++    import sys
++
++    codigo = """
++from src.servicos.limite_memoria import aplicar_limite
++aplicar_limite(256 * 1024**2)
++try:
++    bytearray(320 * 1024**2)
++except MemoryError:
++    print('alocação recusada')
++else:
++    raise AssertionError('O sistema permitiu exceder o limite')
++"""
++    subprocess.run([sys.executable, "-c", codigo], check=True,
++                   cwd=Path(__file__).resolve().parents[1], timeout=30)
+ 
+ 
+ def test_graficos_usam_rotulos_legiveis_e_criam_as_tres_figuras(tmp_path):

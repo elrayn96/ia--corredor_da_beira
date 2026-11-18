@@ -113,25 +113,33 @@ def test_bateria_define_limite_de_memoria_de_dois_gib():
     assert LIMITE_MEMORIA_BYTES == 2 * 1024**3
 
 
-def test_bateria_marca_execucao_que_ultrapassa_limite(monkeypatch):
-    monkeypatch.setattr(
-        "experiencias.bateria._limitar_memoria_processo", lambda _limite: False
-    )
-    monkeypatch.setattr(
-        "experiencias.bateria.executar_experiencia",
-        lambda configuracao, _tempo: {
-            **configuracao,
-            "solucao": None,
-            "eventos": [],
-            "memoria_pico_bytes": 101,
-            "estado_execucao": "concluida",
-        },
-    )
+def test_bateria_nao_inicia_sem_limite(monkeypatch):
+    def recusar(_limite):
+        raise OSError("Limite indisponível")
 
-    resultado = _executar_caso({"algoritmo": "bfs"}, 60, 100)
+    monkeypatch.setattr("experiencias.bateria.aplicar_limite", recusar)
+    resposta = _executar_caso({"algoritmo": "bfs"}, 60, 100)
+    assert resposta["estado_execucao"] == "erro"
+    assert "Limite indisponível" in resposta["mensagem"]
 
-    assert resultado["estado_execucao"] == "falhou"
-    assert resultado["mensagem"] == "Limite de 2 GB excedido."
+
+def test_alocacao_e_recusada_no_processo_filho():
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    codigo = """
+from src.servicos.limite_memoria import aplicar_limite
+aplicar_limite(256 * 1024**2)
+try:
+    bytearray(320 * 1024**2)
+except MemoryError:
+    print('alocação recusada')
+else:
+    raise AssertionError('O sistema permitiu exceder o limite')
+"""
+    subprocess.run([sys.executable, "-c", codigo], check=True,
+                   cwd=Path(__file__).resolve().parents[1], timeout=30)
 
 
 def test_graficos_usam_rotulos_legiveis_e_criam_as_tres_figuras(tmp_path):
