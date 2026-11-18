@@ -15,8 +15,12 @@ CABECALHOS = (
     "estado_execucao",
     "mensagem",
     "custo_total",
+    "custo_optimo",
+    "razao_custo_optimo",
+    "comprimento_caminho",
     "nos_gerados",
     "nos_expandidos",
+    "nos_reexpandidos",
     "max_fronteira",
     "tempo_segundos",
     "memoria_pico_bytes",
@@ -28,7 +32,10 @@ def guardar_resultados_csv(resultados, caminho):
     destino = Path(caminho)
     destino.parent.mkdir(parents=True, exist_ok=True)
     with destino.open("w", newline="", encoding="utf-8-sig") as ficheiro:
-        escritor = csv.DictWriter(ficheiro, fieldnames=CABECALHOS, extrasaction="ignore")
+        escritor = csv.DictWriter(
+            ficheiro, fieldnames=CABECALHOS, extrasaction="ignore",
+            lineterminator="\n",
+        )
         escritor.writeheader()
         for resultado in resultados:
             escritor.writerow({chave: resultado.get(chave) for chave in CABECALHOS})

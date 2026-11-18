@@ -1,0 +1,391 @@
+﻿caminho_instancia,semente,algoritmo,heuristica,peso,limite,estado_execucao,mensagem,custo_total,custo_optimo,razao_custo_optimo,comprimento_caminho,nos_gerados,nos_expandidos,nos_reexpandidos,max_fronteira,tempo_segundos,memoria_pico_bytes,nivel,dimensao,indice,b_efetivo
+dados/instancias_experimentais/grande_01.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,835,,0,517041,130820,0,386223,79.05153823699993,462799309,grande,25,1,0.0
+dados/instancias_experimentais/grande_01.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,835,,0,444504,104948,0,339557,67.43470114899992,410933039,grande,25,1,0.0
+dados/instancias_experimentais/grande_01.json,202601,a_star,h2,,,concluida,Solução encontrada.,835,835,1.0,19,7420,1518,0,5519,0.9469871969999986,7078599,grande,25,1,1.373120393809558
+dados/instancias_experimentais/grande_01.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,835,835,1.0,19,364,75,0,285,0.03045297899984689,524203,grande,25,1,1.124593109833572
+dados/instancias_experimentais/grande_01.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,835,835,1.0,19,1187,249,0,909,0.10927054499984479,1588083,grande,25,1,1.2240474806955326
+dados/instancias_experimentais/grande_01.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,835,835,1.0,19,137450,43864,0,80210,33.356443390000095,124386723,grande,25,1,1.6730503885883103
+dados/instancias_experimentais/grande_01.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,835,,0,307681,140049,0,167634,70.08120361800002,253251643,grande,25,1,0.0
+dados/instancias_experimentais/grande_01.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,835,,0,415676,158276,0,257403,64.79596120199994,309198051,grande,25,1,0.0
+dados/instancias_experimentais/grande_01.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,835,,0,280414,224876,0,55540,66.17775493499994,170455195,grande,25,1,0.0
+dados/instancias_experimentais/grande_01.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,835,,0,316819,271884,0,44936,62.70646981899995,177106343,grande,25,1,0.0
+dados/instancias_experimentais/grande_01.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,835,,0,695155,695142,0,38,60.00341783199997,815107,grande,25,1,0.0
+dados/instancias_experimentais/grande_01.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,835,,0,355972,118909,0,237075,62.12385771800018,92981303,grande,25,1,0.0
+dados/instancias_experimentais/grande_01.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,835,,0,509829,128982,0,380848,74.2211305190001,439307535,grande,25,1,0.0
+dados/instancias_experimentais/grande_02.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,833,,0,590160,152119,0,438042,69.29715346599983,524187279,grande,25,2,0.0
+dados/instancias_experimentais/grande_02.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,833,,0,426747,100799,0,325950,73.96123540399981,395940251,grande,25,2,0.0
+dados/instancias_experimentais/grande_02.json,202601,a_star,h2,,,concluida,Solução encontrada.,833,833,1.0,19,7051,1435,0,5244,1.4989750730001106,6745259,grande,25,2,1.368406365364198
+dados/instancias_experimentais/grande_02.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,833,833,1.0,19,172,34,0,138,0.02412357000002885,254675,grande,25,2,1.0553534767459856
+dados/instancias_experimentais/grande_02.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,833,833,1.0,19,1471,310,0,1121,0.3539688109999588,1904047,grande,25,2,1.2419763084451163
+dados/instancias_experimentais/grande_02.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,833,833,1.0,19,171155,55073,0,99080,32.991696016000105,150640911,grande,25,2,1.6948997079447672
+dados/instancias_experimentais/grande_02.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,833,,0,250993,116206,0,134790,66.95883504200015,207779659,grande,25,2,0.0
+dados/instancias_experimentais/grande_02.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,833,,0,492892,193541,0,299352,66.01943337299986,361813103,grande,25,2,0.0
+dados/instancias_experimentais/grande_02.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,833,,0,281203,227810,0,53403,65.25744799699987,169635487,grande,25,2,0.0
+dados/instancias_experimentais/grande_02.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,833,,0,206914,183325,0,33014,63.47929179399989,125618963,grande,25,2,0.0
+dados/instancias_experimentais/grande_02.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,833,,0,524626,524607,0,43,60.00020630899985,816511,grande,25,2,0.0
+dados/instancias_experimentais/grande_02.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,833,,0,446770,147097,0,299685,61.48397345500007,123086187,grande,25,2,0.0
+dados/instancias_experimentais/grande_02.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,833,,0,491593,126012,0,365583,67.52568412799997,423978311,grande,25,2,0.0
+dados/instancias_experimentais/grande_03.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,835,,0,516995,130339,0,386658,69.78084213700004,462824439,grande,25,3,0.0
+dados/instancias_experimentais/grande_03.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,835,,0,382706,88707,0,294000,71.43278322800006,357933219,grande,25,3,0.0
+dados/instancias_experimentais/grande_03.json,202601,a_star,h2,,,concluida,Solução encontrada.,835,835,1.0,19,6342,1273,0,4754,1.5190167549999387,6130803,grande,25,3,1.3583872859528139
+dados/instancias_experimentais/grande_03.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,835,835,1.0,19,364,75,0,286,0.0896287829996254,524083,grande,25,3,1.124593109833572
+dados/instancias_experimentais/grande_03.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,835,835,1.0,19,3159,773,0,2291,0.695322151000255,3641063,grande,25,3,1.3169715473063426
+dados/instancias_experimentais/grande_03.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,835,835,1.0,19,132832,43119,0,76797,20.47845151499996,116927911,grande,25,3,1.6714147548315323
+dados/instancias_experimentais/grande_03.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,835,,0,304450,138133,0,166319,64.8870180949998,249145703,grande,25,3,0.0
+dados/instancias_experimentais/grande_03.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,835,,0,568469,222383,0,346088,66.77103587600004,415636907,grande,25,3,0.0
+dados/instancias_experimentais/grande_03.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,835,,0,226335,170247,0,56091,65.50329398299982,142783773,grande,25,3,0.0
+dados/instancias_experimentais/grande_03.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,835,,0,267531,229692,0,37841,66.00611926099964,152897651,grande,25,3,0.0
+dados/instancias_experimentais/grande_03.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,835,,0,686123,686107,0,49,60.000135350000164,823011,grande,25,3,0.0
+dados/instancias_experimentais/grande_03.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,835,,0,353529,117858,0,235682,62.01263929000015,82067191,grande,25,3,0.0
+dados/instancias_experimentais/grande_03.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,835,,0,446718,112120,0,334600,67.10974436200013,387664757,grande,25,3,0.0
+dados/instancias_experimentais/grande_04.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,820,,0,325600,82386,0,243215,69.70575402899976,288015975,grande,25,4,0.0
+dados/instancias_experimentais/grande_04.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,820,,0,358381,84106,0,274277,65.70949031600003,336684799,grande,25,4,0.0
+dados/instancias_experimentais/grande_04.json,202601,a_star,h2,,,concluida,Solução encontrada.,820,820,1.0,19,6794,1373,0,5012,0.8413012700002582,6487463,grande,25,4,1.364708594579589
+dados/instancias_experimentais/grande_04.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,820,820,1.0,19,169,34,0,133,0.01249409399997603,243339,grande,25,4,1.0553534767459856
+dados/instancias_experimentais/grande_04.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,820,820,1.0,19,1624,338,0,1229,0.18210520599996016,2049363,grande,25,4,1.2490506711340723
+dados/instancias_experimentais/grande_04.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,820,820,1.0,19,166816,52935,0,95417,21.505452334999973,145452779,grande,25,4,1.691081830589958
+dados/instancias_experimentais/grande_04.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,820,,0,326318,150422,0,175897,65.35300599700031,266072467,grande,25,4,0.0
+dados/instancias_experimentais/grande_04.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,820,,0,488610,192185,0,296427,72.76304805699965,358545183,grande,25,4,0.0
+dados/instancias_experimentais/grande_04.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,820,,0,374134,291276,0,82867,63.53922084099986,236213763,grande,25,4,0.0
+dados/instancias_experimentais/grande_04.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,820,,0,243931,207409,0,36528,62.652090601000054,142588127,grande,25,4,0.0
+dados/instancias_experimentais/grande_04.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,820,,0,477855,477845,0,43,60.00023279900006,819023,grande,25,4,0.0
+dados/instancias_experimentais/grande_04.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,820,,0,414014,136824,0,277202,63.7080402900001,111875583,grande,25,4,0.0
+dados/instancias_experimentais/grande_04.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,820,,0,564701,144948,0,419755,70.92122892999987,484120559,grande,25,4,0.0
+dados/instancias_experimentais/grande_05.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,832,,0,427162,107016,0,320147,75.28247209700021,386937123,grande,25,5,0.0
+dados/instancias_experimentais/grande_05.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,832,,0,410005,95404,0,314602,74.34333912200009,381301879,grande,25,5,0.0
+dados/instancias_experimentais/grande_05.json,202601,a_star,h2,,,concluida,Solução encontrada.,832,832,1.0,19,7607,1554,0,5679,1.182281614999738,7262323,grande,25,5,1.3750875503842943
+dados/instancias_experimentais/grande_05.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,832,832,1.0,19,366,75,0,288,0.06588926900030856,526559,grande,25,5,1.124593109833572
+dados/instancias_experimentais/grande_05.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,832,832,1.0,19,3323,818,0,2413,0.297652097000082,3821527,grande,25,5,1.3216468884400867
+dados/instancias_experimentais/grande_05.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,832,832,1.0,19,151596,48615,0,88507,23.64614704600035,135091167,grande,25,5,1.6828962894838866
+dados/instancias_experimentais/grande_05.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,832,,0,180018,83703,0,96317,65.30183195100017,151645235,grande,25,5,0.0
+dados/instancias_experimentais/grande_05.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,832,,0,531675,208600,0,323077,76.19958505299974,388767193,grande,25,5,0.0
+dados/instancias_experimentais/grande_05.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,832,,0,218818,171503,0,48279,64.09342711999989,134655883,grande,25,5,0.0
+dados/instancias_experimentais/grande_05.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,832,,0,262066,226083,0,35987,65.32146615300007,149444771,grande,25,5,0.0
+dados/instancias_experimentais/grande_05.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,832,,0,394090,394072,0,45,60.0000906209998,818807,grande,25,5,0.0
+dados/instancias_experimentais/grande_05.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,832,,0,500849,162560,0,338304,61.78932441899997,141463595,grande,25,5,0.0
+dados/instancias_experimentais/grande_05.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,832,,0,542891,136995,0,405898,73.90199963500027,466277647,grande,25,5,0.0
+dados/instancias_experimentais/grande_06.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,828,,0,318777,80516,0,238263,72.19658455299987,282342423,grande,25,6,0.0
+dados/instancias_experimentais/grande_06.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,828,,0,355010,82724,0,272288,72.4347587100001,336955643,grande,25,6,0.0
+dados/instancias_experimentais/grande_06.json,202601,a_star,h2,,,concluida,Solução encontrada.,828,828,1.0,19,6663,1343,0,4990,0.6960165959999358,6406859,grande,25,6,1.3628605936658693
+dados/instancias_experimentais/grande_06.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,828,828,1.0,19,157,32,0,125,0.016111409999666648,228787,grande,25,6,1.0498110490007264
+dados/instancias_experimentais/grande_06.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,828,828,1.0,19,3465,870,0,2493,0.3912891580002906,3956903,grande,25,6,1.326745238931447
+dados/instancias_experimentais/grande_06.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,828,828,1.0,19,157166,50556,0,90741,25.562161564000235,138496891,grande,25,6,1.686656600620923
+dados/instancias_experimentais/grande_06.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,828,,0,335648,153174,0,182475,72.07691573800003,273823423,grande,25,6,0.0
+dados/instancias_experimentais/grande_06.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,828,,0,525558,208319,0,317241,72.66778916199974,384658639,grande,25,6,0.0
+dados/instancias_experimentais/grande_06.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,828,,0,322536,285165,0,53915,63.19521611399978,176831819,grande,25,6,0.0
+dados/instancias_experimentais/grande_06.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,828,,0,263853,227181,0,36676,62.38135899100007,150735467,grande,25,6,0.0
+dados/instancias_experimentais/grande_06.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,828,,0,688198,688176,0,49,60.000125578999814,819647,grande,25,6,0.0
+dados/instancias_experimentais/grande_06.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,828,,0,368700,124568,0,244144,62.061403174000134,99815783,grande,25,6,0.0
+dados/instancias_experimentais/grande_06.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,828,,0,619283,159519,0,459766,69.36179189799986,528670551,grande,25,6,0.0
+dados/instancias_experimentais/grande_07.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,828,,0,539770,137004,0,402768,69.21369338000022,481861799,grande,25,7,0.0
+dados/instancias_experimentais/grande_07.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,828,,0,384734,89975,0,294760,74.4948551970001,359639327,grande,25,7,0.0
+dados/instancias_experimentais/grande_07.json,202601,a_star,h2,,,concluida,Solução encontrada.,828,828,1.0,19,6491,1335,0,4827,1.6133137689998875,6251219,grande,25,7,1.3623610037826825
+dados/instancias_experimentais/grande_07.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,828,828,1.0,19,169,34,0,134,0.012936427000113326,244083,grande,25,7,1.0553534767459856
+dados/instancias_experimentais/grande_07.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,828,828,1.0,19,1579,334,0,1191,0.29244155500009583,2005115,grande,25,7,1.2480766790474256
+dados/instancias_experimentais/grande_07.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,828,828,1.0,19,172597,56038,0,98583,50.8790816540004,150467239,grande,25,7,1.6965768066926694
+dados/instancias_experimentais/grande_07.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,828,,0,289779,133914,0,155868,64.820010679,238236711,grande,25,7,0.0
+dados/instancias_experimentais/grande_07.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,828,,0,584263,229709,0,354556,67.43347057399978,427115663,grande,25,7,0.0
+dados/instancias_experimentais/grande_07.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,828,,0,305280,248260,0,57026,66.28400649500009,182223567,grande,25,7,0.0
+dados/instancias_experimentais/grande_07.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,828,,0,318212,274665,0,45209,62.73012304200029,176820535,grande,25,7,0.0
+dados/instancias_experimentais/grande_07.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,828,,0,560946,560930,0,51,60.00029136399962,822059,grande,25,7,0.0
+dados/instancias_experimentais/grande_07.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,828,,0,447637,147626,0,300022,62.85084931599977,127538187,grande,25,7,0.0
+dados/instancias_experimentais/grande_07.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,828,,0,377146,94780,0,282368,70.93023988799996,330422119,grande,25,7,0.0
+dados/instancias_experimentais/grande_08.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,834,,0,344473,86436,0,258039,65.99073570500013,304155223,grande,25,8,0.0
+dados/instancias_experimentais/grande_08.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,834,,0,396532,91649,0,304885,67.4807871830003,369795291,grande,25,8,0.0
+dados/instancias_experimentais/grande_08.json,202601,a_star,h2,,,concluida,Solução encontrada.,834,834,1.0,19,7107,1436,0,5315,0.7615168170000288,6816551,grande,25,8,1.3684647236079956
+dados/instancias_experimentais/grande_08.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,834,834,1.0,19,358,74,0,282,0.024874496999927942,517451,grande,25,8,1.1234542741552591
+dados/instancias_experimentais/grande_08.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,834,834,1.0,19,1354,282,0,1035,0.11790037799983111,1755479,grande,25,8,1.2342318763650424
+dados/instancias_experimentais/grande_08.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,834,834,1.0,19,154041,49582,0,89546,32.73518152299994,136921135,grande,25,8,1.6847872304316218
+dados/instancias_experimentais/grande_08.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,834,,0,350647,160043,0,190605,65.41005977099985,305035947,grande,25,8,0.0
+dados/instancias_experimentais/grande_08.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,834,,0,611478,238322,0,373158,67.32896964099973,446153011,grande,25,8,0.0
+dados/instancias_experimentais/grande_08.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,834,,0,399017,279217,0,119821,64.24542166299989,270652335,grande,25,8,0.0
+dados/instancias_experimentais/grande_08.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,834,,0,283797,245335,0,38574,65.122562819,159594595,grande,25,8,0.0
+dados/instancias_experimentais/grande_08.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,834,,0,414646,414628,0,37,60.000254200999734,814179,grande,25,8,0.0
+dados/instancias_experimentais/grande_08.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,834,,0,348842,116697,0,232157,60.91369765000036,90852867,grande,25,8,0.0
+dados/instancias_experimentais/grande_08.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,834,,0,517612,131499,0,386115,70.22019543799979,445579471,grande,25,8,0.0
+dados/instancias_experimentais/grande_09.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,830,,0,419397,105226,0,314173,66.9956329470001,380389767,grande,25,9,0.0
+dados/instancias_experimentais/grande_09.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,830,,0,305208,70033,0,235177,69.4200100830003,277639659,grande,25,9,0.0
+dados/instancias_experimentais/grande_09.json,202601,a_star,h2,,,concluida,Solução encontrada.,830,830,1.0,19,7694,1562,0,5751,1.8289086549998501,7329291,grande,25,9,1.375518675515453
+dados/instancias_experimentais/grande_09.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,830,830,1.0,19,468,95,0,367,0.16845823800031212,665519,grande,25,9,1.1445111654344768
+dados/instancias_experimentais/grande_09.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,830,830,1.0,19,3578,890,0,2578,1.1450033169999188,4102927,grande,25,9,1.3286270298154326
+dados/instancias_experimentais/grande_09.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,830,830,1.0,19,162911,52085,0,93593,36.2933522899998,143012367,grande,25,9,1.689522931176589
+dados/instancias_experimentais/grande_09.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,830,,0,355441,161619,0,193825,65.83976231199995,305955331,grande,25,9,0.0
+dados/instancias_experimentais/grande_09.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,830,,0,346407,118863,0,227546,69.77267395200033,266558335,grande,25,9,0.0
+dados/instancias_experimentais/grande_09.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,830,,0,261157,180258,0,80901,65.91616233400009,180161279,grande,25,9,0.0
+dados/instancias_experimentais/grande_09.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,830,,0,316800,270836,0,45983,62.879324113000166,177712867,grande,25,9,0.0
+dados/instancias_experimentais/grande_09.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,830,,0,568214,568197,0,43,60.00008822299969,818979,grande,25,9,0.0
+dados/instancias_experimentais/grande_09.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,830,,0,404274,133881,0,270405,61.272800566000114,108240955,grande,25,9,0.0
+dados/instancias_experimentais/grande_09.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,830,,0,518199,130907,0,387293,67.28800378200003,446174711,grande,25,9,0.0
+dados/instancias_experimentais/grande_10.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,827,,0,548138,139380,0,408760,68.55294812700004,488791263,grande,25,10,0.0
+dados/instancias_experimentais/grande_10.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,827,,0,562623,133465,0,429159,66.25795492299994,513592331,grande,25,10,0.0
+dados/instancias_experimentais/grande_10.json,202601,a_star,h2,,,concluida,Solução encontrada.,827,827,1.0,19,7096,1442,0,5299,1.9209686910003256,6837315,grande,25,10,1.3688140451232373
+dados/instancias_experimentais/grande_10.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,827,827,1.0,19,169,34,0,135,0.013354341999729513,244195,grande,25,10,1.0553534767459856
+dados/instancias_experimentais/grande_10.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,827,827,1.0,19,1580,331,0,1203,0.16991598899994642,2007139,grande,25,10,1.2473385159337589
+dados/instancias_experimentais/grande_10.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,827,827,1.0,19,168607,54797,0,96899,32.80600810600026,147642023,grande,25,10,1.694414881304405
+dados/instancias_experimentais/grande_10.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,827,,0,413994,188531,0,225464,64.61908157200014,348705975,grande,25,10,0.0
+dados/instancias_experimentais/grande_10.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,827,,0,677689,262611,0,415079,78.78286230999993,510671532,grande,25,10,0.0
+dados/instancias_experimentais/grande_10.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,827,,0,254328,203036,0,51297,64.1831866739999,157167679,grande,25,10,0.0
+dados/instancias_experimentais/grande_10.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,827,,0,214868,184792,0,30476,62.09150092800019,126303969,grande,25,10,0.0
+dados/instancias_experimentais/grande_10.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,827,,0,430896,430872,0,40,60.000299257999814,817871,grande,25,10,0.0
+dados/instancias_experimentais/grande_10.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,827,,0,497429,161986,0,335455,61.389412270999856,141007695,grande,25,10,0.0
+dados/instancias_experimentais/grande_10.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,827,,0,563483,143255,0,420229,73.17574136500025,483347519,grande,25,10,0.0
+dados/instancias_experimentais/media_01.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,835,,0,472426,159494,0,312933,71.477110081,419464918,media,16,1,0.0
+dados/instancias_experimentais/media_01.json,202601,a_star,h1,,,concluida,Solução encontrada.,835,835,1.0,19,264605,69137,0,165937,50.39519872299999,214923094,media,16,1,1.7169638062411907
+dados/instancias_experimentais/media_01.json,202601,a_star,h2,,,concluida,Solução encontrada.,835,835,1.0,19,3491,889,0,2412,0.3909308069999611,3473046,media,16,1,1.328533928209915
+dados/instancias_experimentais/media_01.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,835,835,1.0,19,1363,379,0,927,0.18044980400003396,1675586,media,16,1,1.2584195577446877
+dados/instancias_experimentais/media_01.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,835,835,1.0,19,17160,5312,0,10416,4.301346486,16298071,media,16,1,1.4803055956744298
+dados/instancias_experimentais/media_01.json,202601,a_star_ponderada,h2,2,,interrompida,Tempo máximo de execução atingido.,,835,,0,365870,164263,0,201618,65.71668569000002,337383762,media,16,1,0.0
+dados/instancias_experimentais/media_01.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,835,,0,226669,130122,0,96548,63.26492934999999,179532258,media,16,1,0.0
+dados/instancias_experimentais/media_01.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,835,,0,521043,215580,0,305465,67.70603871699998,395201314,media,16,1,0.0
+dados/instancias_experimentais/media_01.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,835,,0,259621,206767,0,52889,64.509809728,168233126,media,16,1,0.0
+dados/instancias_experimentais/media_01.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,835,,0,275416,244519,0,30905,62.39738833800001,156773494,media,16,1,0.0
+dados/instancias_experimentais/media_01.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,835,,0,577074,577053,0,49,60.00025395700001,819810,media,16,1,0.0
+dados/instancias_experimentais/media_01.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,835,,0,393185,145078,0,248122,61.432580487999985,93512106,media,16,1,0.0
+dados/instancias_experimentais/media_01.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,835,,0,383121,128027,0,255095,64.91761893100002,331603318,media,16,1,0.0
+dados/instancias_experimentais/media_02.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,819,,0,383983,135743,0,248242,66.54942177400005,344790138,media,16,2,0.0
+dados/instancias_experimentais/media_02.json,202601,a_star,h1,,,concluida,Solução encontrada.,819,819,1.0,19,276249,82895,0,155958,41.431689904999985,215788886,media,16,2,1.7347369510630695
+dados/instancias_experimentais/media_02.json,202601,a_star,h2,,,concluida,Solução encontrada.,819,819,1.0,19,3344,917,0,2243,0.6554349999999545,3434346,media,16,2,1.3311028141118428
+dados/instancias_experimentais/media_02.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,819,819,1.0,19,1290,354,0,883,0.25717313100000183,1623278,media,16,2,1.2528349671238175
+dados/instancias_experimentais/media_02.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,819,819,1.0,19,17506,5527,0,10608,3.8317725350000273,17129026,media,16,2,1.483777589005255
+dados/instancias_experimentais/media_02.json,202601,a_star_ponderada,h2,2,,interrompida,Tempo máximo de execução atingido.,,819,,0,318673,159302,0,159377,65.70234959599998,282589490,media,16,2,0.0
+dados/instancias_experimentais/media_02.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,819,,0,186693,115001,0,71701,64.95277885999997,147241818,media,16,2,0.0
+dados/instancias_experimentais/media_02.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,819,,0,531341,248870,0,282472,68.65560760800003,390188298,media,16,2,0.0
+dados/instancias_experimentais/media_02.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,819,,0,323150,297440,0,25711,62.575231363,169950590,media,16,2,0.0
+dados/instancias_experimentais/media_02.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,819,,0,297491,283013,0,18739,61.87424914600001,150127954,media,16,2,0.0
+dados/instancias_experimentais/media_02.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,819,,0,389095,389080,0,34,60.00381282799998,806886,media,16,2,0.0
+dados/instancias_experimentais/media_02.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,819,,0,442834,183013,0,259835,62.63336822500003,102126098,media,16,2,0.0
+dados/instancias_experimentais/media_02.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,819,,0,309447,108267,0,201182,69.15713236099998,260878694,media,16,2,0.0
+dados/instancias_experimentais/media_03.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,822,,0,335284,102695,0,232591,71.56359893499996,295465154,media,16,3,0.0
+dados/instancias_experimentais/media_03.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,822,,0,254754,71071,0,183684,69.32798573699995,232103382,media,16,3,0.0
+dados/instancias_experimentais/media_03.json,202601,a_star,h2,,,concluida,Solução encontrada.,822,822,1.0,19,3613,862,0,2587,0.9222499319999997,3612810,media,16,3,1.3259806341902074
+dados/instancias_experimentais/media_03.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,822,822,1.0,19,1252,300,0,904,0.23058220199993684,1605590,media,16,3,1.2392938958066848
+dados/instancias_experimentais/media_03.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,822,822,1.0,19,17266,4654,0,11532,2.2542873720000216,17296234,media,16,3,1.4687705225244736
+dados/instancias_experimentais/media_03.json,202601,a_star_ponderada,h2,2,,interrompida,Tempo máximo de execução atingido.,,822,,0,311797,137646,0,174153,69.22380067900008,279359494,media,16,3,0.0
+dados/instancias_experimentais/media_03.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,822,,0,343742,186664,0,157148,65.69957782699998,273001654,media,16,3,0.0
+dados/instancias_experimentais/media_03.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,822,,0,411523,151597,0,259934,64.78862634199999,316840686,media,16,3,0.0
+dados/instancias_experimentais/media_03.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,822,,0,296302,220346,0,75982,63.20953822000001,193594970,media,16,3,0.0
+dados/instancias_experimentais/media_03.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,822,,0,320579,272651,0,49589,63.41373615599991,181563906,media,16,3,0.0
+dados/instancias_experimentais/media_03.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,822,,0,668232,668204,0,45,60.00014664999998,812094,media,16,3,0.0
+dados/instancias_experimentais/media_03.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,822,,0,419854,143982,0,275885,62.686542530999986,98772494,media,16,3,0.0
+dados/instancias_experimentais/media_03.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,822,,0,329568,100856,0,228714,65.07669653899995,278156182,media,16,3,0.0
+dados/instancias_experimentais/media_04.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,831,,0,519178,154934,0,364245,68.32399446,461046474,media,16,4,0.0
+dados/instancias_experimentais/media_04.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,831,,0,327562,85359,0,242205,68.89022539799998,295973574,media,16,4,0.0
+dados/instancias_experimentais/media_04.json,202601,a_star,h2,,,concluida,Solução encontrada.,831,831,1.0,19,4760,1061,0,3484,0.5580725270000357,4640986,media,16,4,1.3432092326746699
+dados/instancias_experimentais/media_04.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,831,831,1.0,19,1596,390,0,1148,0.1986012339999661,1944170,media,16,4,1.2607615502461522
+dados/instancias_experimentais/media_04.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,831,831,1.0,19,20481,5810,0,13138,3.536559622000027,19741682,media,16,4,1.4881546631121458
+dados/instancias_experimentais/media_04.json,202601,a_star_ponderada,h2,2,,interrompida,Tempo máximo de execução atingido.,,831,,0,298074,118177,0,179898,65.58894339000005,271539198,media,16,4,0.0
+dados/instancias_experimentais/media_04.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,831,,0,225607,113692,0,111917,67.75351088899993,185908978,media,16,4,0.0
+dados/instancias_experimentais/media_04.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,831,,0,313862,115741,0,198123,65.80921879499999,237318212,media,16,4,0.0
+dados/instancias_experimentais/media_04.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,831,,0,363662,264083,0,99584,64.08950705799998,251813202,media,16,4,0.0
+dados/instancias_experimentais/media_04.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,831,,0,205914,175628,0,30298,62.87892205000003,130524778,media,16,4,0.0
+dados/instancias_experimentais/media_04.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,831,,0,550723,550696,0,53,60.00020435099998,813434,media,16,4,0.0
+dados/instancias_experimentais/media_04.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,831,,0,361048,122761,0,238302,60.89286299799994,70246930,media,16,4,0.0
+dados/instancias_experimentais/media_04.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,831,,0,382272,112722,0,269552,71.788683161,332713490,media,16,4,0.0
+dados/instancias_experimentais/media_05.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,833,,0,306957,90389,0,216569,65.25441676699995,272887674,media,16,5,0.0
+dados/instancias_experimentais/media_05.json,202601,a_star,h1,,,interrompida,Tempo máximo de execução atingido.,,833,,0,320259,86873,0,233387,72.25477971400005,288791026,media,16,5,0.0
+dados/instancias_experimentais/media_05.json,202601,a_star,h2,,,concluida,Solução encontrada.,833,833,1.0,19,5017,1188,0,3526,0.5048129829999652,4729746,media,16,5,1.3526214088394986
+dados/instancias_experimentais/media_05.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,833,833,1.0,19,364,87,0,273,0.023659501999986787,522186,media,16,5,1.1371274899396615
+dados/instancias_experimentais/media_05.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,833,833,1.0,19,3505,985,0,2377,0.3512995060000321,3871990,media,16,5,1.3370352502928706
+dados/instancias_experimentais/media_05.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,833,833,1.0,19,154370,54161,0,82118,30.075145475,131636678,media,16,5,1.6932887393091594
+dados/instancias_experimentais/media_05.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,833,,0,260917,129879,0,131146,64.42945007600008,214666606,media,16,5,0.0
+dados/instancias_experimentais/media_05.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,833,,0,376752,145159,0,231595,69.86627655400002,287953994,media,16,5,0.0
+dados/instancias_experimentais/media_05.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,833,,0,338412,289084,0,69421,63.51716900200006,195292774,media,16,5,0.0
+dados/instancias_experimentais/media_05.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,833,,0,229871,195152,0,34723,63.49995101700006,138124246,media,16,5,0.0
+dados/instancias_experimentais/media_05.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,833,,0,710282,710266,0,43,60.000201626000035,813838,media,16,5,0.0
+dados/instancias_experimentais/media_05.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,833,,0,426354,154879,0,271489,62.51678071699996,99117674,media,16,5,0.0
+dados/instancias_experimentais/media_05.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,833,,0,374960,111116,0,263846,65.52932312200005,326666806,media,16,5,0.0
+dados/instancias_experimentais/media_06.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,833,,0,370002,113061,0,256943,69.43031821999989,335220322,media,16,6,0.0
+dados/instancias_experimentais/media_06.json,202601,a_star,h1,,,concluida,Solução encontrada.,833,833,1.0,19,282484,70791,0,180581,55.964951145999976,229474386,media,16,6,1.7192706644158262
+dados/instancias_experimentais/media_06.json,202601,a_star,h2,,,concluida,Solução encontrada.,833,833,1.0,19,3813,855,0,2784,0.4931192510000528,3803030,media,16,6,1.325305881414955
+dados/instancias_experimentais/media_06.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,833,833,1.0,19,1222,296,0,878,0.17447425000000294,1569718,media,16,6,1.238195796068769
+dados/instancias_experimentais/media_06.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,833,833,1.0,19,16210,4676,0,10462,1.900816058999908,15864282,media,16,6,1.4691809178963666
+dados/instancias_experimentais/media_06.json,202601,a_star_ponderada,h2,2,,interrompida,Tempo máximo de execução atingido.,,833,,0,319946,127576,0,192374,65.19025543200019,290724686,media,16,6,0.0
+dados/instancias_experimentais/media_06.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,833,,0,356803,185947,0,170857,71.78835435999986,300375382,media,16,6,0.0
+dados/instancias_experimentais/media_06.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,833,,0,607969,248458,0,359513,67.73963901100001,452349758,media,16,6,0.0
+dados/instancias_experimentais/media_06.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,833,,0,290656,219769,0,70943,65.92813220499988,184869350,media,16,6,0.0
+dados/instancias_experimentais/media_06.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,833,,0,281578,238965,0,44734,62.64773319799997,163434910,media,16,6,0.0
+dados/instancias_experimentais/media_06.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,833,,0,546170,546145,0,51,60.00434638599995,824202,media,16,6,0.0
+dados/instancias_experimentais/media_06.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,833,,0,360536,126682,0,233867,61.312067424999896,84050222,media,16,6,0.0
+dados/instancias_experimentais/media_06.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,833,,0,405663,124858,0,280808,67.30074067299995,350486654,media,16,6,0.0
+dados/instancias_experimentais/media_07.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,828,,0,391819,122410,0,269411,65.92918392899992,353809010,media,16,7,0.0
+dados/instancias_experimentais/media_07.json,202601,a_star,h1,,,concluida,Solução encontrada.,828,828,1.0,19,296768,73262,0,192153,50.40905107699996,241681758,media,16,7,1.722622966681686
+dados/instancias_experimentais/media_07.json,202601,a_star,h2,,,concluida,Solução encontrada.,828,828,1.0,19,3572,855,0,2554,0.888074792999987,3648862,media,16,7,1.325305881414955
+dados/instancias_experimentais/media_07.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,828,828,1.0,19,1516,393,0,1066,0.4811666900000091,1861522,media,16,7,1.2613888802147284
+dados/instancias_experimentais/media_07.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,828,828,1.0,19,18406,5465,0,11453,4.8040109420001045,17849838,media,16,7,1.482789892103733
+dados/instancias_experimentais/media_07.json,202601,a_star_ponderada,h2,2,,interrompida,Tempo máximo de execução atingido.,,828,,0,225029,94825,0,130205,68.60761943500006,210353426,media,16,7,0.0
+dados/instancias_experimentais/media_07.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,828,,0,228102,122094,0,106036,67.55903565199992,185292538,media,16,7,0.0
+dados/instancias_experimentais/media_07.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,828,,0,409070,162420,0,246652,67.30400750600006,312118070,media,16,7,0.0
+dados/instancias_experimentais/media_07.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,828,,0,239041,186861,0,52182,65.03564868500007,158190690,media,16,7,0.0
+dados/instancias_experimentais/media_07.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,828,,0,286229,257563,0,30022,62.49393216600015,156848150,media,16,7,0.0
+dados/instancias_experimentais/media_07.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,828,,0,452453,452426,0,44,60.000206818999914,818202,media,16,7,0.0
+dados/instancias_experimentais/media_07.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,828,,0,444808,161510,0,283312,61.52524064600016,119159618,media,16,7,0.0
+dados/instancias_experimentais/media_07.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,828,,0,444922,139789,0,305134,67.03055917899997,383097874,media,16,7,0.0
+dados/instancias_experimentais/media_08.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,833,,0,467623,146717,0,320907,67.67746873700003,416860010,media,16,8,0.0
+dados/instancias_experimentais/media_08.json,202601,a_star,h1,,,concluida,Solução encontrada.,833,833,1.0,19,327987,86775,0,202694,60.7494909940001,260938922,media,16,8,1.7392403530545617
+dados/instancias_experimentais/media_08.json,202601,a_star,h2,,,concluida,Solução encontrada.,833,833,1.0,19,3990,949,0,2842,0.9792684429999099,3917406,media,16,8,1.3339463176140267
+dados/instancias_experimentais/media_08.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,833,833,1.0,19,1630,412,0,1148,0.30680610299987165,1970566,media,16,8,1.2652547596895074
+dados/instancias_experimentais/media_08.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,833,833,1.0,19,16049,4586,0,10342,3.514379455999915,15822130,media,16,8,1.467490107352808
+dados/instancias_experimentais/media_08.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,833,833,1.0,19,420915,159641,0,196528,63.970887933000085,333370435,media,16,8,1.8001845780089982
+dados/instancias_experimentais/media_08.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,833,,0,213303,117206,0,96098,66.92042402399989,172171754,media,16,8,0.0
+dados/instancias_experimentais/media_08.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,833,,0,594426,238335,0,356093,72.10827896499995,446519770,media,16,8,0.0
+dados/instancias_experimentais/media_08.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,833,,0,296747,251338,0,45439,65.08449455499999,175306314,media,16,8,0.0
+dados/instancias_experimentais/media_08.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,833,,0,279606,241831,0,37785,62.67677776100004,161956622,media,16,8,0.0
+dados/instancias_experimentais/media_08.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,833,,0,645656,645635,0,47,60.00040844199998,819610,media,16,8,0.0
+dados/instancias_experimentais/media_08.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,833,,0,449388,159962,0,289439,62.00212940100005,112927042,media,16,8,0.0
+dados/instancias_experimentais/media_08.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,833,,0,275826,84805,0,191023,68.63838233299998,235022998,media,16,8,0.0
+dados/instancias_experimentais/media_09.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,829,,0,284986,83468,0,201519,64.70817625299992,251409574,media,16,9,0.0
+dados/instancias_experimentais/media_09.json,202601,a_star,h1,,,concluida,Solução encontrada.,829,829,1.0,19,382636,92337,0,250304,55.31527048199996,310904086,media,16,9,1.7453719447217844
+dados/instancias_experimentais/media_09.json,202601,a_star,h2,,,concluida,Solução encontrada.,829,829,1.0,19,4524,947,0,3391,0.4633427940000274,4475582,media,16,9,1.3337713667953626
+dados/instancias_experimentais/media_09.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,829,829,1.0,19,1565,369,0,1141,0.14209275400003207,1922886,media,16,9,1.256231034422282
+dados/instancias_experimentais/media_09.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,829,829,1.0,19,20402,5701,0,13289,2.3934629479999785,19860598,media,16,9,1.486493600310519
+dados/instancias_experimentais/media_09.json,202601,a_star_ponderada,h2,2,,interrompida,Tempo máximo de execução atingido.,,829,,0,301107,115694,0,185415,70.29607155899998,275422322,media,16,9,0.0
+dados/instancias_experimentais/media_09.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,829,,0,284095,140848,0,143249,66.78916882800013,229659276,media,16,9,0.0
+dados/instancias_experimentais/media_09.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,829,,0,645582,252007,0,393577,68.75511178600004,503186266,media,16,9,0.0
+dados/instancias_experimentais/media_09.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,829,,0,384667,277850,0,106819,63.997596065999915,259468510,media,16,9,0.0
+dados/instancias_experimentais/media_09.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,829,,0,248791,206220,0,42575,64.62426362600013,149889430,media,16,9,0.0
+dados/instancias_experimentais/media_09.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,829,,0,438304,438281,0,45,60.00016245899997,808794,media,16,9,0.0
+dados/instancias_experimentais/media_09.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,829,,0,470812,160823,0,310004,62.363464294000096,118949510,media,16,9,0.0
+dados/instancias_experimentais/media_09.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,829,,0,306180,89821,0,216360,65.814512917,259636614,media,16,9,0.0
+dados/instancias_experimentais/media_10.json,202601,a_star,h0,,,interrompida,Tempo máximo de execução atingido.,,825,,0,298604,101510,0,197096,70.29327754799988,263302314,media,16,10,0.0
+dados/instancias_experimentais/media_10.json,202601,a_star,h1,,,concluida,Solução encontrada.,825,825,1.0,19,143440,38310,0,94114,26.5882540959999,120385106,media,16,10,1.6601580217428202
+dados/instancias_experimentais/media_10.json,202601,a_star,h2,,,concluida,Solução encontrada.,825,825,1.0,19,2663,691,0,1860,0.3197579120001137,2731922,media,16,10,1.307720233440749
+dados/instancias_experimentais/media_10.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,825,825,1.0,19,801,208,0,559,0.14294277600015448,1123438,media,16,10,1.2093098636549584
+dados/instancias_experimentais/media_10.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,825,825,1.0,19,5333,1608,0,3443,0.7350434700001642,5527022,media,16,10,1.3779567455098962
+dados/instancias_experimentais/media_10.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,825,825,1.0,19,79083,32363,0,39862,13.871195768999996,66342586,media,16,10,1.6442023576772706
+dados/instancias_experimentais/media_10.json,202601,a_star_ponderada,h2,3,,interrompida,Tempo máximo de execução atingido.,,825,,0,308106,156987,0,151121,65.01471473700008,251203482,media,16,10,0.0
+dados/instancias_experimentais/media_10.json,202601,bfs,h0,,,interrompida,Tempo máximo de execução atingido.,,825,,0,454011,193909,0,260104,65.28216473600014,340836698,media,16,10,0.0
+dados/instancias_experimentais/media_10.json,202601,busca_gulosa,h1,,,interrompida,Tempo máximo de execução atingido.,,825,,0,352671,289803,0,62876,63.316836890999866,229319978,media,16,10,0.0
+dados/instancias_experimentais/media_10.json,202601,busca_gulosa,h2,,,interrompida,Tempo máximo de execução atingido.,,825,,0,329303,283439,0,46062,65.00143961000003,186002514,media,16,10,0.0
+dados/instancias_experimentais/media_10.json,202601,dfs,h0,,40,interrompida,Tempo máximo de execução atingido.,,825,,0,647477,647454,0,39,60.00032345599993,808186,media,16,10,0.0
+dados/instancias_experimentais/media_10.json,202601,ids,h0,,40,interrompida,Tempo máximo de execução atingido.,,825,,0,322596,120178,0,202431,61.9696608910001,74198658,media,16,10,0.0
+dados/instancias_experimentais/media_10.json,202601,ucs,h0,,,interrompida,Tempo máximo de execução atingido.,,825,,0,346651,118528,0,228125,71.0621148749999,290429086,media,16,10,0.0
+dados/instancias_experimentais/pequena_01.json,202601,a_star,h0,,,concluida,Solução encontrada.,739,739,1.0,16,6503,4584,0,1438,0.6216455410000208,5582367,pequena,4,1,1.5922020819837295
+dados/instancias_experimentais/pequena_01.json,202601,a_star,h1,,,concluida,Solução encontrada.,739,739,1.0,16,46,26,0,18,0.007866175999993175,76565,pequena,4,1,1.0550151679876418
+dados/instancias_experimentais/pequena_01.json,202601,a_star,h2,,,concluida,Solução encontrada.,739,739,1.0,16,41,24,0,16,0.00755480600000169,71973,pequena,4,1,1.0461985672914764
+dados/instancias_experimentais/pequena_01.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,739,739,1.0,16,35,20,0,14,0.003121380999999701,62941,pequena,4,1,1.0257705147033094
+dados/instancias_experimentais/pequena_01.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,739,739,1.0,16,32,18,0,13,0.00285159200001317,59197,pequena,4,1,1.013718115001677
+dados/instancias_experimentais/pequena_01.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,739,739,1.0,16,32,18,0,13,0.007405320000003712,59181,pequena,4,1,1.013718115001677
+dados/instancias_experimentais/pequena_01.json,202601,a_star_ponderada,h2,3,,concluida,Solução encontrada.,739,739,1.0,16,30,17,0,13,0.002860975999993798,56925,pequena,4,1,1.007094887190806
+dados/instancias_experimentais/pequena_01.json,202601,bfs,h0,,,concluida,Solução encontrada.,739,739,1.0,16,6273,4329,0,1446,0.6123243039999977,5209369,pequena,4,1,1.5858473657704397
+dados/instancias_experimentais/pequena_01.json,202601,busca_gulosa,h1,,,concluida,Solução encontrada.,739,739,1.0,16,29,16,0,13,0.0039056159999972806,50581,pequena,4,1,0.9999999993559141
+dados/instancias_experimentais/pequena_01.json,202601,busca_gulosa,h2,,,concluida,Solução encontrada.,739,739,1.0,16,29,16,0,13,0.004093771000015067,54989,pequena,4,1,0.9999999993559141
+dados/instancias_experimentais/pequena_01.json,202601,dfs,h0,,40,concluida,Solução encontrada.,739,739,1.0,16,37360,37355,0,13,3.912846817000002,785627,pequena,4,1,1.8384987183322294
+dados/instancias_experimentais/pequena_01.json,202601,ids,h0,,40,concluida,Solução encontrada.,739,739,1.0,16,20326,12629,8300,12,3.767945206999997,4298057,pequena,4,1,1.707782028000267
+dados/instancias_experimentais/pequena_01.json,202601,ucs,h0,,,concluida,Solução encontrada.,739,739,1.0,16,6503,4584,0,1438,0.7135897010000178,5380463,pequena,4,1,1.5922020819837295
+dados/instancias_experimentais/pequena_02.json,202601,a_star,h0,,,concluida,Solução encontrada.,741,741,1.0,16,6515,4645,0,1373,0.5951348589999839,5500389,pequena,4,2,1.5936723021250234
+dados/instancias_experimentais/pequena_02.json,202601,a_star,h1,,,concluida,Solução encontrada.,741,741,1.0,16,46,26,0,18,0.0036373310000215042,73565,pequena,4,2,1.0550151679876418
+dados/instancias_experimentais/pequena_02.json,202601,a_star,h2,,,concluida,Solução encontrada.,741,741,1.0,16,41,24,0,16,0.0035959580000053393,71925,pequena,4,2,1.0461985672914764
+dados/instancias_experimentais/pequena_02.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,741,741,1.0,16,35,20,0,14,0.002999055999993061,62893,pequena,4,2,1.0257705147033094
+dados/instancias_experimentais/pequena_02.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,741,741,1.0,16,32,18,0,13,0.002948658999997633,59141,pequena,4,2,1.013718115001677
+dados/instancias_experimentais/pequena_02.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,741,741,1.0,16,32,18,0,13,0.0027783319999912237,59117,pequena,4,2,1.013718115001677
+dados/instancias_experimentais/pequena_02.json,202601,a_star_ponderada,h2,3,,concluida,Solução encontrada.,741,741,1.0,16,30,17,0,13,0.002713012999976172,56861,pequena,4,2,1.007094887190806
+dados/instancias_experimentais/pequena_02.json,202601,bfs,h0,,,concluida,Solução encontrada.,741,741,1.0,16,6282,4397,0,1353,1.0915233549999925,5086569,pequena,4,2,1.5875760966801884
+dados/instancias_experimentais/pequena_02.json,202601,busca_gulosa,h1,,,concluida,Solução encontrada.,741,741,1.0,16,29,16,0,13,0.0023900250000110645,50581,pequena,4,2,0.9999999993559141
+dados/instancias_experimentais/pequena_02.json,202601,busca_gulosa,h2,,,concluida,Solução encontrada.,741,741,1.0,16,29,16,0,13,0.003113017999993417,54989,pequena,4,2,0.9999999993559141
+dados/instancias_experimentais/pequena_02.json,202601,dfs,h0,,40,concluida,Solução encontrada.,741,741,1.0,16,33066,33061,0,13,3.6785296529999982,776093,pequena,4,2,1.8233894307165908
+dados/instancias_experimentais/pequena_02.json,202601,ids,h0,,40,concluida,Solução encontrada.,741,741,1.0,16,21632,13589,9192,12,3.0600175790000037,4363057,pequena,4,2,1.7163743024710953
+dados/instancias_experimentais/pequena_02.json,202601,ucs,h0,,,concluida,Solução encontrada.,741,741,1.0,16,6515,4645,0,1373,1.2152086130000157,5293493,pequena,4,2,1.5936723021250234
+dados/instancias_experimentais/pequena_03.json,202601,a_star,h0,,,concluida,Solução encontrada.,740,740,1.0,16,6696,4793,0,1412,1.4829342390000022,5635939,pequena,4,3,1.5971644130326559
+dados/instancias_experimentais/pequena_03.json,202601,a_star,h1,,,concluida,Solução encontrada.,740,740,1.0,16,46,26,0,18,0.0032252480000067862,77013,pequena,4,3,1.0550151679876418
+dados/instancias_experimentais/pequena_03.json,202601,a_star,h2,,,concluida,Solução encontrada.,740,740,1.0,16,41,24,0,16,0.0032374969999864334,71797,pequena,4,3,1.0461985672914764
+dados/instancias_experimentais/pequena_03.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,740,740,1.0,16,35,20,0,14,0.003116142999999738,62813,pequena,4,3,1.0257705147033094
+dados/instancias_experimentais/pequena_03.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,740,740,1.0,16,32,18,0,13,0.0034026570000094125,59013,pequena,4,3,1.013718115001677
+dados/instancias_experimentais/pequena_03.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,740,740,1.0,16,32,18,0,13,0.002813265000014553,58997,pequena,4,3,1.013718115001677
+dados/instancias_experimentais/pequena_03.json,202601,a_star_ponderada,h2,3,,concluida,Solução encontrada.,740,740,1.0,16,30,17,0,13,0.004084587999983569,56741,pequena,4,3,1.007094887190806
+dados/instancias_experimentais/pequena_03.json,202601,bfs,h0,,,concluida,Solução encontrada.,740,740,1.0,16,6396,4487,0,1401,0.48734624700000495,5176601,pequena,4,3,1.5898254048277933
+dados/instancias_experimentais/pequena_03.json,202601,busca_gulosa,h1,,,concluida,Solução encontrada.,740,740,1.0,16,29,16,0,13,0.00236392499999738,50509,pequena,4,3,0.9999999993559141
+dados/instancias_experimentais/pequena_03.json,202601,busca_gulosa,h2,,,concluida,Solução encontrada.,740,740,1.0,16,29,16,0,13,0.003117553999999245,54981,pequena,4,3,0.9999999993559141
+dados/instancias_experimentais/pequena_03.json,202601,dfs,h0,,40,concluida,Solução encontrada.,740,740,1.0,16,35549,35544,0,13,3.1208960669999897,777259,pequena,4,3,1.8323374066112692
+dados/instancias_experimentais/pequena_03.json,202601,ids,h0,,40,concluida,Solução encontrada.,740,740,1.0,16,21290,13370,8883,12,4.477274778000009,4349029,pequena,4,3,1.714466001627888
+dados/instancias_experimentais/pequena_03.json,202601,ucs,h0,,,concluida,Solução encontrada.,740,740,1.0,16,6696,4793,0,1412,0.6991171779999945,5427723,pequena,4,3,1.5971644130326559
+dados/instancias_experimentais/pequena_04.json,202601,a_star,h0,,,concluida,Solução encontrada.,745,745,1.0,16,6676,4766,0,1401,0.6571647560000144,5600413,pequena,4,4,1.5965350598244998
+dados/instancias_experimentais/pequena_04.json,202601,a_star,h1,,,concluida,Solução encontrada.,745,745,1.0,16,46,26,0,18,0.0032929599999818038,73309,pequena,4,4,1.0550151679876418
+dados/instancias_experimentais/pequena_04.json,202601,a_star,h2,,,concluida,Solução encontrada.,745,745,1.0,16,41,24,0,16,0.005104840999990756,71669,pequena,4,4,1.0461985672914764
+dados/instancias_experimentais/pequena_04.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,745,745,1.0,16,35,20,0,14,0.003019516999984262,62637,pequena,4,4,1.0257705147033094
+dados/instancias_experimentais/pequena_04.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,745,745,1.0,16,35,20,0,14,0.0030285699999978988,62613,pequena,4,4,1.0257705147033094
+dados/instancias_experimentais/pequena_04.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,745,745,1.0,16,32,18,0,13,0.0039448569999933625,58877,pequena,4,4,1.013718115001677
+dados/instancias_experimentais/pequena_04.json,202601,a_star_ponderada,h2,3,,concluida,Solução encontrada.,745,745,1.0,16,30,17,0,13,0.0034545850000142764,56629,pequena,4,4,1.007094887190806
+dados/instancias_experimentais/pequena_04.json,202601,bfs,h0,,,concluida,Solução encontrada.,745,745,1.0,16,6452,4533,0,1372,0.5224448219999829,5175821,pequena,4,4,1.5909585214575577
+dados/instancias_experimentais/pequena_04.json,202601,busca_gulosa,h1,,,concluida,Solução encontrada.,745,745,1.0,16,29,16,0,13,0.0030744599999934508,50869,pequena,4,4,0.9999999993559141
+dados/instancias_experimentais/pequena_04.json,202601,busca_gulosa,h2,,,concluida,Solução encontrada.,745,745,1.0,16,29,16,0,13,0.0031757730000094853,54869,pequena,4,4,0.9999999993559141
+dados/instancias_experimentais/pequena_04.json,202601,dfs,h0,,40,concluida,Solução encontrada.,745,745,1.0,16,31317,31312,0,13,2.8414320310000107,778933,pequena,4,4,1.8166970387895185
+dados/instancias_experimentais/pequena_04.json,202601,ids,h0,,40,concluida,Solução encontrada.,745,745,1.0,16,21629,13621,9088,12,3.790165949999988,4367393,pequena,4,4,1.716650698987283
+dados/instancias_experimentais/pequena_04.json,202601,ucs,h0,,,concluida,Solução encontrada.,745,745,1.0,16,6676,4766,0,1401,0.6059073739999974,5394181,pequena,4,4,1.5965350598244998
+dados/instancias_experimentais/pequena_05.json,202601,a_star,h0,,,concluida,Solução encontrada.,743,743,1.0,16,6664,4763,0,1405,1.2258903439999926,5513745,pequena,4,5,1.5964649223724239
+dados/instancias_experimentais/pequena_05.json,202601,a_star,h1,,,concluida,Solução encontrada.,743,743,1.0,16,46,26,0,18,0.0037556110000025456,76805,pequena,4,5,1.0550151679876418
+dados/instancias_experimentais/pequena_05.json,202601,a_star,h2,,,concluida,Solução encontrada.,743,743,1.0,16,41,24,0,16,0.039222293999984004,71597,pequena,4,5,1.0461985672914764
+dados/instancias_experimentais/pequena_05.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,743,743,1.0,16,35,20,0,14,0.004907892999995056,62613,pequena,4,5,1.0257705147033094
+dados/instancias_experimentais/pequena_05.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,743,743,1.0,16,32,18,0,13,0.004346914999985074,58829,pequena,4,5,1.013718115001677
+dados/instancias_experimentais/pequena_05.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,743,743,1.0,16,32,18,0,13,0.004541157999994994,58821,pequena,4,5,1.013718115001677
+dados/instancias_experimentais/pequena_05.json,202601,a_star_ponderada,h2,3,,concluida,Solução encontrada.,743,743,1.0,16,30,17,0,13,0.004099811000003228,56573,pequena,4,5,1.007094887190806
+dados/instancias_experimentais/pequena_05.json,202601,bfs,h0,,,concluida,Solução encontrada.,743,743,1.0,16,6432,4505,0,1394,0.5323221010000054,5188661,pequena,4,5,1.5902701091276648
+dados/instancias_experimentais/pequena_05.json,202601,busca_gulosa,h1,,,concluida,Solução encontrada.,743,743,1.0,16,29,16,0,13,0.0020007159999977375,48221,pequena,4,5,0.9999999993559141
+dados/instancias_experimentais/pequena_05.json,202601,busca_gulosa,h2,,,concluida,Solução encontrada.,743,743,1.0,16,29,16,0,13,0.002955821000000469,54869,pequena,4,5,0.9999999993559141
+dados/instancias_experimentais/pequena_05.json,202601,dfs,h0,,40,concluida,Solução encontrada.,743,743,1.0,16,30900,30895,0,13,2.8870878059999825,779533,pequena,4,5,1.8150493406180899
+dados/instancias_experimentais/pequena_05.json,202601,ids,h0,,40,concluida,Solução encontrada.,743,743,1.0,16,21957,13812,9307,12,3.05341740099999,4360665,pequena,4,5,1.718287762087598
+dados/instancias_experimentais/pequena_05.json,202601,ucs,h0,,,concluida,Solução encontrada.,743,743,1.0,16,6664,4763,0,1405,0.6948472710000146,5381029,pequena,4,5,1.5964649223724239
+dados/instancias_experimentais/pequena_06.json,202601,a_star,h0,,,concluida,Solução encontrada.,741,741,1.0,16,6774,4846,0,1429,0.6592207640000254,5685541,pequena,4,6,1.5983900622569198
+dados/instancias_experimentais/pequena_06.json,202601,a_star,h1,,,concluida,Solução encontrada.,741,741,1.0,16,46,26,0,18,0.004101974000008113,73453,pequena,4,6,1.0550151679876418
+dados/instancias_experimentais/pequena_06.json,202601,a_star,h2,,,concluida,Solução encontrada.,741,741,1.0,16,41,24,0,16,0.004577241999982107,71757,pequena,4,6,1.0461985672914764
+dados/instancias_experimentais/pequena_06.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,741,741,1.0,16,35,20,0,14,0.004123877000012044,62773,pequena,4,6,1.0257705147033094
+dados/instancias_experimentais/pequena_06.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,741,741,1.0,16,32,18,0,13,0.03728395600001022,58981,pequena,4,6,1.013718115001677
+dados/instancias_experimentais/pequena_06.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,741,741,1.0,16,32,18,0,13,0.003332559999989826,58965,pequena,4,6,1.013718115001677
+dados/instancias_experimentais/pequena_06.json,202601,a_star_ponderada,h2,3,,concluida,Solução encontrada.,741,741,1.0,16,30,17,0,13,0.003359801000016205,56709,pequena,4,6,1.007094887190806
+dados/instancias_experimentais/pequena_06.json,202601,bfs,h0,,,concluida,Solução encontrada.,741,741,1.0,16,6531,4584,0,1418,0.5964051620000248,5257273,pequena,4,6,1.5922020819837295
+dados/instancias_experimentais/pequena_06.json,202601,busca_gulosa,h1,,,concluida,Solução encontrada.,741,741,1.0,16,29,16,0,13,0.0025117790000024343,50989,pequena,4,6,0.9999999993559141
+dados/instancias_experimentais/pequena_06.json,202601,busca_gulosa,h2,,,concluida,Solução encontrada.,741,741,1.0,16,29,16,0,13,0.0024753440000040428,54933,pequena,4,6,0.9999999993559141
+dados/instancias_experimentais/pequena_06.json,202601,dfs,h0,,40,concluida,Solução encontrada.,741,741,1.0,16,31683,31678,0,13,3.9299976949999973,779016,pequena,4,6,1.818126226136143
+dados/instancias_experimentais/pequena_06.json,202601,ids,h0,,40,concluida,Solução encontrada.,741,741,1.0,16,21808,13701,9117,12,4.0493868359999965,4386981,pequena,4,6,1.7173390091613876
+dados/instancias_experimentais/pequena_06.json,202601,ucs,h0,,,concluida,Solução encontrada.,741,741,1.0,16,6774,4846,0,1429,0.6401423499999908,5470061,pequena,4,6,1.5983900622569198
+dados/instancias_experimentais/pequena_07.json,202601,a_star,h0,,,concluida,Solução encontrada.,739,739,1.0,16,6718,4740,0,1473,0.6205945160000113,5728533,pequena,4,7,1.5959258018137152
+dados/instancias_experimentais/pequena_07.json,202601,a_star,h1,,,concluida,Solução encontrada.,739,739,1.0,16,46,26,0,18,0.003078866000009839,73605,pequena,4,7,1.0550151679876418
+dados/instancias_experimentais/pequena_07.json,202601,a_star,h2,,,concluida,Solução encontrada.,739,739,1.0,16,41,24,0,16,0.003168642999980875,71837,pequena,4,7,1.0461985672914764
+dados/instancias_experimentais/pequena_07.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,739,739,1.0,16,35,20,0,14,0.002922579999989239,62853,pequena,4,7,1.0257705147033094
+dados/instancias_experimentais/pequena_07.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,739,739,1.0,16,32,18,0,13,0.0027704000000028373,59061,pequena,4,7,1.013718115001677
+dados/instancias_experimentais/pequena_07.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,739,739,1.0,16,32,18,0,13,0.0032343519999926684,59045,pequena,4,7,1.013718115001677
+dados/instancias_experimentais/pequena_07.json,202601,a_star_ponderada,h2,3,,concluida,Solução encontrada.,739,739,1.0,16,30,17,0,13,0.0027920429999994667,56781,pequena,4,7,1.007094887190806
+dados/instancias_experimentais/pequena_07.json,202601,bfs,h0,,,concluida,Solução encontrada.,739,739,1.0,16,6503,4497,0,1484,0.5361702639999919,5350573,pequena,4,7,1.5900726719295675
+dados/instancias_experimentais/pequena_07.json,202601,busca_gulosa,h1,,,concluida,Solução encontrada.,739,739,1.0,16,29,16,0,13,0.0024121079999872563,50869,pequena,4,7,0.9999999993559141
+dados/instancias_experimentais/pequena_07.json,202601,busca_gulosa,h2,,,concluida,Solução encontrada.,739,739,1.0,16,29,16,0,13,0.03807962499999462,54685,pequena,4,7,0.9999999993559141
+dados/instancias_experimentais/pequena_07.json,202601,dfs,h0,,40,concluida,Solução encontrada.,739,739,1.0,16,40108,40103,0,13,6.137024253999982,781347,pequena,4,7,1.8473290936746225
+dados/instancias_experimentais/pequena_07.json,202601,ids,h0,,40,concluida,Solução encontrada.,739,739,1.0,16,21231,13210,8713,12,1.9149835089999954,4338061,pequena,4,7,1.7130530022237807
+dados/instancias_experimentais/pequena_07.json,202601,ucs,h0,,,concluida,Solução encontrada.,739,739,1.0,16,6718,4740,0,1473,0.6986804000000006,5425469,pequena,4,7,1.5959258018137152
+dados/instancias_experimentais/pequena_08.json,202601,a_star,h0,,,concluida,Solução encontrada.,739,739,1.0,16,6179,4422,0,1300,0.6059096900000043,5258929,pequena,4,8,1.5882052681936316
+dados/instancias_experimentais/pequena_08.json,202601,a_star,h1,,,concluida,Solução encontrada.,739,739,1.0,16,46,26,0,18,0.003995664000001398,73181,pequena,4,8,1.0550151679876418
+dados/instancias_experimentais/pequena_08.json,202601,a_star,h2,,,concluida,Solução encontrada.,739,739,1.0,16,41,24,0,16,0.0029997170000228834,71557,pequena,4,8,1.0461985672914764
+dados/instancias_experimentais/pequena_08.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,739,739,1.0,16,35,20,0,14,0.036220673000002535,62589,pequena,4,8,1.0257705147033094
+dados/instancias_experimentais/pequena_08.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,739,739,1.0,16,32,18,0,13,0.0026852119999887236,58813,pequena,4,8,1.013718115001677
+dados/instancias_experimentais/pequena_08.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,739,739,1.0,16,32,18,0,13,0.0025028359999907934,58813,pequena,4,8,1.013718115001677
+dados/instancias_experimentais/pequena_08.json,202601,a_star_ponderada,h2,3,,concluida,Solução encontrada.,739,739,1.0,16,30,17,0,13,0.002766874999991842,56573,pequena,4,8,1.007094887190806
+dados/instancias_experimentais/pequena_08.json,202601,bfs,h0,,,concluida,Solução encontrada.,739,739,1.0,16,5895,4135,0,1282,0.403897752000006,4834973,pequena,4,8,1.5807694438860842
+dados/instancias_experimentais/pequena_08.json,202601,busca_gulosa,h1,,,concluida,Solução encontrada.,739,739,1.0,16,29,16,0,13,0.0024235959999998613,50573,pequena,4,8,0.9999999993559141
+dados/instancias_experimentais/pequena_08.json,202601,busca_gulosa,h2,,,concluida,Solução encontrada.,739,739,1.0,16,29,16,0,13,0.00280921899999953,54597,pequena,4,8,0.9999999993559141
+dados/instancias_experimentais/pequena_08.json,202601,dfs,h0,,40,concluida,Solução encontrada.,739,739,1.0,16,32387,32382,0,13,5.5971579710000015,775875,pequena,4,8,1.820831938769437
+dados/instancias_experimentais/pequena_08.json,202601,ids,h0,,40,concluida,Solução encontrada.,739,739,1.0,16,19664,12354,8219,12,1.679871754000004,3924233,pequena,4,8,1.705206566858756
+dados/instancias_experimentais/pequena_08.json,202601,ucs,h0,,,concluida,Solução encontrada.,739,739,1.0,16,6179,4422,0,1300,0.6786638689999904,4971369,pequena,4,8,1.5882052681936316
+dados/instancias_experimentais/pequena_09.json,202601,a_star,h0,,,concluida,Solução encontrada.,739,739,1.0,16,6847,4911,0,1438,0.5428461990000244,5742665,pequena,4,9,1.5998759251350827
+dados/instancias_experimentais/pequena_09.json,202601,a_star,h1,,,concluida,Solução encontrada.,739,739,1.0,16,46,26,0,18,0.003900098000002572,73253,pequena,4,9,1.0550151679876418
+dados/instancias_experimentais/pequena_09.json,202601,a_star,h2,,,concluida,Solução encontrada.,739,739,1.0,16,41,24,0,16,0.0038536490000069534,71621,pequena,4,9,1.0461985672914764
+dados/instancias_experimentais/pequena_09.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,739,739,1.0,16,35,20,0,14,0.002856640000004518,62645,pequena,4,9,1.0257705147033094
+dados/instancias_experimentais/pequena_09.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,739,739,1.0,16,32,18,0,13,0.0027843209999787177,58861,pequena,4,9,1.013718115001677
+dados/instancias_experimentais/pequena_09.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,739,739,1.0,16,32,18,0,13,0.0025396210000110386,58853,pequena,4,9,1.013718115001677
+dados/instancias_experimentais/pequena_09.json,202601,a_star_ponderada,h2,3,,concluida,Solução encontrada.,739,739,1.0,16,30,17,0,13,0.005010658000003332,56597,pequena,4,9,1.007094887190806
+dados/instancias_experimentais/pequena_09.json,202601,bfs,h0,,,concluida,Solução encontrada.,739,739,1.0,16,6567,4613,0,1427,0.5579601060000243,5289477,pequena,4,9,1.5929033456677513
+dados/instancias_experimentais/pequena_09.json,202601,busca_gulosa,h1,,,concluida,Solução encontrada.,739,739,1.0,16,29,16,0,13,0.035675073000021484,50637,pequena,4,9,0.9999999993559141
+dados/instancias_experimentais/pequena_09.json,202601,busca_gulosa,h2,,,concluida,Solução encontrada.,739,739,1.0,16,29,16,0,13,0.002428722999979982,54597,pequena,4,9,0.9999999993559141
+dados/instancias_experimentais/pequena_09.json,202601,dfs,h0,,40,concluida,Solução encontrada.,739,739,1.0,16,32344,32339,0,13,2.594971144999988,775755,pequena,4,9,1.8206682759587216
+dados/instancias_experimentais/pequena_09.json,202601,ids,h0,,40,concluida,Solução encontrada.,739,739,1.0,16,21909,13774,9161,12,1.796095121999997,4406453,pequena,4,9,1.7179637792220057
+dados/instancias_experimentais/pequena_09.json,202601,ucs,h0,,,concluida,Solução encontrada.,739,739,1.0,16,6847,4911,0,1438,1.179256296999995,5527337,pequena,4,9,1.5998759251350827
+dados/instancias_experimentais/pequena_10.json,202601,a_star,h0,,,concluida,Solução encontrada.,744,744,1.0,16,5846,4164,0,1238,0.4284831300000178,4894055,pequena,4,10,1.5815427530206783
+dados/instancias_experimentais/pequena_10.json,202601,a_star,h1,,,concluida,Solução encontrada.,744,744,1.0,16,46,26,0,18,0.002946876000009979,73365,pequena,4,10,1.0550151679876418
+dados/instancias_experimentais/pequena_10.json,202601,a_star,h2,,,concluida,Solução encontrada.,744,744,1.0,16,41,24,0,16,0.007662749000019176,71725,pequena,4,10,1.0461985672914764
+dados/instancias_experimentais/pequena_10.json,202601,a_star_ponderada,h2,1.25,,concluida,Solução encontrada.,744,744,1.0,16,35,20,0,14,0.007070993000013459,62693,pequena,4,10,1.0257705147033094
+dados/instancias_experimentais/pequena_10.json,202601,a_star_ponderada,h2,1.5,,concluida,Solução encontrada.,744,744,1.0,16,35,20,0,14,0.0026518210000006093,62669,pequena,4,10,1.0257705147033094
+dados/instancias_experimentais/pequena_10.json,202601,a_star_ponderada,h2,2,,concluida,Solução encontrada.,744,744,1.0,16,32,18,0,13,0.006878042000010964,58925,pequena,4,10,1.013718115001677
+dados/instancias_experimentais/pequena_10.json,202601,a_star_ponderada,h2,3,,concluida,Solução encontrada.,744,744,1.0,16,30,17,0,13,0.007145577000017056,56669,pequena,4,10,1.007094887190806
+dados/instancias_experimentais/pequena_10.json,202601,bfs,h0,,,concluida,Solução encontrada.,744,744,1.0,16,5497,3834,0,1206,0.41836826300001917,4615733,pequena,4,10,1.5724231632513153
+dados/instancias_experimentais/pequena_10.json,202601,busca_gulosa,h1,,,concluida,Solução encontrada.,744,744,1.0,16,29,16,0,13,0.041246408999995765,50589,pequena,4,10,0.9999999993559141
+dados/instancias_experimentais/pequena_10.json,202601,busca_gulosa,h2,,,concluida,Solução encontrada.,744,744,1.0,16,29,16,0,13,0.003167860999980121,54605,pequena,4,10,0.9999999993559141
+dados/instancias_experimentais/pequena_10.json,202601,dfs,h0,,40,concluida,Solução encontrada.,744,744,1.0,16,31253,31248,0,13,2.468814366999993,779191,pequena,4,10,1.8164455062596925
+dados/instancias_experimentais/pequena_10.json,202601,ids,h0,,40,concluida,Solução encontrada.,744,744,1.0,16,18177,11363,7529,12,2.910014803000024,3721141,pequena,4,10,1.6954519603482678
+dados/instancias_experimentais/pequena_10.json,202601,ucs,h0,,,concluida,Solução encontrada.,744,744,1.0,16,5846,4164,0,1238,0.41307360600001175,4691695,pequena,4,10,1.5815427530206783

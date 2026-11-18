@@ -7,6 +7,7 @@ from src.estado import Estado
 from src.gerador import carregar_rede, gerar_instancia
 from src.interface.mapa_rodoviario import (
     preparar_posicoes,
+    rede_visual_da_instancia,
     segmentos_percurso,
     supermercados_da_instancia,
 )
@@ -45,6 +46,82 @@ def test_supermercados_aceitam_os_dois_formatos():
     assert supermercados_da_instancia(directo)["Dondo"]["localidade"] == "Dondo"
 
 
+def test_rede_visual_inclui_ligacao_declarada_na_instancia():
+    rede_base = carregar_rede()
+    instancia = {
+        "estradas": {
+            "Chimoio": {
+                "Beira": {
+                    "distancia": 200, "piso": 5, "simulada": True,
+                }
+            },
+            "Beira": {},
+        }
+    }
+    rede = rede_visual_da_instancia(instancia, rede_base)
+
+    assert rede["localidades"] == rede_base["localidades"]
+    assert len(rede["estradas"]) == len(rede_base["estradas"]) + 1
+    assert {
+        chave: valor
+        for chave, valor in rede["estradas"][-1].items()
+        if chave != "da_instancia"
+    } == {
+        "origem": "Chimoio",
+        "destino": "Beira",
+        "distanciaKm": 200,
+        "piso": 5,
+        "simulada": True,
+    }
+    assert rede["estradas"][-1]["da_instancia"] is True
+
+
+def test_rede_visual_preserva_as_rotas_que_nao_fazem_parte_da_instancia():
+    rede_base = carregar_rede()
+    instancia = {
+        "estradas": {
+            "Beira": {"Dondo": {"distancia": 30, "piso": 5}},
+            "Dondo": {},
+        }
+    }
+    rede = rede_visual_da_instancia(instancia, rede_base)
+    ligacoes = {
+        frozenset((estrada["origem"], estrada["destino"]))
+        for estrada in rede["estradas"]
+    }
+
+    assert frozenset(("Beira", "Dondo")) in ligacoes
+    assert frozenset(("Nhamatanda", "Gorongosa")) in ligacoes
+
+
+def test_rede_visual_pequena_aceita_todo_o_percurso_encontrado():
+    from pathlib import Path
+
+    from src.gerador import carregar_json
+
+    caminho = (
+        Path(__file__).resolve().parents[1]
+        / "dados" / "instancias_experimentais" / "pequena_01.json"
+    )
+    instancia = carregar_json(caminho)
+    rede = rede_visual_da_instancia(instancia, carregar_rede())
+    ligacoes = {
+        frozenset((estrada["origem"], estrada["destino"]))
+        for estrada in rede["estradas"]
+    }
+
+    assert frozenset(("Chimoio", "Beira")) in ligacoes
+    assert all(
+        frozenset(segmento) in ligacoes
+        for segmento in (
+            ("Beira", "Dondo"), ("Dondo", "Nhamatanda"),
+            ("Nhamatanda", "Inchope"), ("Inchope", "Gondola"),
+            ("Gondola", "Vanduzi"), ("Vanduzi", "Manica"),
+            ("Manica", "Chimoio"), ("Chimoio", "Beira"),
+        )
+    )
+
+
 @pytest.mark.parametrize("algoritmo", ALGORITMOS.values())
 def test_contrato_configuracao(tmp_path, algoritmo):
     caminho = tmp_path / "instancia.json"
@@ -59,7 +136,7 @@ def test_contrato_configuracao(tmp_path, algoritmo):
         "limite_maximo",
     }
     assert config["peso"] == (1.5 if algoritmo == "a_star_ponderada" else None)
-    assert config["limite"] == (0 if algoritmo in ("lds", "ids") else None)
+    assert config["limite"] == (0 if algoritmo in ("dfs", "lds", "ids") else None)
 
 
 @pytest.mark.parametrize("peso", ["0", "-1", "nan", "inf", "texto"])

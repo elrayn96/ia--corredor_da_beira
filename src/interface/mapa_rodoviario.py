@@ -97,10 +97,49 @@ def supermercados_da_instancia(instancia):
     return {supermercado["localidade"]: supermercado for supermercado in supermercados}
 
 
+def rede_visual_da_instancia(instancia, rede_base):
+    """Mostra a rede-base inteira e acrescenta/actualiza ligações da instância."""
+    adjacencia = instancia.get("estradas")
+    if not isinstance(adjacencia, dict):
+        return rede_base
+
+    estradas = [dict(estrada) for estrada in rede_base["estradas"]]
+    indices = {
+        frozenset((estrada["origem"], estrada["destino"])): indice
+        for indice, estrada in enumerate(estradas)
+    }
+    for origem, vizinhos in adjacencia.items():
+        if not isinstance(vizinhos, dict):
+            continue
+        for destino, dados in vizinhos.items():
+            par = frozenset((origem, destino))
+            if par in indices and estradas[indices[par]].get("da_instancia"):
+                continue
+            estrada = {
+                "origem": origem,
+                "destino": destino,
+                "distanciaKm": dados.get("distancia", dados.get("distanciaKm")),
+                "piso": dados.get("piso", 3),
+                "simulada": bool(dados.get("simulada", False)),
+                "da_instancia": True,
+            }
+            if par in indices:
+                estradas[indices[par]] = estrada
+            else:
+                indices[par] = len(estradas)
+                estradas.append(estrada)
+    return {
+        "localidades": list(rede_base["localidades"]),
+        "estradas": estradas,
+        "velocidadesPorPiso": rede_base.get("velocidadesPorPiso", {}),
+    }
+
+
 class MapaRodoviario(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent, style="Cartao.TFrame")
         self._rede = {"localidades": [], "estradas": []}
+        self._rede_base = None
         self._segmentos = []
         self._aresta_seleccionada = None
         self._ultima_explorada = None
@@ -218,7 +257,7 @@ class MapaRodoviario(ttk.Frame):
         self._tabela.bind("<<TreeviewSelect>>", self._seleccionar_aresta)
         # Informação metodológica preservada em tooltip ou documentação futura.
 
-    def mostrar_rede(self, rede):
+    def mostrar_rede(self, rede, definir_base=True):
         nomes = [localidade["nome"] for localidade in rede["localidades"]]
         if len(set(nomes)) != len(nomes):
             raise ValueError("A rede contém localidades repetidas.")
@@ -226,6 +265,8 @@ class MapaRodoviario(ttk.Frame):
             if estrada["origem"] not in nomes or estrada["destino"] not in nomes:
                 raise ValueError("Uma estrada refere uma localidade desconhecida.")
         self._rede = rede
+        if definir_base:
+            self._rede_base = rede
         self._posicoes = preparar_posicoes(rede["localidades"])
         self._segmentos = []
         self._aresta_seleccionada = None
@@ -246,6 +287,9 @@ class MapaRodoviario(ttk.Frame):
         self._desenhar()
 
     def mostrar_instancia(self, instancia):
+        if self._rede_base is not None:
+            rede = rede_visual_da_instancia(instancia, self._rede_base)
+            self.mostrar_rede(rede, definir_base=False)
         self._supermercados = supermercados_da_instancia(instancia)
         self._origem = instancia.get("origem") or instancia.get(
             "estadoInicial", {}

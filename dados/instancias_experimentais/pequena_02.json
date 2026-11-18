@@ -1,0 +1,107 @@
+{
+  "nome": "pequena_02",
+  "nivel": "pequena",
+  "indice": 2,
+  "semente_base": 202601,
+  "semente": 202601,
+  "dimensao": 4,
+  "origem": "Beira",
+  "estadoInicial": {
+    "localidade": "Beira",
+    "horaPartida": "05:00",
+    "combustivelLitros": 300
+  },
+  "postosAbastecimento": [
+    "Beira",
+    "Inchope",
+    "Chimoio"
+  ],
+  "estradas": {
+    "Beira": {
+      "Dondo": {
+        "distancia": 42.0,
+        "piso": 5
+      }
+    },
+    "Dondo": {
+      "Nhamatanda": {
+        "distancia": 91.0,
+        "piso": 4
+      }
+    },
+    "Nhamatanda": {
+      "Inchope": {
+        "distancia": 72.0,
+        "piso": 4
+      }
+    },
+    "Inchope": {
+      "Gondola": {
+        "distancia": 70.0,
+        "piso": 4
+      }
+    },
+    "Gorongosa": {},
+    "Gondola": {
+      "Vanduzi": {
+        "distancia": 45.0,
+        "piso": 4
+      }
+    },
+    "Chimoio": {
+      "Beira": {
+        "distancia": 200.0,
+        "piso": 5,
+        "simulada": true
+      }
+    },
+    "Manica": {
+      "Chimoio": {
+        "distancia": 79.0,
+        "piso": 3
+      }
+    },
+    "Catandica": {},
+    "Muxunguè": {},
+    "Caia": {},
+    "Mafambisse": {},
+    "Mutua": {},
+    "Lamego": {},
+    "Vanduzi": {
+      "Manica": {
+        "distancia": 68.0,
+        "piso": 3
+      }
+    }
+  },
+  "supermercados": {
+    "Dondo": {
+      "abertura": "06:00",
+      "fecho": "10:00"
+    },
+    "Nhamatanda": {
+      "abertura": "07:00",
+      "fecho": "11:30"
+    },
+    "Inchope": {
+      "abertura": "08:00",
+      "fecho": "13:00"
+    },
+    "Gondola": {
+      "abertura": "09:00",
+      "fecho": "14:30"
+    },
+    "Vanduzi": {
+      "abertura": "10:00",
+      "fecho": "16:00"
+    },
+    "Manica": {
+      "abertura": "11:00",
+      "fecho": "17:30"
+    },
+    "Chimoio": {
+      "abertura": "12:00",
+      "fecho": "19:00"
+    }
+  }
+}

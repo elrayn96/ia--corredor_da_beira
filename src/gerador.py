@@ -1,6 +1,8 @@
 import json
 import random
+from copy import deepcopy
 from datetime import datetime
+from itertools import pairwise
 from pathlib import Path
 
 RAIZ_PROJECTO = Path(__file__).resolve().parent.parent
@@ -373,3 +375,101 @@ def gerar_demonstracao_validada(semente=202601, nome_ficheiro=None):
     nome_ficheiro = nome_ficheiro or f"demonstracao_{semente}.json"
     caminho = guardar_instancia(instancia, nome_ficheiro)
     return instancia, caminho, solucao
+
+
+def _rede_directa_experimental(nivel, gerador):
+    """Cria uma rede de dificuldade crescente preservando um percurso viável."""
+    rede = converter_para_busca(gerar_instancia())
+    completa = rede["estradas"]
+    if nivel == "pequena":
+        # Caso controlado: corredor dirigido sem alternativas. A ligação final
+        # Chimoio-Beira é um dado simulado, identificado apenas nesta bateria,
+        # e permite que até BFS/DFS/IDS terminem como exige o enunciado.
+        percurso = (
+            "Beira", "Dondo", "Nhamatanda", "Inchope", "Gondola",
+            "Vanduzi", "Manica", "Chimoio", "Beira",
+        )
+        estradas = {nome: {} for nome in completa}
+        for origem, destino in pairwise(percurso):
+            if destino in completa.get(origem, {}):
+                dados = deepcopy(completa[origem][destino])
+            else:
+                dados = {"distancia": 200, "piso": 5, "simulada": True}
+            dados["distancia"] = max(
+                1, round(float(dados["distancia"]) + gerador.randint(-2, 2), 1)
+            )
+            estradas[origem][destino] = dados
+        return estradas
+    pares_percurso = {
+        frozenset((a, b)) for a, b in pairwise(PERCURSO_DEMONSTRACAO)
+    }
+    extras = []
+    for origem, vizinhos in completa.items():
+        for destino, dados in vizinhos.items():
+            if origem < destino and frozenset((origem, destino)) not in pares_percurso:
+                extras.append((origem, destino, dados))
+    gerador.shuffle(extras)
+    quantidade_extra = {"pequena": 0, "media": 8, "grande": len(extras)}[nivel]
+    escolhidas = list(extras[:quantidade_extra])
+    for par in pares_percurso:
+        origem, destino = tuple(par)
+        dados = completa[origem][destino]
+        escolhidas.append((origem, destino, dados))
+
+    estradas = {nome: {} for nome in completa}
+    for origem, destino, dados_originais in escolhidas:
+        dados = deepcopy(dados_originais)
+        # Pequena variação reproduzível mantém as instâncias distintas sem
+        # alterar a estrutura geográfica nem a classificação do piso.
+        dados["distancia"] = max(1, round(float(dados["distancia"]) + gerador.randint(-2, 2), 1))
+        estradas[origem][destino] = dados
+        estradas[destino][origem] = deepcopy(dados)
+    return estradas
+
+
+def gerar_instancias_experimentais(
+    pasta=None, semente_base=202601, quantidade_por_nivel=10
+):
+    """Gera 10 instâncias por nível com um único gerador de semente do grupo.
+
+    Os níveis mantêm as sete entregas e as quinze localidades do P1. A
+    dificuldade cresce pelo número de alternativas rodoviárias, evitando
+    alterar as regras do domínio apenas para produzir resultados favoráveis.
+    O gerador é inicializado uma só vez com ``2026 * 100 + grupo``; os casos
+    ficam distintos porque o estado pseudo-aleatório avança entre gerações.
+    """
+    pasta = Path(pasta) if pasta else PASTA_DADOS / "instancias_experimentais"
+    pasta.mkdir(parents=True, exist_ok=True)
+    supermercados = {
+        item["localidade"]: {
+            "abertura": item["abertura"], "fecho": item["fecho"]
+        }
+        for item in gerar_janelas_horario(DESTINOS_DEMONSTRACAO)
+    }
+    caminhos = []
+    gerador = random.Random(semente_base)
+    for nivel in ("pequena", "media", "grande"):
+        for indice in range(quantidade_por_nivel):
+            estradas = _rede_directa_experimental(nivel, gerador)
+            instancia = {
+                "nome": f"{nivel}_{indice + 1:02d}",
+                "nivel": nivel,
+                "indice": indice + 1,
+                "semente_base": semente_base,
+                "semente": semente_base,
+                "dimensao": sum(len(v) for v in estradas.values()) // 2,
+                "origem": "Beira",
+                "estadoInicial": {
+                    "localidade": "Beira", "horaPartida": "05:00",
+                    "combustivelLitros": 300,
+                },
+                "postosAbastecimento": ["Beira", "Inchope", "Chimoio"],
+                "estradas": estradas,
+                "supermercados": supermercados,
+            }
+            caminho = pasta / f"{nivel}_{indice + 1:02d}.json"
+            caminho.write_text(
+                json.dumps(instancia, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            caminhos.append(caminho)
+    return caminhos

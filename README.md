@@ -123,15 +123,20 @@ As heurísticas não substituem a verificação das restrições. O relatório a
 
 A interface gráfica desktop permite:
 
-1. Seleccionar ou gerar uma instância de distribuição.
+1. Seleccionar ou gerar uma instância de distribuição, incluindo a escolha
+   directa dos níveis Pequena, Média ou Grande e dos casos 01–10.
 2. Escolher o algoritmo e os parâmetros aplicáveis. A heurística só é apresentada aos algoritmos informados. Definir o tempo máximo em segundos ou optar por uma busca sem limite temporal.
-3. Executar a procura, acompanhar contagens de geração/expansão, visualizar a localidade em exploração no mapa e cancelar cooperativamente a operação.
+3. Executar a procura num processo separado, mantendo a janela responsiva,
+   acompanhar contagens de geração/expansão, visualizar a localidade em
+   exploração no mapa e terminar a operação manualmente.
 4. Consultar o mapa rodoviário e destacar a rota encontrada.
 5. Inspeccionar, passo a passo, as acções da solução e os estados sucessivos.
 6. Visualizar uma **árvore de procura interactiva**, com sequência de expansões, fronteira e valores `g`, `h` e `f`, quando disponíveis.
 7. Avançar e recuar por expansão completa (o nó pai e os filhos gerados no mesmo passo), reproduzir ou pausar, utilizar zoom com a roda do rato e mover a árvore por arrasto.
 8. Consultar custo total, nós gerados e expandidos, fronteira máxima, duração e memória de pico.
 9. Comparar algoritmos e consultar gráficos e resultados experimentais.
+10. Consultar o motivo do término e o último estado explorado quando o limite
+    de tempo é atingido ou o utilizador termina o algoritmo.
 
 O mapa de estradas e a árvore de procura são visualizações diferentes: o primeiro mostra a rede física e o percurso; a segunda mostra como o algoritmo explorou o espaço de estados.
 
@@ -145,7 +150,7 @@ Para confirmar o funcionamento completo sem depender de uma instância aleatóri
 4. Selecciona **A\*** e a heurística **h2** e executa a busca. A procura apaga o percurso de referência e desenha apenas a solução que encontrar.
 5. Consulta **Mapa** e **Resultados**: o ensaio controlado desta revisão encontrou uma solução de **830 minutos** com **sete entregas** e **19 acções**.
 
-O percurso demonstrativo é reproduzível pela semente `202601` e fica em `dados/instancias/demonstracao_202601.json` após a sua geração. O gerador aleatório disponível em **Gerar nova instância** permanece independente e **não garante** que uma rota completa seja viável. Uma execução interrompida por limite de tempo não prova que não exista solução.
+O percurso demonstrativo é reproduzível pela semente `202601` e fica em `dados/instancias/demonstracao_202601.json` após a sua geração. O botão **Gerar instância base** usa a mesma semente oficial e valida um percurso testemunha antes de carregar o ficheiro. Uma execução interrompida por limite de tempo não prova que não exista solução.
 
 O mapa mostra inicialmente todas as estradas com a mesma cor; as cores dos estados de piso continuam na legenda, preservando os dados originais. Os marcadores distinguem localidades, supermercados, postos de abastecimento, localidades com as duas funções e origem. A rota definitiva destaca-se depois da busca. O painel lateral possui deslocação vertical; a indicação de processamento é apresentada sobre o mapa durante execuções demoradas.
 
@@ -238,7 +243,7 @@ Na janela principal, seleccionar uma instância, escolher o algoritmo e, se apli
 python -m src.gerador
 ```
 
-O gerador utiliza uma semente para permitir a reprodução das instâncias. A semente de referência do **Grupo 01** é `202601` (`2026 × 100 + 1`).
+O gerador utiliza uma semente para permitir a reprodução das instâncias. A semente do **Grupo 01** é `202601` (`2026 × 100 + 1`). Na campanha experimental, um único gerador é inicializado uma vez com esse valor e o seu estado avança para produzir dez casos distintos por nível; todas as instâncias mantêm `semente: 202601`.
 
 ### Executar experiências
 
@@ -321,7 +326,22 @@ Os módulos auxiliares legados (`src/custos.py`, `src/transicoes.py` e `src/busc
 
 ## Experiências e avaliação
 
-O protocolo experimental prevê **três níveis de dimensão** (pequeno, médio e grande), com **dez instâncias aleatórias por nível**, geradas com sementes reproduzíveis. Cada execução está sujeita aos limites definidos no enunciado: **60 segundos e 2 GB de memória**.
+Para gerar as 30 instâncias, executar a bateria com os limites do enunciado,
+exportar o CSV e produzir os três gráficos obrigatórios:
+
+```bash
+python -m experiencias.bateria --limite 60 --quantidade-por-nivel 10
+```
+
+A bateria guarda um checkpoint após cada execução. Se for interrompida, o mesmo
+comando retoma automaticamente os casos compatíveis; use `--reiniciar` apenas
+quando pretender descartar deliberadamente esse progresso.
+
+Os resultados ficam em `resultados_experimentais/`. A correspondência completa
+entre requisitos, código e testes está documentada em
+[`docs/CONFORMIDADE_ENUNCIADO.md`](docs/CONFORMIDADE_ENUNCIADO.md).
+
+O protocolo experimental prevê **três níveis de dimensão** (pequeno, médio e grande), com **dez instâncias por nível**, geradas pela sequência reproduzível iniciada com a semente única `202601`. Cada execução está sujeita aos limites definidos no enunciado: **60 segundos e 2 GB de memória**.
 
 Para cada combinação de algoritmo e instância, recolhem-se:
 
@@ -442,7 +462,8 @@ Se o vídeo ou os ficheiros ultrapassarem os limites do Vula, podem ser partilha
 - **Executar busca / Cancelar busca** partilham o mesmo botão. Os parâmetros são bloqueados durante uma execução; os separadores mantêm-se acessíveis para consulta.
 - **Árvore de busca:** os controlos situam-se acima do desenho. Um avanço revela a expansão de um nó com os filhos correspondentes. A roda do rato amplia/reduz a vista, o arrasto move-a e o botão de ajuste repõe o enquadramento.
 - **Mapa:** durante uma busca, um anel assinala a localidade do último estado expandido; este sinal não deve ser confundido com a rota da solução, apresentada apenas quando é encontrada e validada.
+- **ASCII:** apresenta a solução passo a passo em texto monoespaçado, incluindo localidade, tempo, combustível, entregas e a acção que liga cada estado. Esta vista complementa o mapa e a árvore, que continuam disponíveis.
 
 ### Limitações verificadas
 
-A geração de instâncias assegura consistência estrutural, mas **não garante uma solução viável** para todas as sementes. A procura pode ser interrompida por limite de tempo e a árvore limita os eventos retidos para controlar a memória. O desempenho depende da instância, do algoritmo e do computador; não se deve interpretar uma execução interrompida como prova de inexistência de solução.
+As instâncias oficiais incluídas foram validadas com A* h2 e possuem solução. A procura de outros algoritmos pode ser interrompida por limite de tempo e a árvore limita os eventos retidos para controlar a memória. O desempenho depende da instância, do algoritmo e do computador; não se deve interpretar uma execução interrompida como prova de inexistência de solução.

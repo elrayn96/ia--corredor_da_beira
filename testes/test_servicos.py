@@ -85,6 +85,8 @@ def test_servico_executa_todos_os_algoritmos(
         "nos_gerados",
         "nos_expandidos",
         "max_fronteira",
+        "nos_reexpandidos",
+        "comprimento_caminho",
         "tempo_segundos",
         "memoria_pico_bytes",
     }
