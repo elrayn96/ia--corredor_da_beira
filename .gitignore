@@ -4,3 +4,4 @@ __pycache__/
 .gitignore
 .ruff_cache/
 *.pyc
+resultados_experimentais/.bateria_parcial.json*

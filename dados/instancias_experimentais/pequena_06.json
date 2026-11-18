@@ -3,7 +3,7 @@
   "nivel": "pequena",
   "indice": 6,
   "semente_base": 202601,
-  "semente": 202606,
+  "semente": 202601,
   "dimensao": 4,
   "origem": "Beira",
   "estadoInicial": {
@@ -19,7 +19,7 @@
   "estradas": {
     "Beira": {
       "Dondo": {
-        "distancia": 42.0,
+        "distancia": 41.0,
         "piso": 5
       }
     },
@@ -37,7 +37,7 @@
     },
     "Inchope": {
       "Gondola": {
-        "distancia": 69.0,
+        "distancia": 68.0,
         "piso": 4
       }
     },
@@ -57,7 +57,7 @@
     },
     "Manica": {
       "Chimoio": {
-        "distancia": 81.0,
+        "distancia": 82.0,
         "piso": 3
       }
     },

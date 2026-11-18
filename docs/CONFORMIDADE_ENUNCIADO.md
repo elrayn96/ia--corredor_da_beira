@@ -20,8 +20,10 @@ regista `nos_reexpandidos`; o UCS usa `heapq` e descarta entradas obsoletas.
 
 ## Instâncias e experiências
 
-A semente de referência é `202601`. O gerador experimental cria dez instâncias
-por nível em `dados/instancias_experimentais/`. Cada instância mantém as sete
+A semente obrigatória é `202601` (`2026 × 100 + 1`). Um único gerador é
+inicializado com esse valor e avança para criar dez instâncias distintas por
+nível em `dados/instancias_experimentais/`; todos os JSONs conservam o campo
+`semente: 202601`. Cada instância mantém as sete
 entregas e as quinze localidades; o tamanho cresce pelo número de alternativas
 rodoviárias. O nível pequeno usa um corredor controlado com uma ligação
 simulada explicitamente identificada no JSON.
@@ -31,6 +33,10 @@ Executar a bateria oficial:
 ```bash
 python -m experiencias.bateria --limite 60 --quantidade-por-nivel 10
 ```
+
+Cada resultado é guardado num checkpoint atómico. Uma nova execução retoma
+automaticamente checkpoints com a mesma assinatura de instâncias e o mesmo
+limite temporal; `--reiniciar` força uma campanha integral nova.
 
 São produzidos:
 

@@ -139,10 +139,10 @@ def actualizar(caminho_docx, caminho_csv, grafico, destino, testes):
     concluidas = sum(x.get("estado_execucao") == "concluida" for x in linhas)
     interrompidas = sum(x.get("estado_execucao") == "interrompida" for x in linhas)
     documento.paragraphs[300].text = (
-        "A instância base de semente 202601 e as instâncias experimentais são construídas "
-        "com um percurso testemunha validado pelas transições do domínio. O gerador "
-        "experimental produz dez casos por nível; o gerador livre da interface continua "
-        "identificado como aleatório e pode exigir validação posterior."
+        "A instância base e as instâncias experimentais usam a semente obrigatória "
+        "202601. Um único gerador pseudo-aleatório é inicializado com esse valor e o "
+        "seu estado avança para produzir dez casos distintos por nível. A instância "
+        "base possui um percurso testemunha validado pelas transições do domínio."
     )
     documento.paragraphs[301].text = (
         f"A suite automatizada executada com pytest contém {testes} testes. Inclui domínio, "
@@ -151,7 +151,7 @@ def actualizar(caminho_docx, caminho_csv, grafico, destino, testes):
     )
     documento.paragraphs[310].text = (
         "A bateria experimental utilizou três níveis de dificuldade, dez instâncias "
-        "reproduzíveis por nível e a semente-base 202601. Cada par algoritmo–instância "
+        "reproduzíveis por nível e uma única semente 202601. Cada par algoritmo–instância "
         "foi executado em processo isolado, com limite de 60 segundos e 2 GB. Foram "
         "registados custo, comprimento, nós gerados e expandidos, reexpansões, fronteira "
         "máxima, tempo e memória de pico."

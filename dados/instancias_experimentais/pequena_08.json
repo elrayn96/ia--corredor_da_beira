@@ -3,7 +3,7 @@
   "nivel": "pequena",
   "indice": 8,
   "semente_base": 202601,
-  "semente": 202608,
+  "semente": 202601,
   "dimensao": 4,
   "origem": "Beira",
   "estadoInicial": {
@@ -19,38 +19,38 @@
   "estradas": {
     "Beira": {
       "Dondo": {
-        "distancia": 42.0,
+        "distancia": 39.0,
         "piso": 5
       }
     },
     "Dondo": {
       "Nhamatanda": {
-        "distancia": 90.0,
+        "distancia": 88.0,
         "piso": 4
       }
     },
     "Nhamatanda": {
       "Inchope": {
-        "distancia": 70.0,
+        "distancia": 71.0,
         "piso": 4
       }
     },
     "Inchope": {
       "Gondola": {
-        "distancia": 71.0,
+        "distancia": 69.0,
         "piso": 4
       }
     },
     "Gorongosa": {},
     "Gondola": {
       "Vanduzi": {
-        "distancia": 46.0,
+        "distancia": 43.0,
         "piso": 4
       }
     },
     "Chimoio": {
       "Beira": {
-        "distancia": 200.0,
+        "distancia": 199.0,
         "piso": 5,
         "simulada": true
       }
@@ -69,7 +69,7 @@
     "Lamego": {},
     "Vanduzi": {
       "Manica": {
-        "distancia": 71.0,
+        "distancia": 72.0,
         "piso": 3
       }
     }

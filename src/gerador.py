@@ -430,11 +430,13 @@ def _rede_directa_experimental(nivel, gerador):
 def gerar_instancias_experimentais(
     pasta=None, semente_base=202601, quantidade_por_nivel=10
 ):
-    """Gera 10 instâncias viáveis por nível a partir da semente do grupo.
+    """Gera 10 instâncias por nível com um único gerador de semente do grupo.
 
     Os níveis mantêm as sete entregas e as quinze localidades do P1. A
     dificuldade cresce pelo número de alternativas rodoviárias, evitando
     alterar as regras do domínio apenas para produzir resultados favoráveis.
+    O gerador é inicializado uma só vez com ``2026 * 100 + grupo``; os casos
+    ficam distintos porque o estado pseudo-aleatório avança entre gerações.
     """
     pasta = Path(pasta) if pasta else PASTA_DADOS / "instancias_experimentais"
     pasta.mkdir(parents=True, exist_ok=True)
@@ -445,17 +447,16 @@ def gerar_instancias_experimentais(
         for item in gerar_janelas_horario(DESTINOS_DEMONSTRACAO)
     }
     caminhos = []
-    for numero_nivel, nivel in enumerate(("pequena", "media", "grande")):
+    gerador = random.Random(semente_base)
+    for nivel in ("pequena", "media", "grande"):
         for indice in range(quantidade_por_nivel):
-            semente = semente_base + numero_nivel * 100 + indice
-            gerador = random.Random(semente)
             estradas = _rede_directa_experimental(nivel, gerador)
             instancia = {
                 "nome": f"{nivel}_{indice + 1:02d}",
                 "nivel": nivel,
                 "indice": indice + 1,
                 "semente_base": semente_base,
-                "semente": semente,
+                "semente": semente_base,
                 "dimensao": sum(len(v) for v in estradas.values()) // 2,
                 "origem": "Beira",
                 "estadoInicial": {

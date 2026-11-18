@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -18,6 +19,55 @@ from src.gerador import gerar_instancias_experimentais
 RAIZ = Path(__file__).resolve().parent.parent
 PASTA_INSTANCIAS = RAIZ / "dados" / "instancias_experimentais"
 PASTA_RESULTADOS = RAIZ / "resultados_experimentais"
+FICHEIRO_CHECKPOINT = PASTA_RESULTADOS / ".bateria_parcial.json"
+
+
+def _assinatura_instancias(caminhos):
+    resumo = hashlib.sha256()
+    for caminho in caminhos:
+        resumo.update(Path(caminho).read_bytes())
+    return resumo.hexdigest()
+
+
+def _chave_execucao(item):
+    return (
+        item.get("nivel"), int(item.get("indice", 0)), item.get("algoritmo"),
+        item.get("heuristica"), item.get("peso"), item.get("limite"),
+    )
+
+
+def _carregar_checkpoint(destino, assinatura, limite_segundos):
+    destino = Path(destino)
+    if not destino.is_file():
+        return []
+    try:
+        dados = json.loads(destino.read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        return []
+    if (
+        dados.get("assinatura_instancias") != assinatura
+        or dados.get("limite_segundos") != limite_segundos
+    ):
+        return []
+    return dados.get("resultados", [])
+
+
+def _guardar_checkpoint(destino, assinatura, limite_segundos, resultados):
+    destino = Path(destino)
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    temporario = destino.with_suffix(destino.suffix + ".tmp")
+    temporario.write_text(
+        json.dumps(
+            {
+                "assinatura_instancias": assinatura,
+                "limite_segundos": limite_segundos,
+                "resultados": resultados,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    temporario.replace(destino)
 
 
 def configuracoes(caminho):
@@ -69,7 +119,8 @@ def _executar_caso(configuracao, limite_segundos, limite_memoria_bytes):
 
 
 def executar_bateria(
-    limite_segundos=60, quantidade_por_nivel=10, trabalhadores=None
+    limite_segundos=60, quantidade_por_nivel=10, trabalhadores=None,
+    retomar=True,
 ):
     caminhos = gerar_instancias_experimentais(
         PASTA_INSTANCIAS, quantidade_por_nivel=quantidade_por_nivel
@@ -81,7 +132,25 @@ def executar_bateria(
             configuracao["semente"] = instancia["semente"]
             trabalhos.append((configuracao, instancia))
 
-    resultados = []
+    assinatura = _assinatura_instancias(caminhos)
+    resultados = (
+        _carregar_checkpoint(FICHEIRO_CHECKPOINT, assinatura, limite_segundos)
+        if retomar else []
+    )
+    concluidas = {_chave_execucao(item) for item in resultados}
+    trabalhos = [
+        trabalho for trabalho in trabalhos
+        if _chave_execucao({
+            **trabalho[0], "nivel": trabalho[1]["nivel"],
+            "indice": trabalho[1]["indice"],
+        }) not in concluidas
+    ]
+    if resultados:
+        print(
+            f"A retomar {len(resultados)} de "
+            f"{quantidade_por_nivel * 3 * 13} execuções guardadas.",
+            flush=True,
+        )
     trabalhadores = trabalhadores or min(4, os.cpu_count() or 1)
     limite_memoria = 2 * 1024 ** 3
     with ProcessPoolExecutor(max_workers=trabalhadores) as executor:
@@ -91,17 +160,24 @@ def executar_bateria(
             ): instancia
             for config, instancia in trabalhos
         }
-        total = len(futuros)
-        for concluido, futuro in enumerate(as_completed(futuros), 1):
+        total = quantidade_por_nivel * 3 * 13
+        for futuro in as_completed(futuros):
             instancia = futuros[futuro]
             registo = futuro.result()
             registo.update(
                 nivel=instancia["nivel"], dimensao=instancia["dimensao"],
                 indice=instancia["indice"],
+                caminho_instancia=str(
+                    Path("dados/instancias_experimentais")
+                    / Path(registo["caminho_instancia"]).name
+                ),
             )
             resultados.append(registo)
+            _guardar_checkpoint(
+                FICHEIRO_CHECKPOINT, assinatura, limite_segundos, resultados
+            )
             print(
-                f"[{concluido:03d}/{total}] {instancia['nome']} · "
+                f"[{len(resultados):03d}/{total}] {instancia['nome']} · "
                 f"{registo.get('algoritmo')} · {registo.get('estado_execucao')}",
                 flush=True,
             )
@@ -141,7 +217,10 @@ def guardar(resultados, destino):
     destino = Path(destino)
     destino.parent.mkdir(parents=True, exist_ok=True)
     with destino.open("w", encoding="utf-8-sig", newline="") as ficheiro:
-        escritor = csv.DictWriter(ficheiro, fieldnames=cabecalhos, extrasaction="ignore")
+        escritor = csv.DictWriter(
+            ficheiro, fieldnames=cabecalhos, extrasaction="ignore",
+            lineterminator="\n",
+        )
         escritor.writeheader()
         escritor.writerows(resultados)
     return destino
@@ -167,7 +246,10 @@ def guardar_tabela_ponderada(resultados, destino):
         })
     destino = Path(destino)
     with destino.open("w", encoding="utf-8-sig", newline="") as ficheiro:
-        escritor = csv.DictWriter(ficheiro, fieldnames=campos, extrasaction="ignore")
+        escritor = csv.DictWriter(
+            ficheiro, fieldnames=campos, extrasaction="ignore",
+            lineterminator="\n",
+        )
         escritor.writeheader()
         escritor.writerows(linhas)
     return destino
@@ -178,15 +260,21 @@ def main():
     parser.add_argument("--limite", type=float, default=60)
     parser.add_argument("--quantidade-por-nivel", type=int, default=10)
     parser.add_argument("--trabalhadores", type=int, default=None)
+    parser.add_argument(
+        "--reiniciar", action="store_true",
+        help="ignora um checkpoint compatível e reinicia todas as execuções",
+    )
     args = parser.parse_args()
     resultados = executar_bateria(
-        args.limite, args.quantidade_por_nivel, args.trabalhadores
+        args.limite, args.quantidade_por_nivel, args.trabalhadores,
+        retomar=not args.reiniciar,
     )
     csv_final = guardar(resultados, PASTA_RESULTADOS / "resultados.csv")
     guardar_tabela_ponderada(
         resultados, PASTA_RESULTADOS / "a_star_ponderada_vs_limite.csv"
     )
     gerar_graficos(csv_final, PASTA_RESULTADOS / "graficos")
+    FICHEIRO_CHECKPOINT.unlink(missing_ok=True)
     print(csv_final)
 
 

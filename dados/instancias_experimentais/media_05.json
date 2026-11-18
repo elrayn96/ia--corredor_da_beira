@@ -3,7 +3,7 @@
   "nivel": "media",
   "indice": 5,
   "semente_base": 202601,
-  "semente": 202705,
+  "semente": 202601,
   "dimensao": 16,
   "origem": "Beira",
   "estadoInicial": {
@@ -18,88 +18,92 @@
   ],
   "estradas": {
     "Beira": {
-      "Mutua": {
-        "distancia": 201.0,
-        "piso": 2
-      },
       "Dondo": {
-        "distancia": 39.0,
+        "distancia": 41.0,
         "piso": 5
       }
     },
     "Dondo": {
       "Lamego": {
-        "distancia": 128.0,
+        "distancia": 132.0,
         "piso": 2
       },
-      "Nhamatanda": {
-        "distancia": 88.0,
-        "piso": 4
-      },
       "Beira": {
-        "distancia": 39.0,
+        "distancia": 41.0,
         "piso": 5
+      },
+      "Nhamatanda": {
+        "distancia": 91.0,
+        "piso": 4
       }
     },
     "Nhamatanda": {
       "Gorongosa": {
-        "distancia": 88.0,
+        "distancia": 91.0,
         "piso": 4
       },
       "Inchope": {
-        "distancia": 71.0,
+        "distancia": 68.0,
         "piso": 4
       },
       "Dondo": {
-        "distancia": 88.0,
+        "distancia": 91.0,
         "piso": 4
       }
     },
     "Inchope": {
       "Mutua": {
-        "distancia": 120.0,
+        "distancia": 118.0,
         "piso": 2
       },
-      "Chimoio": {
-        "distancia": 102.0,
+      "Nhamatanda": {
+        "distancia": 68.0,
         "piso": 4
       },
-      "Nhamatanda": {
-        "distancia": 71.0,
+      "Chimoio": {
+        "distancia": 100.0,
         "piso": 4
       },
       "Gondola": {
-        "distancia": 70.0,
+        "distancia": 71.0,
         "piso": 4
       }
     },
     "Gorongosa": {
+      "Caia": {
+        "distancia": 151.0,
+        "piso": 3
+      },
       "Nhamatanda": {
-        "distancia": 88.0,
+        "distancia": 91.0,
         "piso": 4
       }
     },
     "Gondola": {
+      "Chimoio": {
+        "distancia": 61.0,
+        "piso": 4
+      },
       "Vanduzi": {
-        "distancia": 47.0,
+        "distancia": 43.0,
         "piso": 4
       },
       "Inchope": {
-        "distancia": 70.0,
+        "distancia": 71.0,
         "piso": 4
       }
     },
     "Chimoio": {
+      "Gondola": {
+        "distancia": 61.0,
+        "piso": 4
+      },
       "Catandica": {
-        "distancia": 160.0,
+        "distancia": 159.0,
         "piso": 2
       },
-      "Muxunguè": {
-        "distancia": 98.0,
-        "piso": 3
-      },
       "Inchope": {
-        "distancia": 102.0,
+        "distancia": 100.0,
         "piso": 4
       },
       "Manica": {
@@ -108,8 +112,12 @@
       }
     },
     "Manica": {
+      "Catandica": {
+        "distancia": 178.0,
+        "piso": 2
+      },
       "Vanduzi": {
-        "distancia": 68.0,
+        "distancia": 72.0,
         "piso": 3
       },
       "Chimoio": {
@@ -118,60 +126,50 @@
       }
     },
     "Catandica": {
+      "Manica": {
+        "distancia": 178.0,
+        "piso": 2
+      },
       "Chimoio": {
-        "distancia": 160.0,
+        "distancia": 159.0,
         "piso": 2
       }
     },
-    "Muxunguè": {
-      "Chimoio": {
-        "distancia": 98.0,
-        "piso": 3
-      }
-    },
+    "Muxunguè": {},
     "Caia": {
-      "Mafambisse": {
-        "distancia": 108.0,
+      "Gorongosa": {
+        "distancia": 151.0,
         "piso": 3
       }
     },
-    "Mafambisse": {
-      "Caia": {
-        "distancia": 108.0,
-        "piso": 3
-      }
-    },
+    "Mafambisse": {},
     "Mutua": {
-      "Lamego": {
-        "distancia": 59.0,
-        "piso": 3
-      },
       "Inchope": {
-        "distancia": 120.0,
-        "piso": 2
-      },
-      "Beira": {
-        "distancia": 201.0,
+        "distancia": 118.0,
         "piso": 2
       }
     },
     "Lamego": {
       "Dondo": {
-        "distancia": 128.0,
+        "distancia": 132.0,
         "piso": 2
       },
-      "Mutua": {
-        "distancia": 59.0,
+      "Vanduzi": {
+        "distancia": 110.0,
         "piso": 3
       }
     },
     "Vanduzi": {
+      "Lamego": {
+        "distancia": 110.0,
+        "piso": 3
+      },
       "Manica": {
-        "distancia": 68.0,
+        "distancia": 72.0,
         "piso": 3
       },
       "Gondola": {
-        "distancia": 47.0,
+        "distancia": 43.0,
         "piso": 4
       }
     }

@@ -3,7 +3,7 @@
   "nivel": "grande",
   "indice": 6,
   "semente_base": 202601,
-  "semente": 202806,
+  "semente": 202601,
   "dimensao": 25,
   "origem": "Beira",
   "estadoInicial": {
@@ -19,84 +19,84 @@
   "estradas": {
     "Beira": {
       "Mutua": {
-        "distancia": 200.0,
+        "distancia": 202.0,
         "piso": 2
       },
       "Dondo": {
-        "distancia": 42.0,
+        "distancia": 39.0,
         "piso": 5
       }
     },
     "Dondo": {
       "Lamego": {
-        "distancia": 131.0,
+        "distancia": 132.0,
         "piso": 2
       },
-      "Nhamatanda": {
-        "distancia": 90.0,
-        "piso": 4
-      },
       "Beira": {
-        "distancia": 42.0,
+        "distancia": 39.0,
         "piso": 5
+      },
+      "Nhamatanda": {
+        "distancia": 89.0,
+        "piso": 4
       }
     },
     "Nhamatanda": {
+      "Mafambisse": {
+        "distancia": 61.0,
+        "piso": 4
+      },
       "Gorongosa": {
         "distancia": 88.0,
         "piso": 4
       },
-      "Mafambisse": {
-        "distancia": 60.0,
-        "piso": 4
-      },
       "Inchope": {
-        "distancia": 72.0,
+        "distancia": 70.0,
         "piso": 4
       },
       "Dondo": {
-        "distancia": 90.0,
+        "distancia": 89.0,
         "piso": 4
       }
     },
     "Inchope": {
+      "Mutua": {
+        "distancia": 118.0,
+        "piso": 2
+      },
       "Lamego": {
-        "distancia": 90.0,
+        "distancia": 91.0,
         "piso": 3
       },
-      "Mutua": {
-        "distancia": 122.0,
-        "piso": 2
+      "Nhamatanda": {
+        "distancia": 70.0,
+        "piso": 4
       },
       "Chimoio": {
         "distancia": 102.0,
         "piso": 4
       },
-      "Nhamatanda": {
-        "distancia": 72.0,
-        "piso": 4
-      },
       "Gondola": {
-        "distancia": 68.0,
+        "distancia": 72.0,
         "piso": 4
       }
     },
     "Gorongosa": {
-      "Muxunguè": {
-        "distancia": 141.0,
+      "Caia": {
+        "distancia": 151.0,
         "piso": 3
       },
       "Chimoio": {
-        "distancia": 132.0,
-        "piso": 3
-      },
-      "Caia": {
-        "distancia": 152.0,
+        "distancia": 131.0,
         "piso": 3
       },
       "Nhamatanda": {
         "distancia": 88.0,
         "piso": 4
+      },
+      "Muxunguè": {
+        "distancia": 141.0,
+        "piso": 3
       }
     },
     "Gondola": {
@@ -109,137 +109,137 @@
         "piso": 4
       },
       "Inchope": {
-        "distancia": 68.0,
+        "distancia": 72.0,
         "piso": 4
       }
     },
     "Chimoio": {
-      "Gorongosa": {
-        "distancia": 132.0,
-        "piso": 3
-      },
-      "Catandica": {
-        "distancia": 160.0,
-        "piso": 2
-      },
       "Gondola": {
         "distancia": 62.0,
         "piso": 4
       },
       "Muxunguè": {
-        "distancia": 100.0,
+        "distancia": 102.0,
         "piso": 3
+      },
+      "Gorongosa": {
+        "distancia": 131.0,
+        "piso": 3
+      },
+      "Catandica": {
+        "distancia": 162.0,
+        "piso": 2
       },
       "Inchope": {
         "distancia": 102.0,
         "piso": 4
       },
       "Manica": {
-        "distancia": 81.0,
+        "distancia": 78.0,
         "piso": 3
       }
     },
     "Manica": {
       "Catandica": {
-        "distancia": 179.0,
+        "distancia": 180.0,
         "piso": 2
       },
       "Vanduzi": {
-        "distancia": 72.0,
+        "distancia": 69.0,
         "piso": 3
       },
       "Chimoio": {
-        "distancia": 81.0,
+        "distancia": 78.0,
         "piso": 3
       }
     },
     "Catandica": {
       "Manica": {
-        "distancia": 179.0,
-        "piso": 2
-      },
-      "Chimoio": {
-        "distancia": 160.0,
+        "distancia": 180.0,
         "piso": 2
       },
       "Muxunguè": {
-        "distancia": 119.0,
+        "distancia": 120.0,
         "piso": 3
+      },
+      "Chimoio": {
+        "distancia": 162.0,
+        "piso": 2
       }
     },
     "Muxunguè": {
+      "Chimoio": {
+        "distancia": 102.0,
+        "piso": 3
+      },
       "Gorongosa": {
         "distancia": 141.0,
         "piso": 3
       },
       "Catandica": {
-        "distancia": 119.0,
-        "piso": 3
-      },
-      "Chimoio": {
-        "distancia": 100.0,
+        "distancia": 120.0,
         "piso": 3
       }
     },
     "Caia": {
-      "Mafambisse": {
-        "distancia": 111.0,
+      "Gorongosa": {
+        "distancia": 151.0,
         "piso": 3
       },
-      "Gorongosa": {
-        "distancia": 152.0,
+      "Mafambisse": {
+        "distancia": 108.0,
         "piso": 3
       }
     },
     "Mafambisse": {
-      "Caia": {
-        "distancia": 111.0,
-        "piso": 3
-      },
       "Nhamatanda": {
-        "distancia": 60.0,
+        "distancia": 61.0,
         "piso": 4
+      },
+      "Caia": {
+        "distancia": 108.0,
+        "piso": 3
       }
     },
     "Mutua": {
-      "Beira": {
-        "distancia": 200.0,
+      "Inchope": {
+        "distancia": 118.0,
         "piso": 2
       },
       "Lamego": {
-        "distancia": 62.0,
+        "distancia": 59.0,
         "piso": 3
       },
-      "Inchope": {
-        "distancia": 122.0,
+      "Beira": {
+        "distancia": 202.0,
         "piso": 2
       }
     },
     "Lamego": {
-      "Dondo": {
-        "distancia": 131.0,
-        "piso": 2
-      },
-      "Mutua": {
-        "distancia": 62.0,
+      "Inchope": {
+        "distancia": 91.0,
         "piso": 3
       },
-      "Inchope": {
-        "distancia": 90.0,
+      "Mutua": {
+        "distancia": 59.0,
         "piso": 3
       },
       "Vanduzi": {
-        "distancia": 110.0,
+        "distancia": 109.0,
         "piso": 3
+      },
+      "Dondo": {
+        "distancia": 132.0,
+        "piso": 2
       }
     },
     "Vanduzi": {
       "Lamego": {
-        "distancia": 110.0,
+        "distancia": 109.0,
         "piso": 3
       },
       "Manica": {
-        "distancia": 72.0,
+        "distancia": 69.0,
         "piso": 3
       },
       "Gondola": {

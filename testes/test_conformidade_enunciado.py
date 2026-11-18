@@ -114,6 +114,9 @@ def test_gerador_cria_dez_instancias_viaveis_por_nivel(tmp_path):
     assert {nivel: niveis.count(nivel) for nivel in set(niveis)} == {
         "pequena": 10, "media": 10, "grande": 10,
     }
+    assert {carregar_json(caminho)["semente"] for caminho in caminhos} == {
+        2026 * 100 + 1
+    }
     rede_base = carregar_rede()
     ligacoes_base = {
         frozenset((estrada["origem"], estrada["destino"]))

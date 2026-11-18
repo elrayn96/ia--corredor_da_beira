@@ -1,11 +1,10 @@
 """Controlos de configuracao independentes da janela principal."""
 
-import time
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
-from src.gerador import carregar_json, gerar_problema
+from src.gerador import carregar_json, gerar_demonstracao_validada
 from src.interface.icones import carregar_icone
 
 RAIZ_PROJECTO = Path(__file__).resolve().parents[2]
@@ -15,6 +14,7 @@ NIVEIS_INSTANCIA = {
     "Média": "media",
     "Grande": "grande",
 }
+SEMENTE_GRUPO = 2026 * 100 + 1
 
 ALGORITMOS = {
     "BFS": "bfs",
@@ -129,7 +129,7 @@ class PainelConfiguracao(ttk.Frame):
         )
         self._botao_carregar.grid(row=1, column=0, columnspan=2, sticky="ew", pady=3)
         self._botao_gerar = ttk.Button(
-            self, text="Gerar nova instância", image=icone_gerar, compound="left",
+            self, text="Gerar instância base", image=icone_gerar, compound="left",
             style="Gerar.TButton", command=self._gerar_instancia
         )
         self._botao_gerar.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(3, 9))
@@ -306,12 +306,12 @@ class PainelConfiguracao(ttk.Frame):
         )
 
     def _gerar_instancia(self):
-        """Gera e carrega automaticamente uma nova instância."""
+        """Gera e carrega a instância-base reproduzível do Grupo 01."""
         try:
-            semente = time.time_ns() // 1000000
+            semente = SEMENTE_GRUPO
             nome = f"instancia_{semente}.json"
 
-            _, caminho = gerar_problema(
+            _, caminho, _solucao = gerar_demonstracao_validada(
                 semente=semente,
                 nome_ficheiro=nome,
             )

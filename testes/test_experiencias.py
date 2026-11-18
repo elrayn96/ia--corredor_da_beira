@@ -1,5 +1,6 @@
 import csv
 
+from experiencias.bateria import _carregar_checkpoint, _guardar_checkpoint
 from experiencias.executar import executar_experiencia
 from experiencias.resultados import CABECALHOS, guardar_resultados_csv
 from src.interface.painel_comparacao import preparar_comparacao
@@ -89,3 +90,14 @@ def test_preparar_comparacao_distingue_erro_e_sem_solucao():
     assert linhas[0]["custo_total"] is None
     assert linhas[1]["heuristica"] == "—"
     assert linhas[1]["nos_expandidos"] == 12
+
+
+def test_checkpoint_da_bateria_e_atomico_e_compativel(tmp_path):
+    caminho = tmp_path / ".bateria_parcial.json"
+    resultados = [{"nivel": "pequena", "indice": 1, "algoritmo": "bfs"}]
+    _guardar_checkpoint(caminho, "abc123", 60, resultados)
+
+    assert _carregar_checkpoint(caminho, "abc123", 60) == resultados
+    assert _carregar_checkpoint(caminho, "outra", 60) == []
+    assert _carregar_checkpoint(caminho, "abc123", 30) == []
+    assert not caminho.with_suffix(".json.tmp").exists()
