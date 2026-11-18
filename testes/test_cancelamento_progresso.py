@@ -68,11 +68,11 @@ def test_limite_tempo_guarda_motivo_e_ultimo_estado(tmp_path, monkeypatch):
 
     def fake_execucao(_problema, _configuracao, _estatisticas, observador):
         observador({"tipo": "expandir", "estado": Estado("Inchope")})
-        time.sleep(0.003)
+        time.sleep(0.03)
         observador({"tipo": "expandir", "estado": Estado("Chimoio")})
 
     monkeypatch.setattr(modulo, "_executar_algoritmo", fake_execucao)
-    resultado = modulo.executar_busca(_config(tmp_path), limite_segundos=0.001)
+    resultado = modulo.executar_busca(_config(tmp_path), limite_segundos=0.01)
 
     assert resultado["estado_execucao"] == "interrompida"
     assert resultado["motivo_termino"] == "limite_tempo"

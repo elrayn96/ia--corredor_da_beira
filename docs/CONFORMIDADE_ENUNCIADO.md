@@ -58,6 +58,8 @@ disponibilizam `resource.RLIMIT_AS`. No Windows, a memória é medida com
 - Cancelamento manual e limite de tempo são registados como motivos distintos.
 - Quando não existe solução completa, o painel Resultados apresenta o último
   estado explorado, além das métricas recolhidas até à interrupção.
+- O separador **ASCII** apresenta cada estado e acção da solução numa sequência
+  monoespaçada; o mapa e a árvore gráfica permanecem disponíveis.
 
 ## Exemplo: menor distância não é menor tempo
 
@@ -89,3 +91,6 @@ python -m ruff check src main.py experiencias testes
 `caminho`, imutabilidade do estado, limite da DFS, reexpansões do IDS, igualdade
 de custo entre A* e UCS, cadeia de frio, espera nocturna, geração das trinta
 instâncias, factor de ramificação e o exemplo distância/tempo.
+
+Uma selecção de quinze testes adequada à demonstração está documentada em
+`docs/GUIA_DEMONSTRACAO_TESTES.md`.

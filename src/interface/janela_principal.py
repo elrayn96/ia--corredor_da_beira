@@ -13,6 +13,7 @@ from src.gerador import carregar_rede, gerar_demonstracao_validada
 from src.interface.arvore_busca import ArvoreBusca
 from src.interface.icones import carregar_icone
 from src.interface.mapa_rodoviario import MapaRodoviario
+from src.interface.painel_ascii import PainelASCII
 from src.interface.painel_comparacao import PainelComparacao
 from src.interface.painel_configuracao import PainelConfiguracao
 from src.interface.painel_resultados import PainelResultados
@@ -344,11 +345,13 @@ class JanelaPrincipal(tk.Tk):
         self._separadores.pack(fill="both", expand=True)
         self._mapa = MapaRodoviario(self._separadores)
         self._painel_resultados = PainelResultados(self._separadores)
+        self._ascii = PainelASCII(self._separadores)
         self._arvore = ArvoreBusca(self._separadores)
         self._comparacao = PainelComparacao(self._separadores)
         for painel, titulo, nome in (
             (self._mapa, "Mapa", "mapa"),
             (self._painel_resultados, "Resultados", "resultados"),
+            (self._ascii, "ASCII", "resultados"),
             (self._arvore, "Árvore de busca", "arvore"),
             (self._comparacao, "Comparação", "comparacao"),
         ):
@@ -365,6 +368,11 @@ class JanelaPrincipal(tk.Tk):
             _instancia, caminho, solucao = gerar_demonstracao_validada()
             self._configuracao.carregar_instancia(caminho)
             self._mapa.destacar_percurso(solucao.get_estados(), solucao.get_accoes())
+            self._ascii.mostrar_resultado(
+                solucao,
+                "concluida",
+                "Percurso de demonstração; não é um resultado de busca.",
+            )
             self._estado.set(
                 f"Demonstração validada: percurso de referência de "
                 f"{solucao.get_custo_total():.0f} min. Não é um resultado de busca."
@@ -589,6 +597,12 @@ class JanelaPrincipal(tk.Tk):
             resultado.get("estado_execucao"), resultado.get("mensagem"),
             resultado.get("ultimo_estado"),
         )
+        self._ascii.mostrar_resultado(
+            solucao,
+            resultado.get("estado_execucao"),
+            resultado.get("mensagem"),
+            resultado.get("ultimo_estado"),
+        )
         eventos = resultado.get("eventos") or []
         self._arvore.carregar_eventos(eventos)
         self._mapa.limpar_percurso()
@@ -627,6 +641,7 @@ class JanelaPrincipal(tk.Tk):
             return
         self._resultados.clear()
         self._painel_resultados.limpar()
+        self._ascii.limpar()
         self._arvore.carregar_eventos([])
         self._comparacao.limpar()
         self._mapa.limpar_percurso()

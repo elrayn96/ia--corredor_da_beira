@@ -1,6 +1,11 @@
 import csv
 
-from experiencias.bateria import _carregar_checkpoint, _guardar_checkpoint
+from experiencias.bateria import (
+    LIMITE_MEMORIA_BYTES,
+    _carregar_checkpoint,
+    _executar_caso,
+    _guardar_checkpoint,
+)
 from experiencias.executar import executar_experiencia
 from experiencias.graficos import _rotulo, gerar_graficos
 from experiencias.resultados import CABECALHOS, guardar_resultados_csv
@@ -102,6 +107,31 @@ def test_checkpoint_da_bateria_e_atomico_e_compativel(tmp_path):
     assert _carregar_checkpoint(caminho, "outra", 60) == []
     assert _carregar_checkpoint(caminho, "abc123", 30) == []
     assert not caminho.with_suffix(".json.tmp").exists()
+
+
+def test_bateria_define_limite_de_memoria_de_dois_gib():
+    assert LIMITE_MEMORIA_BYTES == 2 * 1024**3
+
+
+def test_bateria_marca_execucao_que_ultrapassa_limite(monkeypatch):
+    monkeypatch.setattr(
+        "experiencias.bateria._limitar_memoria_processo", lambda _limite: False
+    )
+    monkeypatch.setattr(
+        "experiencias.bateria.executar_experiencia",
+        lambda configuracao, _tempo: {
+            **configuracao,
+            "solucao": None,
+            "eventos": [],
+            "memoria_pico_bytes": 101,
+            "estado_execucao": "concluida",
+        },
+    )
+
+    resultado = _executar_caso({"algoritmo": "bfs"}, 60, 100)
+
+    assert resultado["estado_execucao"] == "falhou"
+    assert resultado["mensagem"] == "Limite de 2 GB excedido."
 
 
 def test_graficos_usam_rotulos_legiveis_e_criam_as_tres_figuras(tmp_path):

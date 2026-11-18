@@ -462,6 +462,7 @@ Se o vídeo ou os ficheiros ultrapassarem os limites do Vula, podem ser partilha
 - **Executar busca / Cancelar busca** partilham o mesmo botão. Os parâmetros são bloqueados durante uma execução; os separadores mantêm-se acessíveis para consulta.
 - **Árvore de busca:** os controlos situam-se acima do desenho. Um avanço revela a expansão de um nó com os filhos correspondentes. A roda do rato amplia/reduz a vista, o arrasto move-a e o botão de ajuste repõe o enquadramento.
 - **Mapa:** durante uma busca, um anel assinala a localidade do último estado expandido; este sinal não deve ser confundido com a rota da solução, apresentada apenas quando é encontrada e validada.
+- **ASCII:** apresenta a solução passo a passo em texto monoespaçado, incluindo localidade, tempo, combustível, entregas e a acção que liga cada estado. Esta vista complementa o mapa e a árvore, que continuam disponíveis.
 
 ### Limitações verificadas
 

@@ -20,6 +20,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 PASTA_INSTANCIAS = RAIZ / "dados" / "instancias_experimentais"
 PASTA_RESULTADOS = RAIZ / "resultados_experimentais"
 FICHEIRO_CHECKPOINT = PASTA_RESULTADOS / ".bateria_parcial.json"
+LIMITE_MEMORIA_BYTES = 2 * 1024**3
 
 
 def _assinatura_instancias(caminhos):
@@ -86,18 +87,24 @@ def configuracoes(caminho):
         }
 
 
-def _executar_caso(configuracao, limite_segundos, limite_memoria_bytes):
-    """Executa um caso num processo isolado e devolve apenas dados escalares."""
+def _limitar_memoria_processo(limite_memoria_bytes):
+    """Impõe o limite de memória quando o sistema fornece RLIMIT_AS."""
     try:
         import resource
 
         resource.setrlimit(
             resource.RLIMIT_AS, (limite_memoria_bytes, limite_memoria_bytes)
         )
+        return True
     except (ImportError, OSError, ValueError):
         # Windows não expõe resource.RLIMIT_AS; nesse sistema a memória de
         # pico continua a ser medida e o excesso é marcado após a execução.
-        pass
+        return False
+
+
+def _executar_caso(configuracao, limite_segundos, limite_memoria_bytes):
+    """Executa um caso num processo isolado e devolve apenas dados escalares."""
+    _limitar_memoria_processo(limite_memoria_bytes)
     try:
         registo = executar_experiencia(configuracao, limite_segundos)
         registo.pop("solucao", None)
@@ -152,7 +159,7 @@ def executar_bateria(
             flush=True,
         )
     trabalhadores = trabalhadores or min(4, os.cpu_count() or 1)
-    limite_memoria = 2 * 1024 ** 3
+    limite_memoria = LIMITE_MEMORIA_BYTES
     with ProcessPoolExecutor(max_workers=trabalhadores) as executor:
         futuros = {
             executor.submit(
